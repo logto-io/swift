@@ -1,1 +1,1 @@
-# Logto Swift SDKs
+# Logto Swift SDK
