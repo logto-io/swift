@@ -6,8 +6,7 @@
 ## Static frameworks should be downloaded separately
 Frameworks/
 
-## Xcode 13
-
+## Xcode 13 with SPM
 /.build
 /Packages
 /*.xcodeproj
