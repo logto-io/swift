@@ -1,5 +1,5 @@
-import XCTest
 @testable import Logto
+import XCTest
 
 final class LogtoTests: XCTestCase {
     func testExample() throws {

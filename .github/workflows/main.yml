@@ -19,5 +19,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-spm-
 
+      - name: SwiftFormat
+        run: swift run -c release swiftformat ../ --lint
+
       - name: Build & Test
         run: swift test
