@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct IDTokenClaims {
+public struct IdTokenClaims {
     let sub: String
     let atHash: String
     let aud: String
