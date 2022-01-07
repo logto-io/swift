@@ -21,6 +21,7 @@ jobs:
 
       - name: SwiftFormat
         run: swift run -c release swiftformat ../ --lint
+        working-directory: ./BuildTools
 
       - name: Build & Test
         run: swift test
