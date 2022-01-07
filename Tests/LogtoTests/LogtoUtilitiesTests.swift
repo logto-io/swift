@@ -11,8 +11,8 @@ final class LogtoUtilitiesTests: XCTestCase {
     }
     
     func testGenerateState() throws {
-        let verifier = LogtoUtilities.generateState()
-        XCTAssertEqual(fromBase64(string: verifier)?.count, 64)
+        let state = LogtoUtilities.generateState()
+        XCTAssertEqual(fromBase64(string: state)?.count, 64)
     }
 
     func testGenerateCodeVerifier() throws {
