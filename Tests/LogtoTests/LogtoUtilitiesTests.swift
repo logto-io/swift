@@ -9,6 +9,11 @@ final class LogtoUtilitiesTests: XCTestCase {
 
         return String(data: data, encoding: .utf8)
     }
+    
+    func testGenerateState() throws {
+        let verifier = LogtoUtilities.generateState()
+        XCTAssertEqual(fromBase64(string: verifier)?.count, 64)
+    }
 
     func testGenerateCodeVerifier() throws {
         let verifier = LogtoUtilities.generateCodeVerifier()
