@@ -28,4 +28,8 @@ extension String {
             .replacingOccurrences(of: "/", with: "_")
             .replacingOccurrences(of: "=", with: "")
     }
+
+    var isUrlSafe: Bool {
+        !contains(where: { "+/=".contains($0) })
+    }
 }
