@@ -12,12 +12,12 @@ public enum LogtoUtilities {
         let randomAlphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
         return String((0 ..< length).compactMap { _ in randomAlphabet.randomElement() })
     }
-    
+
     static func generateState() -> String {
-        Data(randomString().utf8).base64EncodedString()
+        randomString().toUrlSafeBase64()
     }
 
     static func generateCodeVerifier() -> String {
-        Data(randomString().utf8).base64EncodedString()
+        randomString().toUrlSafeBase64()
     }
 }
