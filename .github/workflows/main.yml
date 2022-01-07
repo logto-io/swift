@@ -1,0 +1,23 @@
+name: Main
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  Build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - uses: actions/cache@v2
+        with:
+          path: .build
+          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
+
+      - name: Build & Test
+        run: swift test
