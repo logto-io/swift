@@ -14,7 +14,7 @@ extension String {
         }
         return String(data: data, encoding: .utf8)
     }
-    
+
     var isUrlSafe: Bool {
         !contains(where: { "+/=".contains($0) })
     }

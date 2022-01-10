@@ -32,24 +32,24 @@ public enum LogtoUtilities {
         }
         return Data(hash).toUrlSafeBase64String()
     }
-    
+
     /// Decode ID Token claims WITHOUT validation.
     /// - Parameter token: The JWT to decode
     /// - Returns: A set of ID T	oken claims
     static func decodeIdToken(_ token: String) throws -> IdTokenClaims {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
-        
+
         let segments = token.split(separator: ".")
-        
+
         guard let payload = segments[safe: 1] else {
             throw LogtoErrors.Decode.noPayloadFound
         }
-        
+
         guard let decoded = String.fromUrlSafeBase64(string: String(payload)) else {
             throw LogtoErrors.Decode.invalidUrlSafeBase64Encoding
         }
-        
+
         return try decoder.decode(IdTokenClaims.self, from: Data(decoded.utf8))
     }
 }
