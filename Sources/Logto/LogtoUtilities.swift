@@ -8,16 +8,11 @@
 import Foundation
 
 public enum LogtoUtilities {
-    private static func randomString(length: Int = 64) -> String {
-        let randomAlphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-        return String((0 ..< length).compactMap { _ in randomAlphabet.randomElement() })
-    }
-
     static func generateState() -> String {
-        randomString().toUrlSafeBase64()
+        Data.randomArray(length: 64).toUrlSafeBase64String()
     }
 
     static func generateCodeVerifier() -> String {
-        randomString().toUrlSafeBase64()
+        Data.randomArray(length: 64).toUrlSafeBase64String()
     }
 }
