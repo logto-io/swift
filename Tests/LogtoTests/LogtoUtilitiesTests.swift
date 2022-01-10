@@ -32,6 +32,9 @@ final class LogtoUtilitiesTests: XCTestCase {
             try LogtoUtilities.decodeIdToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYXRfaGFzaCI6ImZvbyIsImF1ZCI6ImJhciIsImV4cCI6MTUxNjIzOTAyMSwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ3RvLmRldiJ9.sJMMInlklGgbSOeOa71_uhoUvTLXDFq4jHQ1Bu81GyE"),
             IdTokenClaims(sub: "1234567890", atHash: "foo", aud: "bar", exp: 1_516_239_021, iat: 1_516_239_022, iss: "https://logto.dev")
         )
-        XCTAssertThrowsError(try LogtoUtilities.decodeIdToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"))
+        XCTAssertThrowsError(try LogtoUtilities.decodeIdToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c")) {
+            XCTAssertNotNil($0 as? DecodingError)
+        }
+        
     }
 }
