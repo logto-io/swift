@@ -7,6 +7,10 @@
 
 import CommonCrypto
 import Foundation
+<<<<<<< HEAD
+=======
+import JOSESwift
+>>>>>>> d7aa8f7 (feat: `verifyIdToken()`)
 
 public enum LogtoUtilities {
     static func generateState() -> String {
@@ -29,20 +33,51 @@ public enum LogtoUtilities {
     /// Decode ID Token claims WITHOUT validation.
     /// - Parameter token: The JWT to decode
     /// - Returns: A set of ID Token claims
-    static func decodeIdToken(_ token: String) throws -> IdTokenClaims {
+    static func decodeIdToken(_ idToken: String) throws -> IdTokenClaims {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
 
-        let segments = token.split(separator: ".")
+        let segments = idToken.split(separator: ".")
 
         guard let payload = segments[safe: 1] else {
-            throw LogtoErrors.Decode.noPayloadFound
+            throw LogtoErrors.Decoding.noPayloadFound
         }
 
         guard let decoded = String.fromUrlSafeBase64(string: String(payload)) else {
-            throw LogtoErrors.Decode.invalidUrlSafeBase64Encoding
+            throw LogtoErrors.Decoding.invalidUrlSafeBase64Encoding
         }
 
         return try decoder.decode(IdTokenClaims.self, from: Data(decoded.utf8))
+    }
+
+    static func verifyIdToken(_ idToken: String, issuer: String, clientId: String, jwks: JWKSet) throws {
+        if jwks.keys.isEmpty {
+            throw LogtoErrors.Verification.missingJwt
+        }
+
+        // Public key verification
+        let jws = try JWS(compactSerialization: idToken)
+        guard jwks
+            .keys
+            .compactMap({ Verifier(verifyingAlgorithm: .RS256, key: $0) })
+            .contains(where: { (try? jws.validate(using: $0)) != nil ? true : false })
+        else {
+            throw LogtoErrors.Verification.noPublicKeyMatched
+        }
+
+        // Claims verification
+        let claims = try decodeIdToken(idToken)
+        guard claims.iss == issuer else {
+            throw LogtoErrors.Verification.valueMismatch(field: .issuer)
+        }
+        guard claims.aud == clientId else {
+            throw LogtoErrors.Verification.valueMismatch(field: .audience)
+        }
+        guard claims.exp > Int64(Date().timeIntervalSince1970 * 1000) else {
+            throw LogtoErrors.Verification.tokenExpired
+        }
+        guard abs(claims.iat - Int64(Date().timeIntervalSince1970)) <= 60000 else {
+            throw LogtoErrors.Verification.issuedTimeIncorrect
+        }
     }
 }
