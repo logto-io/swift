@@ -13,7 +13,7 @@ final class LogtoUtilitiesTests: XCTestCase {
         XCTAssertTrue(verifier.isUrlSafe)
         XCTAssertEqual(Data.fromUrlSafeBase64(string: verifier)?.count, 64)
     }
-    
+
     func testGenerateCodeChallenge() throws {
         XCTAssertEqual(
             try LogtoUtilities.generateCodeChallenge(codeVerifier: "tO6MabnMFRAatnlMa1DdSstypzzkgalL1-k8Hr_GdfTj-VXGiEACqAkSkDhFuAuD8FOU8lMishaXjt29Xt2Oww"),
