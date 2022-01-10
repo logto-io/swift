@@ -50,6 +50,12 @@ public enum LogtoUtilities {
         return try decoder.decode(IdTokenClaims.self, from: Data(decoded.utf8))
     }
 
+    /// Verify the give ID Token:
+    /// * One of the JWKs matches the token.
+    /// * Issuer matches token payload `iss`.
+    /// * Client ID matches token payload `aud`.
+    /// * The token is not expired.
+    /// * The token is issued in +/- 1min.
     static func verifyIdToken(_ idToken: String, issuer: String, clientId: String, jwks: JWKSet) throws {
         if jwks.keys.isEmpty {
             throw LogtoErrors.Verification.missingJwt
