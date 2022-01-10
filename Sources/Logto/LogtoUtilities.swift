@@ -5,15 +5,24 @@
 //  Created by Gao Sun on 2022/1/7.
 //
 
+import CommonCrypto
 import Foundation
 
 public enum LogtoUtilities {
-    private static func randomString(length: Int = 64) -> String {
-        let randomAlphabet = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-        return String((0 ..< length).compactMap { _ in randomAlphabet.randomElement() })
+    static func generateState() -> String {
+        Data.randomArray(length: 64).toUrlSafeBase64String()
     }
 
     static func generateCodeVerifier() -> String {
-        return Data(randomString().utf8).base64EncodedString()
+        Data.randomArray(length: 64).toUrlSafeBase64String()
+    }
+
+    static func generateCodeChallenge(codeVerifier: String) -> String {
+        let data = Data(codeVerifier.utf8)
+        var hash = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
+        data.withUnsafeBytes {
+            _ = CC_SHA256($0.baseAddress, CC_LONG(data.count), &hash)
+        }
+        return Data(hash).toUrlSafeBase64String()
     }
 }
