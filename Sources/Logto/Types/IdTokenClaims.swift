@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct IdTokenClaims {
+public struct IdTokenClaims: Codable, Equatable {
     let sub: String
     let atHash: String
     let aud: String
