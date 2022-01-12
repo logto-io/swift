@@ -8,13 +8,6 @@
 import CommonCrypto
 import Foundation
 
-public enum LogtoErrors {
-    enum Decode: LocalizedError {
-        case noPayloadFound
-        case invalidUrlSafeBase64Encoding
-    }
-}
-
 public enum LogtoUtilities {
     static func generateState() -> String {
         Data.randomArray(length: 64).toUrlSafeBase64String()
@@ -35,7 +28,7 @@ public enum LogtoUtilities {
 
     /// Decode ID Token claims WITHOUT validation.
     /// - Parameter token: The JWT to decode
-    /// - Returns: A set of ID T	oken claims
+    /// - Returns: A set of ID Token claims
     static func decodeIdToken(_ token: String) throws -> IdTokenClaims {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
