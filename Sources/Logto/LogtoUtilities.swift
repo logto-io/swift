@@ -66,7 +66,6 @@ public enum LogtoUtilities {
 
         // Public key verification
         let jws = try JWS(compactSerialization: idToken)
-
         guard publicKeys
             .compactMap({ try? $0.converted(to: SecKey.self) })
             .compactMap({ Verifier(verifyingAlgorithm: .RS256, key: $0) })
