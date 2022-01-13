@@ -7,10 +7,7 @@
 
 import CommonCrypto
 import Foundation
-<<<<<<< HEAD
-=======
 import JOSESwift
->>>>>>> d7aa8f7 (feat: `verifyIdToken()`)
 
 public enum LogtoUtilities {
     static func generateState() -> String {
@@ -56,17 +53,26 @@ public enum LogtoUtilities {
     /// * Client ID matches token payload `aud`.
     /// * The token is not expired.
     /// * The token is issued in +/- 1min.
-    static func verifyIdToken(_ idToken: String, issuer: String, clientId: String, jwks: JWKSet) throws {
-        if jwks.keys.isEmpty {
-            throw LogtoErrors.Verification.missingJwt
+    static func verifyIdToken(
+        _ idToken: String,
+        issuer: String,
+        clientId: String,
+        publicKeys: [RSAPublicKey],
+        forTimeInterval: TimeInterval = Date().timeIntervalSince1970
+    ) throws {
+        if publicKeys.isEmpty {
+            throw LogtoErrors.Verification.missingJwk
         }
 
         // Public key verification
         let jws = try JWS(compactSerialization: idToken)
-        guard jwks
-            .keys
+
+        guard publicKeys
+            .compactMap({ try? $0.converted(to: SecKey.self) })
             .compactMap({ Verifier(verifyingAlgorithm: .RS256, key: $0) })
-            .contains(where: { (try? jws.validate(using: $0)) != nil ? true : false })
+            .contains(where: {
+                (try? jws.validate(using: $0)) != nil ? true : false
+            })
         else {
             throw LogtoErrors.Verification.noPublicKeyMatched
         }
@@ -79,10 +85,10 @@ public enum LogtoUtilities {
         guard claims.aud == clientId else {
             throw LogtoErrors.Verification.valueMismatch(field: .audience)
         }
-        guard claims.exp > Int64(Date().timeIntervalSince1970 * 1000) else {
+        guard claims.exp > Int64(forTimeInterval / 1000) else {
             throw LogtoErrors.Verification.tokenExpired
         }
-        guard abs(claims.iat - Int64(Date().timeIntervalSince1970)) <= 60000 else {
+        guard abs(claims.iat - Int64(forTimeInterval / 1000)) <= 60 else {
             throw LogtoErrors.Verification.issuedTimeIncorrect
         }
     }
