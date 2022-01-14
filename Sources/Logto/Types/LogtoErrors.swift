@@ -18,6 +18,6 @@ public enum LogtoErrors {
         case noPublicKeyMatched
         case tokenExpired
         case issuedTimeIncorrect
-        case valueMismatch(field: JwtField)
+        case valueMismatched(field: JwtField)
     }
 }

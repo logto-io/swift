@@ -79,10 +79,10 @@ public enum LogtoUtilities {
         // Claims verification
         let claims = try decodeIdToken(idToken)
         guard claims.iss == issuer else {
-            throw LogtoErrors.Verification.valueMismatch(field: .issuer)
+            throw LogtoErrors.Verification.valueMismatched(field: .issuer)
         }
         guard claims.aud == clientId else {
-            throw LogtoErrors.Verification.valueMismatch(field: .audience)
+            throw LogtoErrors.Verification.valueMismatched(field: .audience)
         }
         guard claims.exp > Int64(forTimeInterval / 1000) else {
             throw LogtoErrors.Verification.tokenExpired
