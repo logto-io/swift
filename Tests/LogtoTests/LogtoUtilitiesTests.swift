@@ -61,12 +61,12 @@ final class LogtoUtilitiesTests: XCTestCase {
         XCTAssertThrowsError(try LogtoUtilities.verifyIdToken(idToken, issuer: issuer, clientId: "bar", publicKeys: [jwk])) {
             XCTAssertEqual($0 as? LogtoErrors.Verification, LogtoErrors.Verification.valueMismatched(field: .audience))
         }
-        XCTAssertThrowsError(try LogtoUtilities.verifyIdToken(idToken, issuer: issuer, clientId: clientId, publicKeys: [jwk], forTimeInterval: 1_641_815_618_000)) {
+        XCTAssertThrowsError(try LogtoUtilities.verifyIdToken(idToken, issuer: issuer, clientId: clientId, publicKeys: [jwk], forTimeInterval: 1_641_815_618)) {
             XCTAssertEqual($0 as? LogtoErrors.Verification, LogtoErrors.Verification.tokenExpired)
         }
         XCTAssertThrowsError(try LogtoUtilities.verifyIdToken(idToken, issuer: issuer, clientId: clientId, publicKeys: [jwk], forTimeInterval: 0)) {
             XCTAssertEqual($0 as? LogtoErrors.Verification, LogtoErrors.Verification.issuedTimeIncorrect)
         }
-        XCTAssertNoThrow(try LogtoUtilities.verifyIdToken(idToken, issuer: issuer, clientId: clientId, publicKeys: [jwk], forTimeInterval: 1_641_812_017_000))
+        XCTAssertNoThrow(try LogtoUtilities.verifyIdToken(idToken, issuer: issuer, clientId: clientId, publicKeys: [jwk], forTimeInterval: 1_641_812_017))
     }
 }
