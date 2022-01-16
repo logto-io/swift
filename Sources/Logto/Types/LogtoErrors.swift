@@ -8,8 +8,16 @@
 import Foundation
 
 public enum LogtoErrors {
-    enum Decode: LocalizedError {
+    enum Decoding: LocalizedError, Equatable {
         case noPayloadFound
         case invalidUrlSafeBase64Encoding
+    }
+
+    enum Verification: LocalizedError, Equatable {
+        case missingJwk
+        case noPublicKeyMatched
+        case tokenExpired
+        case issuedTimeIncorrect
+        case valueMismatched(field: JwtField)
     }
 }
