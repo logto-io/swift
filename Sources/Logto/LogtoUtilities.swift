@@ -11,7 +11,7 @@ import JOSESwift
 
 public enum LogtoUtilities {
     private static let idTokenTolerance: UInt64 = 60
-    
+
     static func generateState() -> String {
         Data.randomArray(length: 64).toUrlSafeBase64String()
     }
@@ -89,7 +89,7 @@ public enum LogtoUtilities {
         guard claims.exp > Int64(forTimeInterval) else {
             throw LogtoErrors.Verification.tokenExpired
         }
-        guard abs(claims.iat - Int64(forTimeInterval)) <= idTokenTolerance  else {
+        guard abs(claims.iat - Int64(forTimeInterval)) <= idTokenTolerance else {
             throw LogtoErrors.Verification.issuedTimeIncorrect
         }
     }
