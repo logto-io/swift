@@ -1,6 +1,6 @@
 //
 //  LogtoUtilities+IdToken.swift
-//  
+//
 //
 //  Created by Gao Sun on 2022/1/17.
 //
@@ -50,14 +50,14 @@ extension LogtoUtilities {
 
         // Public key verification
         let jws = try JWS(compactSerialization: idToken)
-        
+
         guard let algorithm = jws.header.algorithm else {
             throw LogtoErrors.Verification.jwtMissingAlgorithmInHeader
         }
-        
+
         let verifiers: [Verifier] = try jwks
             .keys
-            .compactMap({
+            .compactMap {
                 // [RFC-7518](https://tools.ietf.org/html/rfc7518#section-7.4)
                 switch $0 {
                 case let publicKey as ECPublicKey:
@@ -76,9 +76,8 @@ extension LogtoUtilities {
                     throw LogtoErrors.Verification.unsupportedJwkType
                 }
                 return nil
-            })
-        
-        
+            }
+
         guard verifiers.contains(where: {
             (try? jws.validate(using: $0)) != nil ? true : false
         }) else {

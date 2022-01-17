@@ -39,6 +39,7 @@ final class LogtoUtilitiesTests: XCTestCase {
     }
 
     // MARK: Verify ID Token
+
     func testVerifyIdTokenFailure() throws {
         let idToken = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IkNza2w2SDRGR3NpLXE0QkVPT1BQOWJlbHNoRGFHZjd3RXViVU5KQllwQmsifQ.eyJzdWIiOiJ3anNadVc4VWpQd2ciLCJhdF9oYXNoIjoibkZOZGdOSWcwWmw0ZWxaTEhMVVpHZyIsImF1ZCI6ImZvbyIsImV4cCI6MTY0MTgxNTYxNywiaWF0IjoxNjQxODEyMDE3LCJpc3MiOiJodHRwczovL2xvZ3RvLmRldi9vaWRjIn0.SCAFRIRWq_iSVbbb3yO3_vvin8XUVWeFIgnsHumSdSBG8qeF9LuO-Hm4xjrTN-XREsifAfGHMrmRC23_QAkwtK8u36m-rlvBnJjq9SdqlQJAyFhCez2Uojzn97CFlwv_n8ucSyy6ToeBrbR1DqvUWdo8lrCer7WHQ3OJRe2U3pAAU9_zqMU6sntP2GshNYnA3IKylhRNFQlP91HT80ROPhgll6GCieTLlCiIeb6Q3KigBDTQ1vJYhK-NaHNP646MQeheUofhFsEZGZFS0OxNPm1FDCsxU2Nwvts7KjxjYM5wb2D5ELB1tFmes7XNWk12bNyN0dEGTugH98CtC_kIA67rZU5q9eUZRuWHPRjraWkdTemNWtW5MvBaVpAMYNJn0Fk5EKSsco_MNvZCszoKvViGo06f1YUex_jkGsOTcttdIbR-780ulWCR0txmg2gu21RRN7oMF4aTs-W7cEKOYuyRX85XTWo_Lu3BugI8kKbSwUsmO8oYPjdpipjcTf-8KJLNOkBefiWDNzM0VoysAlKYUx9aMOSD4gc7h0di7KVZFlEQ7JByn1_gyi8yHrRrHCkzLCe73gBGruijhADoISC6Uq3WmdkQvdYRpRMv0Fz9Wj6vjRhvr1nAu4ZHhsfohCIHVVMKHxXmgfjNKjBTcaRWxit39MK_-sk2Fr52F2w"
         let jwk = try RSAPublicKey(data: Data("""
@@ -71,7 +72,7 @@ final class LogtoUtilitiesTests: XCTestCase {
             XCTAssertEqual($0 as? LogtoErrors.Verification, LogtoErrors.Verification.jwtIssuedTimeIncorrect)
         }
     }
-    
+
     func testVerifyIdTokenRSA() throws {
         let idToken = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IkNza2w2SDRGR3NpLXE0QkVPT1BQOWJlbHNoRGFHZjd3RXViVU5KQllwQmsifQ.eyJzdWIiOiJ3anNadVc4VWpQd2ciLCJhdF9oYXNoIjoibkZOZGdOSWcwWmw0ZWxaTEhMVVpHZyIsImF1ZCI6ImZvbyIsImV4cCI6MTY0MTgxNTYxNywiaWF0IjoxNjQxODEyMDE3LCJpc3MiOiJodHRwczovL2xvZ3RvLmRldi9vaWRjIn0.SCAFRIRWq_iSVbbb3yO3_vvin8XUVWeFIgnsHumSdSBG8qeF9LuO-Hm4xjrTN-XREsifAfGHMrmRC23_QAkwtK8u36m-rlvBnJjq9SdqlQJAyFhCez2Uojzn97CFlwv_n8ucSyy6ToeBrbR1DqvUWdo8lrCer7WHQ3OJRe2U3pAAU9_zqMU6sntP2GshNYnA3IKylhRNFQlP91HT80ROPhgll6GCieTLlCiIeb6Q3KigBDTQ1vJYhK-NaHNP646MQeheUofhFsEZGZFS0OxNPm1FDCsxU2Nwvts7KjxjYM5wb2D5ELB1tFmes7XNWk12bNyN0dEGTugH98CtC_kIA67rZU5q9eUZRuWHPRjraWkdTemNWtW5MvBaVpAMYNJn0Fk5EKSsco_MNvZCszoKvViGo06f1YUex_jkGsOTcttdIbR-780ulWCR0txmg2gu21RRN7oMF4aTs-W7cEKOYuyRX85XTWo_Lu3BugI8kKbSwUsmO8oYPjdpipjcTf-8KJLNOkBefiWDNzM0VoysAlKYUx9aMOSD4gc7h0di7KVZFlEQ7JByn1_gyi8yHrRrHCkzLCe73gBGruijhADoISC6Uq3WmdkQvdYRpRMv0Fz9Wj6vjRhvr1nAu4ZHhsfohCIHVVMKHxXmgfjNKjBTcaRWxit39MK_-sk2Fr52F2w"
         let jwk = try RSAPublicKey(data: Data("""
@@ -82,7 +83,7 @@ final class LogtoUtilitiesTests: XCTestCase {
         let clientId = "foo"
         XCTAssertNoThrow(try LogtoUtilities.verifyIdToken(idToken, issuer: issuer, clientId: clientId, jwks: jwks, forTimeInterval: 1_641_812_017))
     }
-    
+
     func testVerifyIdTokenEC() throws {
         let idToken = "eyJhbGciOiJFUzUxMiJ9.eyJ1cm46ZXhhbXBsZTpjbGFpbSI6dHJ1ZSwiaWF0IjoxNjQyNDA5NjQ4LCJpc3MiOiJodHRwczovL2xvZ3RvLmRldi9vaWRjIiwic3ViIjoiZm9vIiwiYXVkIjoiMTIzIiwiZXhwIjoxNjQyNDE2ODQ4fQ.ABQro2j_TvBHv9rUaOGBbLrWiW0XgpWTGhEus95uvnFkB2AqPFRNG_mF4P5Q3VPMVke-b6KkVdZ9En0T1BNJ7vmHAQhSVamZSpj6A_fKLhR7cghYsl4yX0vMPpiC7fdluskMLj_68wOaQ3Gay48MqQqPevw_6VKKZ7FMdS8UrwDgCqmX"
         let jwk = try ECPublicKey(data: Data("""
@@ -91,6 +92,6 @@ final class LogtoUtilitiesTests: XCTestCase {
         let jwks = JWKSet(keys: [jwk])
         let issuer = "https://logto.dev/oidc"
         let clientId = "123"
-        XCTAssertNoThrow(try LogtoUtilities.verifyIdToken(idToken, issuer: issuer, clientId: clientId, jwks: jwks, forTimeInterval: 1642409648))
+        XCTAssertNoThrow(try LogtoUtilities.verifyIdToken(idToken, issuer: issuer, clientId: clientId, jwks: jwks, forTimeInterval: 1_642_409_648))
     }
 }
