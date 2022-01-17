@@ -13,7 +13,7 @@ extension Data {
             .replacingOccurrences(of: "-", with: "+")
             .replacingOccurrences(of: "_", with: "/")
             // Base64 encoding
-            .padding(toLength: string.count + string.count % 3, withPad: "=", startingAt: 0))
+            .padding(toLength: string.count + string.count % 4, withPad: "=", startingAt: 0))
     }
 
     static func randomArray(length: Int) -> Data {

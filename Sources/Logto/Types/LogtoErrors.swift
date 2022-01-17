@@ -15,9 +15,11 @@ public enum LogtoErrors {
 
     enum Verification: LocalizedError, Equatable {
         case missingJwk
-        case noPublicKeyMatched
-        case tokenExpired
-        case issuedTimeIncorrect
-        case valueMismatched(field: JwtField)
+        case unsupportedJwkType
+        case noSigningKeyMatched
+        case jwtMissingAlgorithmInHeader
+        case jwtExpired
+        case jwtIssuedTimeIncorrect
+        case jwtValueMismatched(field: JwtField)
     }
 }
