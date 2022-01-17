@@ -15,6 +15,7 @@ public enum LogtoErrors {
 
     enum Verification: LocalizedError, Equatable {
         case missingJwk
+        case algorithmNotSupported
         case noPublicKeyMatched
         case tokenExpired
         case issuedTimeIncorrect

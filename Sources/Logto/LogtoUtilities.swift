@@ -68,9 +68,13 @@ public enum LogtoUtilities {
 
         // Public key verification
         let jws = try JWS(compactSerialization: idToken)
+        guard let algorithm = jws.header.algorithm, [.RS256, .RS512].contains(algorithm) else {
+            throw LogtoErrors.Verification.algorithmNotSupported
+        }
+                
         guard publicKeys
             .compactMap({ try? $0.converted(to: SecKey.self) })
-            .compactMap({ Verifier(verifyingAlgorithm: .RS256, key: $0) })
+            .compactMap({ Verifier(verifyingAlgorithm: algorithm, key: $0) })
             .contains(where: {
                 (try? jws.validate(using: $0)) != nil ? true : false
             })
