@@ -12,7 +12,7 @@ enum LogtoCore {
     private static let responseType = "authorization_code"
     private static let prompt = "consent"
 
-    static func generateSignInUrl(
+    static func generateSignInUri(
         authorizationEndpoint: String,
         clientId: String,
         redirectUri: String,

@@ -8,7 +8,7 @@ final class LogtoCoreTests: XCTestCase {
     let state = LogtoUtilities.generateState()
 
     func testGenerateSignInUrlFailure() throws {
-        XCTAssertThrowsError(try LogtoCore.generateSignInUrl(
+        XCTAssertThrowsError(try LogtoCore.generateSignInUri(
             authorizationEndpoint: "???",
             clientId: "",
             redirectUri: "",
@@ -28,7 +28,7 @@ final class LogtoCoreTests: XCTestCase {
     func testGenerateSignInUrl() throws {
         let codeChallenge = LogtoUtilities.generateCodeChallenge(codeVerifier: codeVerifier)
 
-        let url = try LogtoCore.generateSignInUrl(
+        let url = try LogtoCore.generateSignInUri(
             authorizationEndpoint: authorizationEndpoint,
             clientId: clientId,
             redirectUri: "logto://sign-in/redirect",
@@ -45,7 +45,7 @@ final class LogtoCoreTests: XCTestCase {
     func testGenerateSignInUrlWithScope() throws {
         let codeChallenge = LogtoUtilities.generateCodeChallenge(codeVerifier: codeVerifier)
 
-        let url1 = try LogtoCore.generateSignInUrl(
+        let url1 = try LogtoCore.generateSignInUri(
             authorizationEndpoint: authorizationEndpoint,
             clientId: clientId,
             redirectUri: "logto://sign-in/redirect",
@@ -59,7 +59,7 @@ final class LogtoCoreTests: XCTestCase {
             "client_id=foo&redirect_uri=logto://sign-in/redirect&code_challenge=\(codeChallenge)&code_challenge_method=S256&state=\(state)&scope=foo&response_type=authorization_code&prompt=consent"
         )
 
-        let url2 = try LogtoCore.generateSignInUrl(
+        let url2 = try LogtoCore.generateSignInUri(
             authorizationEndpoint: authorizationEndpoint,
             clientId: clientId,
             redirectUri: "logto://sign-in/redirect",
@@ -77,7 +77,7 @@ final class LogtoCoreTests: XCTestCase {
     func testGenerateSignInUrlWithResource() throws {
         let codeChallenge = LogtoUtilities.generateCodeChallenge(codeVerifier: codeVerifier)
 
-        let url1 = try LogtoCore.generateSignInUrl(
+        let url1 = try LogtoCore.generateSignInUri(
             authorizationEndpoint: authorizationEndpoint,
             clientId: clientId,
             redirectUri: "logto://sign-in/redirect",
@@ -91,7 +91,7 @@ final class LogtoCoreTests: XCTestCase {
             "client_id=foo&redirect_uri=logto://sign-in/redirect&code_challenge=\(codeChallenge)&code_challenge_method=S256&state=\(state)&response_type=authorization_code&prompt=consent&resource=https://api.logto.dev/"
         )
 
-        let url2 = try LogtoCore.generateSignInUrl(
+        let url2 = try LogtoCore.generateSignInUri(
             authorizationEndpoint: authorizationEndpoint,
             clientId: clientId,
             redirectUri: "logto://sign-in/redirect",
