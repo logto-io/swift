@@ -9,7 +9,7 @@ import Foundation
 
 public struct IdTokenClaims: Codable, Equatable {
     let sub: String
-    let atHash: String
+    let atHash: String?
     let aud: String
     let exp: Int64
     let iat: Int64
