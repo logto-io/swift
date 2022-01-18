@@ -31,7 +31,10 @@ enum LogtoCore {
 
         let baseQueryItems = [
             URLQueryItem(name: "client_id", value: clientId),
-            URLQueryItem(name: "redirect_uri", value: redirectUri.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)),
+            URLQueryItem(
+                name: "redirect_uri",
+                value: redirectUri.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+            ),
             URLQueryItem(name: "code_challenge", value: codeChallenge),
             URLQueryItem(name: "code_challenge_method", value: LogtoCore.codeChallengeMethod),
             URLQueryItem(name: "state", value: state),
