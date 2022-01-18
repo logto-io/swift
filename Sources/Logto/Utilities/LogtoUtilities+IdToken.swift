@@ -15,8 +15,7 @@ extension LogtoUtilities {
     /// - Parameter token: The JWT to decode
     /// - Returns: A set of ID Token claims
     static func decodeIdToken(_ idToken: String) throws -> IdTokenClaims {
-        let decoder = JSONDecoder()
-        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        let decoder = Utilities.getCamelCaseDecoder()
 
         let segments = idToken.split(separator: ".")
 
