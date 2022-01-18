@@ -22,4 +22,9 @@ public enum LogtoErrors {
         case jwtIssuedTimeIncorrect
         case jwtValueMismatched(field: JwtField)
     }
+
+    enum UrlConstruction: LocalizedError, Equatable {
+        case invalidAuthorizationEndpoint
+        case unableToConstructUrl
+    }
 }
