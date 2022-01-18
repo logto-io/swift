@@ -17,7 +17,7 @@ extension Data {
     }
 
     static func randomArray(length: Int) -> Data {
-        Data((0 ..< length).map { _ in UInt8.random(in: UInt8.min ... UInt8.max) })
+        Data((0..<length).map { _ in UInt8.random(in: UInt8.min...UInt8.max) })
     }
 
     func toUrlSafeBase64String() -> String {
