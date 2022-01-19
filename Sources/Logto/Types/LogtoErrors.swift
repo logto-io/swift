@@ -32,7 +32,7 @@ public enum LogtoErrors {
     }
 
     enum UrlConstruction: LocalizedError, Equatable {
-        case invalidAuthorizationEndpoint
+        case invalidEndpoint
         case unableToConstructUrl
     }
 

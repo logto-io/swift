@@ -15,7 +15,9 @@ enum Utilities {
         return decoder
     }
 
-    static func httpGet<T: Codable>(endpoint: String, completion: @escaping (T?, Error?) -> Void) {
+    static func httpGet<T: Codable>(useSession session: NetworkSession, endpoint: String,
+                                    completion: @escaping HttpCompletion<T>)
+    {
         guard let url = URL(string: endpoint) else {
             completion(nil, LogtoErrors.UrlConstruction.unableToConstructUrl)
             return
@@ -23,7 +25,7 @@ enum Utilities {
 
         let decoder = Utilities.getCamelCaseDecoder()
 
-        let task = URLSession.shared.dataTask(with: url) { data, _, error in
+        session.loadData(from: url) { data, error in
             guard error == nil else {
                 completion(nil, error)
                 return
@@ -41,7 +43,5 @@ enum Utilities {
                 completion(nil, error)
             }
         }
-
-        task.resume()
     }
 }
