@@ -54,4 +54,30 @@ enum LogtoCore {
 
         return url
     }
+
+    static func generateSignOutUri(
+        endSessionEndpoint: String,
+        idToken: String,
+        postLogoutRedirectUri: String?
+    ) throws -> URL {
+        guard
+            var components = URLComponents(string: endSessionEndpoint),
+            components.scheme != nil,
+            components.host != nil
+        else {
+            throw LogtoErrors.UrlConstruction.invalidAuthorizationEndpoint
+        }
+
+        let queryItems = [
+            URLQueryItem(name: "id_token_hint", value: idToken),
+            URLQueryItem(name: "post_logout_redirect_uri", value: postLogoutRedirectUri),
+        ]
+        components.queryItems = queryItems.filter { $0.value != "" }
+
+        guard let url = components.url else {
+            throw LogtoErrors.UrlConstruction.unableToConstructUrl
+        }
+
+        return url
+    }
 }
