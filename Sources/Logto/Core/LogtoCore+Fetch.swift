@@ -1,6 +1,6 @@
 //
 //  LogtoCore+Fetch.swift
-//  
+//
 //
 //  Created by Gao Sun on 2022/1/18.
 //
@@ -16,7 +16,7 @@ extension LogtoCore {
         let jwksUri: String
         let issuer: String
     }
-    
+
     static func fetchOidcConfig(endpoint: String, completion: @escaping (OidcConfigResponse?, Error?) -> Void) {
         Utilities.httpGet(endpoint: endpoint, completion: completion)
     }
