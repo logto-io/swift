@@ -100,6 +100,7 @@ extension LogtoCoreTests {
             "client_id=foo&redirect_uri=logto://sign-in/redirect&code_challenge=\(codeChallenge)&code_challenge_method=S256&state=\(state)&response_type=authorization_code&prompt=consent&resource=https://api.logto.dev/&resource=bar"
         )
     }
+
     func testGenerateSignOutUri() throws {
         XCTAssertThrowsError(try LogtoCore
             .generateSignOutUri(endSessionEndpoint: "???", idToken: "", postLogoutRedirectUri: nil)) {
