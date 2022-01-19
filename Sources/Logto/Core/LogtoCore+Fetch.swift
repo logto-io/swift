@@ -37,32 +37,27 @@ extension LogtoCore {
     }
 
     static func fetchToken(
-        useSession session: URLSession = .shared,
+        useSession session: NetworkSession = URLSession.shared,
         byAuthorizationCode code: String,
         codeVerifier: String,
         tokenEndpoint: String,
         clientId: String,
         redirectUri: String,
         completion: @escaping HttpCompletion<CodeTokenResponse>
-    ) throws {
-        guard var components = URLComponents(string: tokenEndpoint), components.scheme != nil,
-              components.host != nil
-        else {
-            throw LogtoErrors.UrlConstruction.invalidEndpoint
-        }
-
-        components.queryItems = [
-            URLQueryItem(name: "grant_type", value: tokenGrantType),
-            URLQueryItem(name: "code", value: code),
-            URLQueryItem(name: "code_verifier", value: codeVerifier),
-            URLQueryItem(name: "client_id", value: clientId),
-            URLQueryItem(name: "redirect_uri", value: redirectUri),
+    ) {
+        let body: [String: Any] = [
+            "grant_type": tokenGrantType,
+            "code": code,
+            "code_verifier": codeVerifier,
+            "client_id": clientId,
+            "redirect_uri": redirectUri,
         ]
 
-        guard let url = components.url else {
-            throw LogtoErrors.UrlConstruction.unableToConstructUrl
+        do {
+            let data = try JSONSerialization.data(withJSONObject: body)
+            Utilities.httpPost(useSession: session, endpoint: tokenEndpoint, body: data, completion: completion)
+        } catch {
+            completion(nil, error)
         }
-
-        Utilities.httpGet(useSession: session, endpoint: url.absoluteString, completion: completion)
     }
 }

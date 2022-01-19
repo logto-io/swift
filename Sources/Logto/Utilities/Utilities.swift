@@ -15,33 +15,67 @@ enum Utilities {
         return decoder
     }
 
-    static func httpGet<T: Codable>(useSession session: NetworkSession, endpoint: String,
-                                    completion: @escaping HttpCompletion<T>)
-    {
+    private static func handleResponse<T: Codable>(
+        data: Data?,
+        error: Error?,
+        completion: @escaping HttpCompletion<T>
+    ) {
+        let decoder = Utilities.getCamelCaseDecoder()
+
+        guard error == nil else {
+            completion(nil, error)
+            return
+        }
+
+        guard let data = data else {
+            completion(nil, LogtoErrors.Request.noResponseData)
+            return
+        }
+
+        do {
+            let decoded = try decoder.decode(T.self, from: data)
+            completion(decoded, nil)
+        } catch {
+            completion(nil, error)
+        }
+    }
+
+    static func httpGet<T: Codable>(
+        useSession session: NetworkSession,
+        endpoint: String,
+        completion: @escaping HttpCompletion<T>
+    ) {
         guard let url = URL(string: endpoint) else {
             completion(nil, LogtoErrors.UrlConstruction.unableToConstructUrl)
             return
         }
 
-        let decoder = Utilities.getCamelCaseDecoder()
+        session.loadData(with: url) { data, error in
+            Utilities.handleResponse(data: data, error: error, completion: completion)
+        }
+    }
 
-        session.loadData(from: url) { data, error in
-            guard error == nil else {
-                completion(nil, error)
-                return
-            }
+    static func httpPost<T: Codable>(
+        useSession session: NetworkSession,
+        endpoint: String,
+        body: Data? = nil,
+        completion: @escaping HttpCompletion<T>
+    ) {
+        guard let url = URL(string: endpoint) else {
+            completion(nil, LogtoErrors.UrlConstruction.unableToConstructUrl)
+            return
+        }
 
-            guard let data = data else {
-                completion(nil, LogtoErrors.Request.noResponseData)
-                return
-            }
+        var request = URLRequest(
+            url: url,
+            cachePolicy: .reloadIgnoringLocalCacheData
+        )
 
-            do {
-                let decoded = try decoder.decode(T.self, from: data)
-                completion(decoded, nil)
-            } catch {
-                completion(nil, error)
-            }
+        request.httpMethod = "POST"
+        request.httpBody = body
+
+        session.loadData(with: request) { data, error in
+            Utilities.handleResponse(data: data, error: error, completion: completion)
         }
     }
 }

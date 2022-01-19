@@ -14,19 +14,45 @@ class NetworkSessionMock: NetworkSession {
     static let shared = NetworkSessionMock()
 
     func loadData(
-        from url: URL,
-        completion: @escaping (Data?, Error?) -> Void
+        with url: URL,
+        completion: @escaping HttpCompletion<Data>
     ) {
-        switch url.absoluteString {
-        case "OidcConfig:good":
+        switch url.path {
+        case "/oidc_config:good":
             completion(Data("""
                 {
-                    "authorizationEndpoint": "https://logto.dev/oidc/auth",
-                    "tokenEndpoint": "https://logto.dev/oidc/token",
-                    "endSessionEndpoint": "https://logto.dev/oidc/session/end",
-                    "revocationEndpoint": "https://logto.dev/oidc/token/revocation",
-                    "jwksUri": "https://logto.dev/oidc/jwks",
+                    "authorization_endpoint": "https://logto.dev/oidc/auth",
+                    "token_endpoint": "https://logto.dev/oidc/token",
+                    "end_session_endpoint": "https://logto.dev/oidc/session/end",
+                    "revocation_endpoint": "https://logto.dev/oidc/token/revocation",
+                    "jwks_uri": "https://logto.dev/oidc/jwks",
                     "issuer": "http://localhost:443/oidc"
+                }
+            """.utf8), nil)
+        default:
+            completion(nil, MockError())
+        }
+    }
+
+    func loadData(
+        with request: URLRequest,
+        completion: @escaping HttpCompletion<Data>
+    ) {
+        guard let method = request.httpMethod, method.lowercased() != "get" else {
+            completion(nil, MockError())
+            return
+        }
+
+        switch request.url?.path {
+        case "/token:good":
+            completion(Data("""
+                {
+                    "access_token": "123",
+                    "refresh_token": "456",
+                    "id_token": "789",
+                    "token_type": "jwt",
+                    "scope": "",
+                    "expires_in": 123
                 }
             """.utf8), nil)
         default:

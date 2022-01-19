@@ -8,12 +8,45 @@
 import Foundation
 
 extension URLSession: NetworkSession {
-    func loadData(
-        from url: URL,
-        completion: @escaping (Data?, Error?) -> Void
+    private func handleResponse(
+        data: Data?,
+        response: URLResponse?,
+        error: Error?,
+        completion: @escaping HttpCompletion<Data>
     ) {
-        let task = dataTask(with: url) { data, _, error in
-            completion(data, error)
+        guard let httpResponse = response as? HTTPURLResponse else {
+            completion(nil, LogtoErrors.Response.notHttpResponse(response: response))
+            return
+        }
+
+        guard httpResponse.statusCode < 400 else {
+            completion(
+                nil,
+                LogtoErrors.Response.withCode(code: httpResponse.statusCode, httpResponse: httpResponse)
+            )
+            return
+        }
+
+        completion(data, error)
+    }
+
+    func loadData(
+        with url: URL,
+        completion: @escaping HttpCompletion<Data>
+    ) {
+        let task = dataTask(with: url) { data, response, error in
+            self.handleResponse(data: data, response: response, error: error, completion: completion)
+        }
+
+        task.resume()
+    }
+
+    func loadData(
+        with request: URLRequest,
+        completion: @escaping HttpCompletion<Data>
+    ) {
+        let task = dataTask(with: request) { data, response, error in
+            self.handleResponse(data: data, response: response, error: error, completion: completion)
         }
 
         task.resume()
