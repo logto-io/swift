@@ -27,4 +27,8 @@ public enum LogtoErrors {
         case invalidAuthorizationEndpoint
         case unableToConstructUrl
     }
+
+    enum Request: LocalizedError, Equatable {
+        case noResponseData
+    }
 }
