@@ -23,6 +23,14 @@ public enum LogtoErrors {
         case jwtValueMismatched(field: JwtField)
     }
 
+    enum UriVerification: LocalizedError, Equatable {
+        case redirectUriMismatched
+        case decodeComponentsFailed
+        case stateMismatched
+        case errorItemFound(items: [URLQueryItem])
+        case missingCode
+    }
+
     enum UrlConstruction: LocalizedError, Equatable {
         case invalidAuthorizationEndpoint
         case unableToConstructUrl
