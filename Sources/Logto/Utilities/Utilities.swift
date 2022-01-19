@@ -15,9 +15,9 @@ enum Utilities {
         return decoder
     }
     
-    static func httpGet<T: Codable>(endpoint: String, callback: @escaping (T?, Error?) -> Void) {
+    static func httpGet<T: Codable>(endpoint: String, completion: @escaping (T?, Error?) -> Void) {
         guard let url = URL(string: endpoint) else {
-            callback(nil, LogtoErrors.UrlConstruction.unableToConstructUrl)
+            completion(nil, LogtoErrors.UrlConstruction.unableToConstructUrl)
             return
         }
         
@@ -25,21 +25,21 @@ enum Utilities {
             
         let task = URLSession.shared.dataTask(with: url) { data, _, error in
             guard error == nil else {
-                callback(nil, error)
+                completion(nil, error)
                 return
             }
             
             guard let data = data else {
-                callback(nil, LogtoErrors.Request.noResponseData)
+                completion(nil, LogtoErrors.Request.noResponseData)
                 return
             }
             
             do {
                 let decoded = try decoder.decode(T.self, from: data)
-                callback(decoded, nil)
+                completion(decoded, nil)
             }
             catch let error {
-                callback(nil, error)
+                completion(nil, error)
             }
         }
         

@@ -17,7 +17,7 @@ extension LogtoCore {
         let issuer: String
     }
     
-    static func fetchOidcConfig(endpoint: String, callback: @escaping (OidcConfigResponse?, Error?) -> Void) {
-        Utilities.httpGet(endpoint: endpoint, callback: callback)
+    static func fetchOidcConfig(endpoint: String, completion: @escaping (OidcConfigResponse?, Error?) -> Void) {
+        Utilities.httpGet(endpoint: endpoint, completion: completion)
     }
 }
