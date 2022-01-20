@@ -9,7 +9,7 @@ import Foundation
 
 extension LogtoCore {
     // MARK: OIDC Config
-    
+
     struct OidcConfigResponse: Codable, Equatable {
         let authorizationEndpoint: String
         let tokenEndpoint: String
@@ -28,6 +28,7 @@ extension LogtoCore {
     }
 
     // MARK: Token Endpoint
+
     // https://openid.net/specs/openid-connect-core-1_0.html#TokenEndpoint
 
     private enum TokenGrantType: String {
@@ -106,7 +107,7 @@ extension LogtoCore {
             "refresh_token": refreshToken,
             "client_id": clientId,
             "resource": resource as Any,
-            "scope": scope?.inArray.joined(separator: " ") as Any
+            "scope": scope?.inArray.joined(separator: " ") as Any,
         ]
 
         do {

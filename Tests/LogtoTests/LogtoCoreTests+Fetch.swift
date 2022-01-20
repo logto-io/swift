@@ -81,7 +81,6 @@ extension LogtoCoreTests {
         wait(for: [expectOk, expectFailed], timeout: 1)
     }
             
-    
     func testFetchTokenByRefreshToken() throws {
         let expectOk = expectation(description: "Fetch token by refresh token OK")
         let expectFailed = expectation(description: "Fetch token by refresh token failed")
