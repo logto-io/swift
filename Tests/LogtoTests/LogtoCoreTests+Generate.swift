@@ -10,7 +10,7 @@ extension LogtoCoreTests {
             codeChallenge: "",
             state: ""
         )) {
-            XCTAssertEqual($0 as? LogtoErrors.UrlConstruction, LogtoErrors.UrlConstruction.invalidAuthorizationEndpoint)
+            XCTAssertEqual($0 as? LogtoErrors.UrlConstruction, LogtoErrors.UrlConstruction.invalidEndpoint)
         }
     }
 
@@ -106,7 +106,7 @@ extension LogtoCoreTests {
             .generateSignOutUri(endSessionEndpoint: "???", idToken: "", postLogoutRedirectUri: nil)) {
                 XCTAssertEqual(
                     $0 as? LogtoErrors.UrlConstruction,
-                    LogtoErrors.UrlConstruction.invalidAuthorizationEndpoint
+                    LogtoErrors.UrlConstruction.invalidEndpoint
                 )
             }
 

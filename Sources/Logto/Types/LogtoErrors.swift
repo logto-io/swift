@@ -32,11 +32,16 @@ public enum LogtoErrors {
     }
 
     enum UrlConstruction: LocalizedError, Equatable {
-        case invalidAuthorizationEndpoint
+        case invalidEndpoint
         case unableToConstructUrl
     }
 
     enum Request: LocalizedError, Equatable {
         case noResponseData
+    }
+
+    enum Response: LocalizedError, Equatable {
+        case notHttpResponse(response: URLResponse?)
+        case withCode(code: Int, httpResponse: HTTPURLResponse)
     }
 }

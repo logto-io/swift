@@ -17,7 +17,47 @@ extension LogtoCore {
         let issuer: String
     }
 
-    static func fetchOidcConfig(endpoint: String, completion: @escaping (OidcConfigResponse?, Error?) -> Void) {
-        Utilities.httpGet(endpoint: endpoint, completion: completion)
+    static func fetchOidcConfig(
+        useSession session: NetworkSession = URLSession.shared,
+        endpoint: String,
+        completion: @escaping HttpCompletion<OidcConfigResponse>
+    ) {
+        Utilities.httpGet(useSession: session, endpoint: endpoint, completion: completion)
+    }
+
+    private static let tokenGrantType = "authorization_code"
+
+    struct CodeTokenResponse: Codable, Equatable {
+        let accessToken: String
+        let refreshToken: String
+        let idToken: String
+        let tokenType: String
+        let scope: String
+        let expiresIn: UInt64
+    }
+
+    static func fetchToken(
+        useSession session: NetworkSession = URLSession.shared,
+        byAuthorizationCode code: String,
+        codeVerifier: String,
+        tokenEndpoint: String,
+        clientId: String,
+        redirectUri: String,
+        completion: @escaping HttpCompletion<CodeTokenResponse>
+    ) {
+        let body: [String: Any] = [
+            "grant_type": tokenGrantType,
+            "code": code,
+            "code_verifier": codeVerifier,
+            "client_id": clientId,
+            "redirect_uri": redirectUri,
+        ]
+
+        do {
+            let data = try JSONSerialization.data(withJSONObject: body)
+            Utilities.httpPost(useSession: session, endpoint: tokenEndpoint, body: data, completion: completion)
+        } catch {
+            completion(nil, error)
+        }
     }
 }
