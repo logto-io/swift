@@ -23,7 +23,7 @@ extension LogtoCoreTests {
 
     func testFetchToken() throws {
         let expectOk = expectation(description: "Fetch token by code OK")
-        let expectFailed = expectation(description: "Fetch OpenID config failed")
+        let expectFailed = expectation(description: "Fetch token by code failed")
 
         LogtoCore.fetchToken(
             useSession: NetworkSessionMock.shared,
