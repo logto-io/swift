@@ -2,7 +2,7 @@
 import XCTest
 
 extension LogtoCoreTests {
-    func testgenerateSignInUriFailure() throws {
+    func testGenerateSignInUriFailure() throws {
         XCTAssertThrowsError(try LogtoCore.generateSignInUri(
             authorizationEndpoint: "???",
             clientId: "",
@@ -20,7 +20,7 @@ extension LogtoCoreTests {
         XCTAssertEqual(url.path, "/oidc")
     }
 
-    func testgenerateSignInUri() throws {
+    func testGenerateSignInUri() throws {
         let codeChallenge = LogtoUtilities.generateCodeChallenge(codeVerifier: codeVerifier)
 
         let url = try LogtoCore.generateSignInUri(
@@ -37,7 +37,7 @@ extension LogtoCoreTests {
         )
     }
 
-    func testgenerateSignInUriWithScope() throws {
+    func testGenerateSignInUriWithScope() throws {
         let codeChallenge = LogtoUtilities.generateCodeChallenge(codeVerifier: codeVerifier)
 
         let url1 = try LogtoCore.generateSignInUri(
@@ -69,7 +69,7 @@ extension LogtoCoreTests {
         )
     }
 
-    func testgenerateSignInUriWithResource() throws {
+    func testGenerateSignInUriWithResource() throws {
         let codeChallenge = LogtoUtilities.generateCodeChallenge(codeVerifier: codeVerifier)
 
         let url1 = try LogtoCore.generateSignInUri(
