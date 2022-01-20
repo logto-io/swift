@@ -26,7 +26,7 @@ extension LogtoCore {
             components.scheme != nil,
             components.host != nil
         else {
-            throw LogtoErrors.UrlConstruction.invalidAuthorizationEndpoint
+            throw LogtoErrors.UrlConstruction.invalidEndpoint
         }
 
         let baseQueryItems = [
@@ -65,7 +65,7 @@ extension LogtoCore {
             components.scheme != nil,
             components.host != nil
         else {
-            throw LogtoErrors.UrlConstruction.invalidAuthorizationEndpoint
+            throw LogtoErrors.UrlConstruction.invalidEndpoint
         }
 
         let queryItems = [
