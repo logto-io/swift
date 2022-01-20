@@ -21,7 +21,7 @@ extension LogtoCoreTests {
         wait(for: [expectOk, expectFailed], timeout: 1)
     }
 
-    func testFetchToken() throws {
+    func testFetchTokenByCode() throws {
         let expectOk = expectation(description: "Fetch token by code OK")
         let expectFailed = expectation(description: "Fetch token by code failed")
 
@@ -67,11 +67,43 @@ extension LogtoCoreTests {
             XCTAssertNil($1)
             expectOk.fulfill()
         }
-
+        
         LogtoCore.fetchUserInfo(
             useSession: NetworkSessionMock.shared,
             userInfoEndpoint: "/user",
             accessToken: "bad"
+        ) {
+            XCTAssertNil($0)
+            XCTAssertNotNil($1)
+            expectFailed.fulfill()
+        }
+        
+        wait(for: [expectOk, expectFailed], timeout: 1)
+    }
+            
+    
+    func testFetchTokenByRefreshToken() throws {
+        let expectOk = expectation(description: "Fetch token by refresh token OK")
+        let expectFailed = expectation(description: "Fetch token by refresh token failed")
+
+        LogtoCore.fetchToken(
+            useSession: NetworkSessionMock.shared,
+            byRefreshToken: "123",
+            tokenEndpoint: "/token:good",
+            clientId: "foo",
+            resource: "bar",
+            scope: .value("baz")
+        ) {
+            XCTAssertNotNil($0)
+            XCTAssertNil($1)
+            expectOk.fulfill()
+        }
+
+        LogtoCore.fetchToken(
+            useSession: NetworkSessionMock.shared,
+            byRefreshToken: "123",
+            tokenEndpoint: "/token:bad",
+            clientId: "foo"
         ) {
             XCTAssertNil($0)
             XCTAssertNotNil($1)
