@@ -66,6 +66,8 @@ class NetworkSessionMock: NetworkSession {
                     "sub": "foo"
                 }
             """.utf8), nil)
+        case "/revoke:good":
+            completion(nil, nil)
         default:
             completion(nil, MockError())
         }
