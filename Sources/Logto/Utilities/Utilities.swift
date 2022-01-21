@@ -105,4 +105,28 @@ enum Utilities {
             Utilities.handleResponse(data: data, error: error, completion: completion)
         }
     }
+
+    static func httpPost(
+        useSession session: NetworkSession,
+        endpoint: String,
+        body: Data? = nil,
+        completion: @escaping HttpEmptyCompletion
+    ) {
+        guard let url = URL(string: endpoint) else {
+            completion(LogtoErrors.UrlConstruction.unableToConstructUrl)
+            return
+        }
+
+        var request = URLRequest(
+            url: url,
+            cachePolicy: .reloadIgnoringLocalCacheData
+        )
+
+        request.httpMethod = "POST"
+        request.httpBody = body
+
+        session.loadData(with: request) {
+            completion($1)
+        }
+    }
 }
