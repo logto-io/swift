@@ -8,3 +8,5 @@
 import Foundation
 
 typealias HttpCompletion<T> = (T?, Error?) -> Void
+
+typealias HttpEmptyCompletion = (Error?) -> Void
