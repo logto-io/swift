@@ -41,7 +41,7 @@ extension LogtoCore {
         let refreshToken: String
         let idToken: String
         let scope: String
-        let expiresIn: UInt64
+        let expiresIn: Int64
     }
 
     /// Fetch token by `authorization_code`.
@@ -79,7 +79,7 @@ extension LogtoCore {
         let refreshToken: String
         let idToken: String?
         let scope: String
-        let expiresIn: UInt64
+        let expiresIn: Int64
     }
 
     /// Fetch token by `refresh_token`.
