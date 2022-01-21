@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum ValueOrArray<T> {
+public enum ValueOrArray<T> {
     case value(T)
     case array([T])
 

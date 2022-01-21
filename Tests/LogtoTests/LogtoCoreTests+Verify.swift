@@ -1,7 +1,7 @@
 @testable import Logto
 import XCTest
 
-extension LogtoTests {
+extension LogtoCoreTests {
     func testVerifyAndParseSignInCallbackUri() throws {
         let state = "123"
         let code = "456"
