@@ -73,7 +73,7 @@ extension LogtoCore {
             completion(nil, error)
         }
     }
-    
+
     struct RefreshTokenTokenResponse: Codable, Equatable {
         let accessToken: String
         let refreshToken: String
@@ -82,25 +82,6 @@ extension LogtoCore {
         let expiresIn: UInt64
     }
 
-    struct UserInfoResponse: Codable, Equatable {
-        let sub: String
-        // More props TBD by LOG-561
-    }
-
-    static func fetchUserInfo(
-        useSession session: NetworkSession = URLSession.shared,
-        userInfoEndpoint: String,
-        accessToken: String,
-        completion: @escaping HttpCompletion<UserInfoResponse>
-    ) {
-        Utilities.httpGet(
-            useSession: session,
-            endpoint: userInfoEndpoint,
-            headers: ["Authorization": "Bearer \(accessToken)"],
-            completion: completion
-        )
-    }
-    
     /// Fetch token by `refresh_token`.
     /// Note the func will NOT validate any token in the response.
     static func fetchToken(
@@ -126,5 +107,26 @@ extension LogtoCore {
         } catch {
             completion(nil, error)
         }
+    }
+
+    // MARK: User Info
+
+    struct UserInfoResponse: Codable, Equatable {
+        let sub: String
+        // More props TBD by LOG-561
+    }
+
+    static func fetchUserInfo(
+        useSession session: NetworkSession = URLSession.shared,
+        userInfoEndpoint: String,
+        accessToken: String,
+        completion: @escaping HttpCompletion<UserInfoResponse>
+    ) {
+        Utilities.httpGet(
+            useSession: session,
+            endpoint: userInfoEndpoint,
+            headers: ["Authorization": "Bearer \(accessToken)"],
+            completion: completion
+        )
     }
 }

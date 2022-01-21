@@ -54,33 +54,6 @@ extension LogtoCoreTests {
         wait(for: [expectOk, expectFailed], timeout: 1)
     }
 
-    func testFetchUserInfo() throws {
-        let expectOk = expectation(description: "Fetch user info OK")
-        let expectFailed = expectation(description: "Fetch user info failed")
-
-        LogtoCore.fetchUserInfo(
-            useSession: NetworkSessionMock.shared,
-            userInfoEndpoint: "/user",
-            accessToken: "good"
-        ) {
-            XCTAssertNotNil($0)
-            XCTAssertNil($1)
-            expectOk.fulfill()
-        }
-        
-        LogtoCore.fetchUserInfo(
-            useSession: NetworkSessionMock.shared,
-            userInfoEndpoint: "/user",
-            accessToken: "bad"
-        ) {
-            XCTAssertNil($0)
-            XCTAssertNotNil($1)
-            expectFailed.fulfill()
-        }
-        
-        wait(for: [expectOk, expectFailed], timeout: 1)
-    }
-            
     func testFetchTokenByRefreshToken() throws {
         let expectOk = expectation(description: "Fetch token by refresh token OK")
         let expectFailed = expectation(description: "Fetch token by refresh token failed")
@@ -103,6 +76,33 @@ extension LogtoCoreTests {
             byRefreshToken: "123",
             tokenEndpoint: "/token:bad",
             clientId: "foo"
+        ) {
+            XCTAssertNil($0)
+            XCTAssertNotNil($1)
+            expectFailed.fulfill()
+        }
+
+        wait(for: [expectOk, expectFailed], timeout: 1)
+    }
+
+    func testFetchUserInfo() throws {
+        let expectOk = expectation(description: "Fetch user info OK")
+        let expectFailed = expectation(description: "Fetch user info failed")
+
+        LogtoCore.fetchUserInfo(
+            useSession: NetworkSessionMock.shared,
+            userInfoEndpoint: "/user",
+            accessToken: "good"
+        ) {
+            XCTAssertNotNil($0)
+            XCTAssertNil($1)
+            expectOk.fulfill()
+        }
+
+        LogtoCore.fetchUserInfo(
+            useSession: NetworkSessionMock.shared,
+            userInfoEndpoint: "/user",
+            accessToken: "bad"
         ) {
             XCTAssertNil($0)
             XCTAssertNotNil($1)
