@@ -14,13 +14,19 @@ public struct LogtoConfig {
     let scope: ValueOrArray<String>?
     let resource: ValueOrArray<String>?
     let usingPersistStorage: Bool
-    
+
     var computedScopes: [String] {
         LogtoUtilities.withReservedScopes(scope)
     }
-    
+
     // Have to do this in Swift
-    init(endpoint: String, clientId: String, scope: ValueOrArray<String>? = nil, resource: ValueOrArray<String>? = nil, usingPersistStorage: Bool = false) {
+    init(
+        endpoint: String,
+        clientId: String,
+        scope: ValueOrArray<String>? = nil,
+        resource: ValueOrArray<String>? = nil,
+        usingPersistStorage: Bool = false
+    ) {
         self.endpoint = endpoint
         self.clientId = clientId
         self.scope = scope

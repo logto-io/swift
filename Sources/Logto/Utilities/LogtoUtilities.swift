@@ -11,11 +11,11 @@ import JOSESwift
 
 public enum LogtoUtilities {
     static let reservedScopes = ["openid", "offline_access"]
-    
+
     public static func withReservedScopes(_ scopes: ValueOrArray<String>?) -> [String] {
         Array(Set((scopes?.inArray ?? []) + reservedScopes)).sorted()
     }
-    
+
     public static func generateState() -> String {
         Data.randomArray(length: 64).toUrlSafeBase64String()
     }
