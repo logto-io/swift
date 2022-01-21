@@ -37,5 +37,9 @@ let package = Package(
             name: "LogtoClient",
             dependencies: ["Logto"]
         ),
+        .testTarget(
+            name: "LogtoClientTests",
+            dependencies: ["LogtoClient"]
+        ),
     ]
 )
