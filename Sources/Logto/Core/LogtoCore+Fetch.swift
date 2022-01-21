@@ -60,4 +60,23 @@ extension LogtoCore {
             completion(nil, error)
         }
     }
+
+    struct UserInfoResponse: Codable, Equatable {
+        let sub: String
+        // More props TBD by LOG-561
+    }
+
+    static func fetchUserInfo(
+        useSession session: NetworkSession = URLSession.shared,
+        userInfoEndpoint: String,
+        accessToken: String,
+        completion: @escaping HttpCompletion<UserInfoResponse>
+    ) {
+        Utilities.httpGet(
+            useSession: session,
+            endpoint: userInfoEndpoint,
+            headers: ["Authorization": "Bearer \(accessToken)"],
+            completion: completion
+        )
+    }
 }

@@ -38,7 +38,7 @@ class NetworkSessionMock: NetworkSession {
         with request: URLRequest,
         completion: @escaping HttpCompletion<Data>
     ) {
-        guard let method = request.httpMethod, method.lowercased() != "get" else {
+        guard request.httpMethod != nil else {
             completion(nil, MockError())
             return
         }
@@ -53,6 +53,17 @@ class NetworkSessionMock: NetworkSession {
                     "token_type": "jwt",
                     "scope": "",
                     "expires_in": 123
+                }
+            """.utf8), nil)
+        case "/user":
+            guard request.value(forHTTPHeaderField: "Authorization") == "Bearer good" else {
+                completion(nil, MockError())
+                return
+            }
+
+            completion(Data("""
+                {
+                    "sub": "foo"
                 }
             """.utf8), nil)
         default:

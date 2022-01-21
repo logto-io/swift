@@ -15,6 +15,7 @@ enum Utilities {
         return decoder
     }
 
+    // TO-DO: refactor request utilities
     private static func handleResponse<T: Codable>(
         data: Data?,
         error: Error?,
@@ -51,6 +52,32 @@ enum Utilities {
         }
 
         session.loadData(with: url) { data, error in
+            Utilities.handleResponse(data: data, error: error, completion: completion)
+        }
+    }
+
+    static func httpGet<T: Codable>(
+        useSession session: NetworkSession,
+        endpoint: String,
+        headers: [String: String],
+        completion: @escaping HttpCompletion<T>
+    ) {
+        guard let url = URL(string: endpoint) else {
+            completion(nil, LogtoErrors.UrlConstruction.unableToConstructUrl)
+            return
+        }
+
+        var request = URLRequest(
+            url: url,
+            cachePolicy: .reloadIgnoringLocalCacheData
+        )
+
+        request.httpMethod = "GET"
+        headers.forEach { key, value in
+            request.setValue(value, forHTTPHeaderField: key)
+        }
+
+        session.loadData(with: request) { data, error in
             Utilities.handleResponse(data: data, error: error, completion: completion)
         }
     }
