@@ -40,12 +40,12 @@ extension LogtoCore {
         let accessToken: String
         let refreshToken: String
         let idToken: String
-        let tokenType: String
         let scope: String
         let expiresIn: UInt64
     }
 
     /// Fetch token by `authorization_code`.
+    /// The returned `access_token` is only for user info enpoint.
     /// Note the func will NOT validate any token in the response.
     static func fetchToken(
         useSession session: NetworkSession = URLSession.shared,
@@ -53,6 +53,7 @@ extension LogtoCore {
         codeVerifier: String,
         tokenEndpoint: String,
         clientId: String,
+        resource: String? = nil,
         redirectUri: String,
         completion: @escaping HttpCompletion<CodeTokenResponse>
     ) {
@@ -61,8 +62,9 @@ extension LogtoCore {
             "code": code,
             "code_verifier": codeVerifier,
             "client_id": clientId,
+            "resource": resource as Any,
             "redirect_uri": redirectUri,
-        ]
+        ].compactMapValues { $0 }
 
         do {
             let data = try JSONSerialization.data(withJSONObject: body)
@@ -70,6 +72,14 @@ extension LogtoCore {
         } catch {
             completion(nil, error)
         }
+    }
+    
+    struct RefreshTokenTokenResponse: Codable, Equatable {
+        let accessToken: String
+        let refreshToken: String
+        let idToken: String?
+        let scope: String
+        let expiresIn: UInt64
     }
 
     struct UserInfoResponse: Codable, Equatable {
@@ -108,7 +118,7 @@ extension LogtoCore {
             "client_id": clientId,
             "resource": resource as Any,
             "scope": scope?.inArray.joined(separator: " ") as Any,
-        ]
+        ].compactMapValues { $0 }
 
         do {
             let data = try JSONSerialization.data(withJSONObject: body)
