@@ -8,7 +8,7 @@
 import Foundation
 import Logto
 
-struct LogtoConfig {
+public struct LogtoConfig {
     let endpoint: String
     let clientId: String
     let scope: ValueOrArray<String>? = nil

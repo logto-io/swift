@@ -10,7 +10,7 @@ import Foundation
 extension LogtoCore {
     // MARK: OIDC Config
 
-    struct OidcConfigResponse: Codable, Equatable {
+    public struct OidcConfigResponse: Codable, Equatable {
         let authorizationEndpoint: String
         let tokenEndpoint: String
         let endSessionEndpoint: String
@@ -36,7 +36,7 @@ extension LogtoCore {
         case refreshToken = "refresh_token"
     }
 
-    struct CodeTokenResponse: Codable, Equatable {
+    public struct CodeTokenResponse: Codable, Equatable {
         let accessToken: String
         let refreshToken: String
         let idToken: String
@@ -74,7 +74,7 @@ extension LogtoCore {
         }
     }
 
-    struct RefreshTokenTokenResponse: Codable, Equatable {
+    public struct RefreshTokenTokenResponse: Codable, Equatable {
         let accessToken: String
         let refreshToken: String
         let idToken: String?
@@ -111,7 +111,7 @@ extension LogtoCore {
 
     // MARK: User Info
 
-    struct UserInfoResponse: Codable, Equatable {
+    public struct UserInfoResponse: Codable, Equatable {
         let sub: String
         // More props TBD by LOG-561
     }

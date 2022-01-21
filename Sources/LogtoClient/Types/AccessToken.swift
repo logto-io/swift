@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct AccessToken {
+public struct AccessToken {
     let token: String
     let scope: String
     let expiresAt: Int64
