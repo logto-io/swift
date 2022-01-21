@@ -4,13 +4,17 @@
 import PackageDescription
 
 let package = Package(
-    name: "Logto",
+    name: "Logto SDK",
     platforms: [.iOS(.v13), .macOS(.v10_15), .watchOS(.v5)],
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
             name: "Logto",
             targets: ["Logto"]
+        ),
+        .library(
+            name: "LogtoClient",
+            targets: ["LogtoClient"]
         ),
     ],
     dependencies: [
@@ -27,6 +31,10 @@ let package = Package(
         ),
         .testTarget(
             name: "LogtoTests",
+            dependencies: ["Logto"]
+        ),
+        .target(
+            name: "LogtoClient",
             dependencies: ["Logto"]
         ),
     ]
