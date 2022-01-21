@@ -9,7 +9,7 @@ import Foundation
 import JOSESwift
 
 extension LogtoUtilities {
-    private static let idTokenTolerance: UInt64 = 60
+    private static let idTokenTolerance: Int64 = 60
 
     /// Decode ID Token claims WITHOUT validation.
     /// - Parameter token: The JWT to decode
