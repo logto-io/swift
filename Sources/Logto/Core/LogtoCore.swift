@@ -7,4 +7,4 @@
 
 import Foundation
 
-enum LogtoCore {}
+public enum LogtoCore {}
