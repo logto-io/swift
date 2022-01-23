@@ -6,9 +6,12 @@ final class LogtoUtilitiesTests: XCTestCase {
     func testWithReservedScopes() throws {
         XCTAssertEqual(LogtoUtilities.withReservedScopes(nil), ["offline_access", "openid"])
         XCTAssertEqual(LogtoUtilities.withReservedScopes(.value("foo")), ["foo", "offline_access", "openid"])
-        XCTAssertEqual(LogtoUtilities.withReservedScopes(.array(["foo", "xyz"])), ["foo", "offline_access", "openid", "xyz"])
+        XCTAssertEqual(
+            LogtoUtilities.withReservedScopes(.array(["foo", "xyz"])),
+            ["foo", "offline_access", "openid", "xyz"]
+        )
     }
-    
+
     func testGenerateState() throws {
         let state = LogtoUtilities.generateState()
         XCTAssertTrue(state.isUrlSafe)

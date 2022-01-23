@@ -9,14 +9,15 @@ import Foundation
 import Logto
 
 public struct LogtoConfig {
+    private let _scope: ValueOrArray<String>?
+
     let endpoint: String
     let clientId: String
-    let scope: ValueOrArray<String>?
     let resource: ValueOrArray<String>?
     let usingPersistStorage: Bool
 
-    var computedScopes: [String] {
-        LogtoUtilities.withReservedScopes(scope)
+    var scope: [String] {
+        LogtoUtilities.withReservedScopes(_scope)
     }
 
     // Have to do this in Swift
@@ -29,7 +30,7 @@ public struct LogtoConfig {
     ) {
         self.endpoint = endpoint
         self.clientId = clientId
-        self.scope = scope
+        _scope = scope
         self.resource = resource
         self.usingPersistStorage = usingPersistStorage
     }
