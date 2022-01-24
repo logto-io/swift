@@ -22,7 +22,7 @@ extension LogtoCore {
 
         do {
             let data = try JSONSerialization.data(withJSONObject: body)
-            Utilities.httpPost(useSession: session, endpoint: revocationEndpoint, body: data, completion: completion)
+            LogtoRequest.post(useSession: session, endpoint: revocationEndpoint, body: data, completion: completion)
         } catch {
             completion(error)
         }

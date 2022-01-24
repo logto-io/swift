@@ -31,17 +31,6 @@ extension URLSession: NetworkSession {
     }
 
     func loadData(
-        with url: URL,
-        completion: @escaping HttpCompletion<Data>
-    ) {
-        let task = dataTask(with: url) { data, response, error in
-            self.handleResponse(data: data, response: response, error: error, completion: completion)
-        }
-
-        task.resume()
-    }
-
-    func loadData(
         with request: URLRequest,
         completion: @escaping HttpCompletion<Data>
     ) {

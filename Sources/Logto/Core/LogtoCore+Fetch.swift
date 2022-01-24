@@ -24,7 +24,7 @@ extension LogtoCore {
         endpoint: String,
         completion: @escaping HttpCompletion<OidcConfigResponse>
     ) {
-        Utilities.httpGet(useSession: session, endpoint: endpoint, completion: completion)
+        LogtoRequest.get(useSession: session, endpoint: endpoint, completion: completion)
     }
 
     // MARK: Token Endpoint
@@ -68,7 +68,7 @@ extension LogtoCore {
 
         do {
             let data = try JSONSerialization.data(withJSONObject: body)
-            Utilities.httpPost(useSession: session, endpoint: tokenEndpoint, body: data, completion: completion)
+            LogtoRequest.post(useSession: session, endpoint: tokenEndpoint, body: data, completion: completion)
         } catch {
             completion(nil, error)
         }
@@ -103,7 +103,7 @@ extension LogtoCore {
 
         do {
             let data = try JSONSerialization.data(withJSONObject: body)
-            Utilities.httpPost(useSession: session, endpoint: tokenEndpoint, body: data, completion: completion)
+            LogtoRequest.post(useSession: session, endpoint: tokenEndpoint, body: data, completion: completion)
         } catch {
             completion(nil, error)
         }
@@ -122,7 +122,7 @@ extension LogtoCore {
         accessToken: String,
         completion: @escaping HttpCompletion<UserInfoResponse>
     ) {
-        Utilities.httpGet(
+        LogtoRequest.get(
             useSession: session,
             endpoint: userInfoEndpoint,
             headers: ["Authorization": "Bearer \(accessToken)"],

@@ -10,6 +10,12 @@ import Foundation
 import JOSESwift
 
 public enum LogtoUtilities {
+    static func getCamelCaseDecoder() -> JSONDecoder {
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        return decoder
+    }
+
     static let reservedScopes = ["openid", "offline_access"]
 
     public static func withReservedScopes(_ scopes: ValueOrArray<String>?) -> [String] {
