@@ -20,8 +20,8 @@ public class LogtoClient {
         logtoConfig = config
         // TO-DO: LOG-1398 set up and use persist storage if needed
     }
-    
-    var isAuthenticated: Boolean {
+
+    var isAuthenticated: Bool {
         idToken != nil
     }
 }
