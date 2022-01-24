@@ -1,6 +1,6 @@
 <!-- MANDATORY -->
 ## Summary
-<!-- Provide detail PR description bellow -->
+<!-- Provide detail PR description below -->
 
 
 <!-- Optional -->
@@ -13,7 +13,7 @@
 <!-- How did you test this PR? -->
 
 <!-- MANDATORY -->
-## Reviwers
+## Reviewers
 <!-- Update if needed. -->
 
 @logto-io/eng
