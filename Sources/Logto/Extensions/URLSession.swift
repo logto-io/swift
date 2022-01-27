@@ -30,7 +30,7 @@ extension URLSession: NetworkSession {
         completion(data, error)
     }
 
-    func loadData(
+    public func loadData(
         with request: URLRequest,
         completion: @escaping HttpCompletion<Data>
     ) {

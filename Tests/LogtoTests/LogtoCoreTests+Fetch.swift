@@ -1,5 +1,6 @@
 @testable import Logto
 import XCTest
+import LogtoMock
 
 extension LogtoCoreTests {
     func testFetchOidcConfig() throws {

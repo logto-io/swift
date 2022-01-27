@@ -7,8 +7,8 @@
 
 import Foundation
 
-enum LogtoRequest {
-    enum HttpMethod: String {
+public enum LogtoRequest {
+    public enum HttpMethod: String {
         case get = "GET"
         case post = "POST"
     }
@@ -38,7 +38,7 @@ enum LogtoRequest {
         }
     }
 
-    static func load(
+    public static func load(
         useSession session: NetworkSession,
         method: HttpMethod,
         url: URL,
@@ -60,7 +60,7 @@ enum LogtoRequest {
         session.loadData(with: request, completion: completion)
     }
 
-    static func load(
+    public static func load(
         useSession session: NetworkSession,
         method: HttpMethod,
         endpoint: String,
@@ -76,7 +76,7 @@ enum LogtoRequest {
         load(useSession: session, method: method, url: url, headers: headers, body: body, completion: completion)
     }
 
-    static func get<T: Codable>(
+    public static func get<T: Codable>(
         useSession session: NetworkSession,
         endpoint: String,
         headers: [String: String] = [:],
@@ -87,7 +87,18 @@ enum LogtoRequest {
         }
     }
 
-    static func post<T: Codable>(
+    public static func get<T: Codable>(
+        useSession session: NetworkSession,
+        url: URL,
+        headers: [String: String] = [:],
+        completion: @escaping HttpCompletion<T>
+    ) {
+        load(useSession: session, method: .get, url: url, headers: headers) { data, error in
+            handleResponse(data: data, error: error, completion: completion)
+        }
+    }
+
+    public static func post<T: Codable>(
         useSession session: NetworkSession,
         endpoint: String,
         headers: [String: String] = [:],
@@ -99,7 +110,7 @@ enum LogtoRequest {
         }
     }
 
-    static func post(
+    public static func post(
         useSession session: NetworkSession,
         endpoint: String,
         headers: [String: String] = [:],

@@ -3,7 +3,7 @@ import XCTest
 
 final class LogtoConfigTests: XCTestCase {
     func testLogtoConfig() throws {
-        let config = LogtoConfig(endpoint: "foo", clientId: "bar", scope: .value("scope1"))
+        let config = try LogtoConfig(endpoint: "foo", clientId: "bar", scope: .value("scope1"))
         XCTAssertEqual(config.scope, ["offline_access", "openid", "scope1"])
     }
 }
