@@ -12,7 +12,7 @@ public class LogtoClient {
     internal let accessTokenMap: [String: AccessToken] = [:]
     internal let logtoConfig: LogtoConfig
     internal let networkSession: NetworkSession
-    
+
     internal var idToken: String?
     internal var refreshToken: String?
     internal var oidcConfig: LogtoCore.OidcConfigResponse?

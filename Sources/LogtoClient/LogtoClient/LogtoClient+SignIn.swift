@@ -33,7 +33,7 @@ public extension LogtoClient {
     }
 
     func signInWithBrowser() {
-        fetchOidcConfig { config, error in
+        fetchOidcConfig { _, _ in
             // To implement
         }
     }

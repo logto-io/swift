@@ -1,5 +1,4 @@
 @testable import LogtoClient
 import XCTest
 
-final class LogtoClientTests: XCTestCase {
-}
+final class LogtoClientTests: XCTestCase {}
