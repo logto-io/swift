@@ -21,7 +21,7 @@ public struct LogtoConfig {
     }
 
     // Have to do this in Swift
-    init(
+    public init(
         endpoint: String,
         clientId: String,
         scope: ValueOrArray<String>? = nil,

@@ -17,7 +17,7 @@ public class LogtoClient {
     internal var refreshToken: String?
     internal var oidcConfig: LogtoCore.OidcConfigResponse?
 
-    init(useConfig config: LogtoConfig, session: NetworkSession = URLSession.shared) {
+    public init(useConfig config: LogtoConfig, session: NetworkSession = URLSession.shared) {
         logtoConfig = config
         networkSession = session
         // TO-DO: LOG-1398 set up and use persist storage if needed
