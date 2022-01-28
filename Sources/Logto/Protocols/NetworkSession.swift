@@ -8,7 +8,7 @@
 import Foundation
 
 // https://www.swiftbysundell.com/articles/mocking-in-swift/#complete-mocking
-protocol NetworkSession {
+public protocol NetworkSession {
     func loadData(
         with request: URLRequest,
         completion: @escaping HttpCompletion<Data>

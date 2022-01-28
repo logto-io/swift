@@ -31,7 +31,7 @@ public enum LogtoErrors {
         case missingCode
     }
 
-    enum UrlConstruction: LocalizedError, Equatable {
+    public enum UrlConstruction: LocalizedError, Equatable {
         case invalidEndpoint
         case unableToConstructUrl
     }

@@ -11,7 +11,7 @@ import Logto
 public struct LogtoConfig {
     private let _scope: ValueOrArray<String>?
 
-    let endpoint: String
+    let endpoint: URL
     let clientId: String
     let resource: ValueOrArray<String>?
     let usingPersistStorage: Bool
@@ -27,7 +27,11 @@ public struct LogtoConfig {
         scope: ValueOrArray<String>? = nil,
         resource: ValueOrArray<String>? = nil,
         usingPersistStorage: Bool = false
-    ) {
+    ) throws {
+        guard let endpoint = URL(string: endpoint) else {
+            throw LogtoErrors.UrlConstruction.unableToConstructUrl
+        }
+
         self.endpoint = endpoint
         self.clientId = clientId
         _scope = scope

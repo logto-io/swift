@@ -8,19 +8,19 @@
 import Foundation
 @testable import Logto
 
-class MockError: LocalizedError {}
+public class MockError: LocalizedError {}
 
-class NetworkSessionMock: NetworkSession {
-    static let shared = NetworkSessionMock()
+public class NetworkSessionMock: NetworkSession {
+    public static let shared = NetworkSessionMock()
 
-    func loadData(
+    public func loadData(
         with request: URLRequest,
         completion: @escaping HttpCompletion<Data>
     ) {
         switch request.httpMethod {
         case "GET":
-            switch request.url?.path {
-            case "/oidc_config:good":
+            switch request.url?.pathComponents[safe: 1] {
+            case "oidc_config:good":
                 completion(Data("""
                     {
                         "authorization_endpoint": "https://logto.dev/oidc/auth",
@@ -31,7 +31,7 @@ class NetworkSessionMock: NetworkSession {
                         "issuer": "http://localhost:443/oidc"
                     }
                 """.utf8), nil)
-            case "/user":
+            case "user":
                 guard request.value(forHTTPHeaderField: "Authorization") == "Bearer good" else {
                     completion(nil, MockError())
                     return
@@ -46,8 +46,8 @@ class NetworkSessionMock: NetworkSession {
                 completion(nil, MockError())
             }
         case "POST":
-            switch request.url?.path {
-            case "/token:good":
+            switch request.url?.pathComponents[safe: 1] {
+            case "token:good":
                 completion(Data("""
                     {
                         "access_token": "123",
@@ -58,7 +58,7 @@ class NetworkSessionMock: NetworkSession {
                         "expires_in": 123
                     }
                 """.utf8), nil)
-            case "/revoke:good":
+            case "revoke:good":
                 completion(nil, nil)
             default:
                 completion(nil, MockError())

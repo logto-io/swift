@@ -1,4 +1,5 @@
 @testable import Logto
+import LogtoMock
 import XCTest
 
 extension LogtoCoreTests {
