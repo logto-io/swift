@@ -9,6 +9,7 @@ import Foundation
 import Logto
 
 public class LogtoClient {
+    internal let authContext = LogtoAuthContext()
     internal let accessTokenMap: [String: AccessToken] = [:]
     internal let logtoConfig: LogtoConfig
     internal let networkSession: NetworkSession
@@ -23,7 +24,7 @@ public class LogtoClient {
         // TO-DO: LOG-1398 set up and use persist storage if needed
     }
 
-    var isAuthenticated: Bool {
+    public var isAuthenticated: Bool {
         idToken != nil
     }
 }

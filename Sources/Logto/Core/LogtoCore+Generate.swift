@@ -7,9 +7,9 @@
 
 import Foundation
 
-extension LogtoCore {
+public extension LogtoCore {
     private static let codeChallengeMethod = "S256"
-    private static let responseType = "authorization_code"
+    private static let responseType = "code"
     private static let prompt = "consent"
 
     static func generateSignInUri(
