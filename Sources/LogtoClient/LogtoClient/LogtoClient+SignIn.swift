@@ -56,8 +56,8 @@ public extension LogtoClient {
                 redirectUri: redirectUri,
                 codeChallenge: codeChallenge,
                 state: state,
-                scope: nil,
-                resource: nil
+                scopes: [],
+                resources: []
             )
 
             // Create session
