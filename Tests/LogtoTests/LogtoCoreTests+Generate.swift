@@ -6,7 +6,7 @@ extension LogtoCoreTests {
         XCTAssertThrowsError(try LogtoCore.generateSignInUri(
             authorizationEndpoint: "???",
             clientId: "",
-            redirectUri: URL(string: "")!,
+            redirectUri: URL(string: "foo")!,
             codeChallenge: "",
             state: ""
         )) {
