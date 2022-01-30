@@ -11,7 +11,7 @@ import SwiftUI
 struct ContentView: View {
     @State var isAuthenticated = false
     @State var authError: Error?
-    
+
     let client: LogtoClient?
 
     init() {
@@ -41,7 +41,7 @@ struct ContentView: View {
                     case .success:
                         isAuthenticated = true
                         authError = nil
-                    case .failure(let error):
+                    case let .failure(error):
                         isAuthenticated = false
                         authError = error
                     }

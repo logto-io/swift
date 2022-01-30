@@ -14,9 +14,9 @@ public extension LogtoClient {
         case success
         case failure(error: Errors.SignIn)
     }
-    
+
     typealias SignInCompletion = (SignInResult) -> Void
-    
+
     internal func fetchOidcConfig(completion: @escaping HttpCompletion<LogtoCore.OidcConfigResponse>) {
         guard oidcConfig == nil else {
             completion(oidcConfig, nil)
@@ -39,8 +39,12 @@ public extension LogtoClient {
             completion: requestCompletion
         )
     }
-    
-    internal func startSession(oidcConfig: LogtoCore.OidcConfigResponse, redirectUri: URL, completion: @escaping SignInCompletion) {
+
+    internal func startSession(
+        oidcConfig: LogtoCore.OidcConfigResponse,
+        redirectUri: URL,
+        completion: @escaping SignInCompletion
+    ) {
         do {
             // Construct auth URI
             let state = LogtoUtilities.generateState()
@@ -55,7 +59,7 @@ public extension LogtoClient {
                 scope: nil,
                 resource: nil
             )
-            
+
             // Create session
             let session = ASWebAuthenticationSession(url: authUri, callbackURLScheme: redirectUri.scheme) {
                 guard let callbackUri = $0 else {
@@ -63,7 +67,7 @@ public extension LogtoClient {
                     completion(.failure(error: Errors.SignIn(type: .authFailed, error: $1)))
                     return
                 }
-                
+
                 print("auth success", callbackUri)
                 completion(.success)
             }
@@ -76,11 +80,9 @@ public extension LogtoClient {
             DispatchQueue.main.async {
                 session.start()
             }
-        }
-        catch let error as LogtoErrors.UrlConstruction {
+        } catch let error as LogtoErrors.UrlConstruction {
             completion(.failure(error: Errors.SignIn(type: .unableToConstructAuthUri, error: error)))
-        }
-        catch {
+        } catch {
             completion(.failure(error: Errors.SignIn(type: .unknownError, error: error)))
         }
     }
@@ -91,7 +93,7 @@ public extension LogtoClient {
             completion(.failure(error: Errors.SignIn(type: .unableToConstructRedirectUri, error: nil)))
             return
         }
-        
+
         fetchOidcConfig { [self] oidcConfig, error in
             guard let oidcConfig = oidcConfig else {
                 completion(.failure(error: Errors.SignIn(type: .unableToFetchOidcConfig, error: error)))

@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Gao Sun on 2022/1/30.
 //
@@ -12,7 +12,7 @@ public extension LogtoClient {
         public enum Fetch: LocalizedError {
             case unableToFetchOidcConfig
         }
-        
+
         public struct SignIn: LocalizedError {
             enum SignInError {
                 case unknownError
@@ -21,10 +21,9 @@ public extension LogtoClient {
                 case unableToConstructAuthUri
                 case authFailed
             }
-            
+
             let type: SignInError
             let error: Error?
         }
     }
-
 }
