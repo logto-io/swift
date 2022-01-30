@@ -40,8 +40,8 @@ public enum LogtoErrors {
         case noResponseData
     }
 
-    enum Response: LocalizedError, Equatable {
+    public enum Response: LocalizedError, Equatable {
         case notHttpResponse(response: URLResponse?)
-        case withCode(code: Int, httpResponse: HTTPURLResponse)
+        case withCode(code: Int, httpResponse: HTTPURLResponse, data: Data?)
     }
 }

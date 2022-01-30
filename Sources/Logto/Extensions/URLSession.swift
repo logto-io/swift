@@ -22,7 +22,7 @@ extension URLSession: NetworkSession {
         guard httpResponse.statusCode < 400 else {
             completion(
                 nil,
-                LogtoErrors.Response.withCode(code: httpResponse.statusCode, httpResponse: httpResponse)
+                LogtoErrors.Response.withCode(code: httpResponse.statusCode, httpResponse: httpResponse, data: data)
             )
             return
         }

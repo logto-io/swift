@@ -7,10 +7,14 @@
 
 import Foundation
 
-extension LogtoCore {
+public extension LogtoCore {
+    static let postHeaders: [String: String] = [
+        "Content-Type": "application/x-www-form-urlencoded",
+    ]
+
     // MARK: OIDC Config
 
-    public struct OidcConfigResponse: Codable, Equatable {
+    struct OidcConfigResponse: Codable, Equatable {
         public let authorizationEndpoint: String
         public let tokenEndpoint: String
         public let endSessionEndpoint: String
@@ -36,12 +40,12 @@ extension LogtoCore {
         case refreshToken = "refresh_token"
     }
 
-    public struct CodeTokenResponse: Codable, Equatable {
-        let accessToken: String
-        let refreshToken: String
-        let idToken: String
-        let scope: String
-        let expiresIn: Int64
+    struct CodeTokenResponse: Codable, Equatable {
+        public let accessToken: String
+        public let refreshToken: String
+        public let idToken: String
+        public let scope: String
+        public let expiresIn: Int64
     }
 
     /// Fetch token by `authorization_code`.
@@ -57,29 +61,30 @@ extension LogtoCore {
         redirectUri: String,
         completion: @escaping HttpCompletion<CodeTokenResponse>
     ) {
-        let body: [String: Any] = [
+        let body: [String: String?] = [
             "grant_type": TokenGrantType.code.rawValue,
             "code": code,
             "code_verifier": codeVerifier,
             "client_id": clientId,
-            "resource": resource as Any,
+            "resource[]": resource,
             "redirect_uri": redirectUri,
-        ].compactMapValues { $0 }
+        ]
 
-        do {
-            let data = try JSONSerialization.data(withJSONObject: body)
-            LogtoRequest.post(useSession: session, endpoint: tokenEndpoint, body: data, completion: completion)
-        } catch {
-            completion(nil, error)
-        }
+        LogtoRequest.post(
+            useSession: session,
+            endpoint: tokenEndpoint,
+            headers: postHeaders,
+            body: body.urlParamEncoded.data(using: .utf8),
+            completion: completion
+        )
     }
 
-    public struct RefreshTokenTokenResponse: Codable, Equatable {
-        let accessToken: String
-        let refreshToken: String
-        let idToken: String?
-        let scope: String
-        let expiresIn: Int64
+    struct RefreshTokenTokenResponse: Codable, Equatable {
+        public let accessToken: String
+        public let refreshToken: String
+        public let idToken: String?
+        public let scope: String
+        public let expiresIn: Int64
     }
 
     /// Fetch token by `refresh_token`.
@@ -93,25 +98,26 @@ extension LogtoCore {
         scopes: [String] = [],
         completion: @escaping HttpCompletion<CodeTokenResponse>
     ) {
-        let body: [String: Any] = [
+        let body: [String: String?] = [
             "grant_type": TokenGrantType.refreshToken.rawValue,
             "refresh_token": refreshToken,
             "client_id": clientId,
-            "resource": resource as Any,
+            "resource[]": resource,
             "scope": scopes.joined(separator: " "),
-        ].compactMapValues { $0 }
+        ]
 
-        do {
-            let data = try JSONSerialization.data(withJSONObject: body)
-            LogtoRequest.post(useSession: session, endpoint: tokenEndpoint, body: data, completion: completion)
-        } catch {
-            completion(nil, error)
-        }
+        LogtoRequest.post(
+            useSession: session,
+            endpoint: tokenEndpoint,
+            headers: postHeaders,
+            body: body.urlParamEncoded.data(using: .utf8),
+            completion: completion
+        )
     }
 
     // MARK: User Info
 
-    public struct UserInfoResponse: Codable, Equatable {
+    struct UserInfoResponse: Codable, Equatable {
         let sub: String
         // More props TBD by LOG-561
     }
