@@ -53,7 +53,7 @@ extension LogtoCore {
         codeVerifier: String,
         tokenEndpoint: String,
         clientId: String,
-        resources: String? = nil,
+        resource: String? = nil,
         redirectUri: String,
         completion: @escaping HttpCompletion<CodeTokenResponse>
     ) {
@@ -62,7 +62,7 @@ extension LogtoCore {
             "code": code,
             "code_verifier": codeVerifier,
             "client_id": clientId,
-            "resource": resources as Any,
+            "resource": resource as Any,
             "redirect_uri": redirectUri,
         ].compactMapValues { $0 }
 
