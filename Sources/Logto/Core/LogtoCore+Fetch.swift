@@ -11,12 +11,12 @@ extension LogtoCore {
     // MARK: OIDC Config
 
     public struct OidcConfigResponse: Codable, Equatable {
-        let authorizationEndpoint: String
-        let tokenEndpoint: String
-        let endSessionEndpoint: String
-        let revocationEndpoint: String
-        let jwksUri: String
-        let issuer: String
+        public let authorizationEndpoint: String
+        public let tokenEndpoint: String
+        public let endSessionEndpoint: String
+        public let revocationEndpoint: String
+        public let jwksUri: String
+        public let issuer: String
     }
 
     static func fetchOidcConfig(

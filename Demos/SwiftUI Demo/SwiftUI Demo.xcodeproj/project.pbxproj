@@ -99,8 +99,8 @@
 		6C88C0A127A3D8060007B4D4 /* SwiftUI Demo */ = {
 			isa = PBXGroup;
 			children = (
-				6C88C0A227A3D8060007B4D4 /* SwiftUI_DemoApp.swift */,
 				6C88C0A427A3D8060007B4D4 /* ContentView.swift */,
+				6C88C0A227A3D8060007B4D4 /* SwiftUI_DemoApp.swift */,
 				6C88C0A627A3D8060007B4D4 /* Assets.xcassets */,
 				6C88C0A827A3D8060007B4D4 /* Preview Content */,
 			);

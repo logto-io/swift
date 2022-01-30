@@ -30,7 +30,7 @@ public enum LogtoUtilities {
         Data.randomArray(length: 64).toUrlSafeBase64String()
     }
 
-    static func generateCodeChallenge(codeVerifier: String) -> String {
+    public static func generateCodeChallenge(codeVerifier: String) -> String {
         let data = Data(codeVerifier.utf8)
         var hash = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
         data.withUnsafeBytes {
