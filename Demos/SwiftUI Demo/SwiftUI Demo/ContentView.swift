@@ -5,6 +5,7 @@
 //  Created by Gao Sun on 2022/1/28.
 //
 
+import Logto
 import LogtoClient
 import SwiftUI
 
@@ -15,7 +16,11 @@ struct ContentView: View {
     let client: LogtoClient?
 
     init() {
-        guard let config = try? LogtoConfig(endpoint: "https://logto.dev", clientId: "z4skkM1Z8LLVSl1JCmVZO") else {
+        guard let config = try? LogtoConfig(
+            endpoint: "https://logto.dev",
+            clientId: "z4skkM1Z8LLVSl1JCmVZO",
+            resources: ["https://api.logto.io"]
+        ) else {
             client = nil
             return
         }
@@ -44,6 +49,17 @@ struct ContentView: View {
                     case let .failure(error):
                         isAuthenticated = false
                         authError = error
+                        print("failed", error)
+
+                        if let error = error.innerError as? LogtoErrors.Response,
+                           case let LogtoErrors.Response.withCode(
+                               _,
+                               _,
+                               data
+                           ) = error, let data = data
+                        {
+                            print(String(decoding: data, as: UTF8.self))
+                        }
                     }
                 }
             }

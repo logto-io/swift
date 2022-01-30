@@ -9,21 +9,23 @@ import Foundation
 
 public extension LogtoClient {
     enum Errors {
-        public enum Fetch: LocalizedError {
+        public enum Fetch: String, LocalizedError {
             case unableToFetchOidcConfig
         }
 
         public struct SignIn: LocalizedError {
-            enum SignInError {
+            public enum SignInError: String {
                 case unknownError
+                case authFailed
                 case unableToFetchOidcConfig
                 case unableToConstructRedirectUri
                 case unableToConstructAuthUri
-                case authFailed
+                case unableToFetchToken
+                case unexpectedSignInCallback
             }
 
-            let type: SignInError
-            let error: Error?
+            public let type: SignInError
+            public let innerError: Error?
         }
     }
 }

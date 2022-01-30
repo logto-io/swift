@@ -7,17 +7,19 @@
 
 import Foundation
 
-extension LogtoCore {
+public extension LogtoCore {
+    /// Verify the given `callbackUri` matches the requirements and return `code` parameter if success.
     static func verifyAndParseSignInCallbackUri(
-        _ callbackUri: String,
-        redirectUri: String,
+        _ callbackUri: URL,
+        redirectUri: URL,
         state: String
     ) throws -> String {
-        guard callbackUri.starts(with: redirectUri) else {
+        // OIDC Provider will convert callback URI to lowercase
+        guard callbackUri.absoluteString.lowercased().starts(with: redirectUri.absoluteString.lowercased()) else {
             throw LogtoErrors.UriVerification.redirectUriMismatched
         }
 
-        guard let components = URLComponents(string: callbackUri) else {
+        guard let components = URLComponents(url: callbackUri, resolvingAgainstBaseURL: true) else {
             throw LogtoErrors.UriVerification.decodeComponentsFailed
         }
 
