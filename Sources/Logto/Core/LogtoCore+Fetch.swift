@@ -89,7 +89,7 @@ extension LogtoCore {
         byRefreshToken refreshToken: String,
         tokenEndpoint: String,
         clientId: String,
-        resources: [String] = [],
+        resource: String? = nil,
         scopes: [String] = [],
         completion: @escaping HttpCompletion<CodeTokenResponse>
     ) {
@@ -97,7 +97,7 @@ extension LogtoCore {
             "grant_type": TokenGrantType.refreshToken.rawValue,
             "refresh_token": refreshToken,
             "client_id": clientId,
-            "resource": resources,
+            "resource": resource as Any,
             "scope": scopes.joined(separator: " "),
         ].compactMapValues { $0 }
 
