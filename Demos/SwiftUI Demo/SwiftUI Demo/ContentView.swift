@@ -49,7 +49,7 @@ struct ContentView: View {
                     case let .failure(error):
                         isAuthenticated = false
                         authError = error
-                        print("failed", error)
+                        print("failure", error)
 
                         if let error = error.innerError as? LogtoErrors.Response,
                            case let LogtoErrors.Response.withCode(
