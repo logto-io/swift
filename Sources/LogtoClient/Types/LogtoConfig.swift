@@ -9,11 +9,11 @@ import Foundation
 import Logto
 
 public struct LogtoConfig {
-    private let _scopes: ValueOrArray<String>?
+    private let _scopes: [String]
 
     let endpoint: URL
     let clientId: String
-    let resources: ValueOrArray<String>?
+    let resources: [String]
     let usingPersistStorage: Bool
 
     var scopes: [String] {
@@ -24,8 +24,8 @@ public struct LogtoConfig {
     public init(
         endpoint: String,
         clientId: String,
-        scopes: ValueOrArray<String>? = nil,
-        resources: ValueOrArray<String>? = nil,
+        scopes: [String] = [],
+        resources: [String] = [],
         usingPersistStorage: Bool = false
     ) throws {
         guard let endpoint = URL(string: endpoint) else {

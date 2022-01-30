@@ -18,8 +18,8 @@ public extension LogtoCore {
         redirectUri: String,
         codeChallenge: String,
         state: String,
-        scopes: ValueOrArray<String>? = nil,
-        resources: ValueOrArray<String>? = nil
+        scopes: [String] = [],
+        resources: [String] = []
     ) throws -> URL {
         guard
             var components = URLComponents(string: authorizationEndpoint),
@@ -42,7 +42,7 @@ public extension LogtoCore {
             URLQueryItem(name: "response_type", value: LogtoCore.responseType),
             URLQueryItem(name: "prompt", value: LogtoCore.prompt),
         ]
-        let resourceQueryItems = (resources?.inArray ?? []).map {
+        let resourceQueryItems = resources.map {
             URLQueryItem(name: "resource", value: $0.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed))
         }
 

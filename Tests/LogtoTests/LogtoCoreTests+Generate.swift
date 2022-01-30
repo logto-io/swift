@@ -46,7 +46,7 @@ extension LogtoCoreTests {
             redirectUri: "logto://sign-in/redirect",
             codeChallenge: codeChallenge,
             state: state,
-            scopes: .value("foo")
+            scopes: ["foo"]
         )
         try validateBaseInformation(url: url1)
         XCTAssertEqual(
@@ -60,7 +60,7 @@ extension LogtoCoreTests {
             redirectUri: "logto://sign-in/redirect",
             codeChallenge: codeChallenge,
             state: state,
-            scopes: .array(["foo", "bar"])
+            scopes: ["foo", "bar"]
         )
         try validateBaseInformation(url: url2)
         XCTAssertEqual(
@@ -78,7 +78,7 @@ extension LogtoCoreTests {
             redirectUri: "logto://sign-in/redirect",
             codeChallenge: codeChallenge,
             state: state,
-            resources: .value("https://api.logto.dev/")
+            resources: ["https://api.logto.dev/"]
         )
         try validateBaseInformation(url: url1)
         XCTAssertEqual(
@@ -92,7 +92,7 @@ extension LogtoCoreTests {
             redirectUri: "logto://sign-in/redirect",
             codeChallenge: codeChallenge,
             state: state,
-            resources: .array(["https://api.logto.dev/", "bar"])
+            resources: ["https://api.logto.dev/", "bar"]
         )
         try validateBaseInformation(url: url2)
         XCTAssertEqual(

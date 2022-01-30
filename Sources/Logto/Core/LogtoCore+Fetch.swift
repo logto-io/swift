@@ -89,16 +89,16 @@ extension LogtoCore {
         byRefreshToken refreshToken: String,
         tokenEndpoint: String,
         clientId: String,
-        resources: String? = nil,
-        scopes: ValueOrArray<String>? = nil,
+        resources: [String] = [],
+        scopes: [String] = [],
         completion: @escaping HttpCompletion<CodeTokenResponse>
     ) {
         let body: [String: Any] = [
             "grant_type": TokenGrantType.refreshToken.rawValue,
             "refresh_token": refreshToken,
             "client_id": clientId,
-            "resource": resources as Any,
-            "scope": scopes?.inArray.joined(separator: " ") as Any,
+            "resource": resources,
+            "scope": scopes.joined(separator: " "),
         ].compactMapValues { $0 }
 
         do {
