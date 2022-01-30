@@ -65,7 +65,7 @@ extension LogtoCoreTests {
             tokenEndpoint: "/token:good",
             clientId: "foo",
             resource: "bar",
-            scope: .value("baz")
+            scopes: ["baz"]
         ) {
             XCTAssertNotNil($0)
             XCTAssertNil($1)

@@ -9,23 +9,23 @@ import Foundation
 import Logto
 
 public struct LogtoConfig {
-    private let _scope: ValueOrArray<String>?
+    private let _scopes: [String]
 
     let endpoint: URL
     let clientId: String
-    let resource: ValueOrArray<String>?
+    let resources: [String]
     let usingPersistStorage: Bool
 
-    var scope: [String] {
-        LogtoUtilities.withReservedScopes(_scope)
+    var scopes: [String] {
+        LogtoUtilities.withReservedScopes(_scopes)
     }
 
     // Have to do this in Swift
     public init(
         endpoint: String,
         clientId: String,
-        scope: ValueOrArray<String>? = nil,
-        resource: ValueOrArray<String>? = nil,
+        scopes: [String] = [],
+        resources: [String] = [],
         usingPersistStorage: Bool = false
     ) throws {
         guard let endpoint = URL(string: endpoint) else {
@@ -34,8 +34,8 @@ public struct LogtoConfig {
 
         self.endpoint = endpoint
         self.clientId = clientId
-        _scope = scope
-        self.resource = resource
+        _scopes = scopes
+        self.resources = resources
         self.usingPersistStorage = usingPersistStorage
     }
 }

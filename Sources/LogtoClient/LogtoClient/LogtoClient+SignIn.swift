@@ -51,9 +51,7 @@ public extension LogtoClient {
                 clientId: logtoConfig.clientId,
                 redirectUri: "\(scheme)://callback",
                 codeChallenge: codeChallenge,
-                state: state,
-                scope: nil,
-                resource: nil
+                state: state
             ) else {
                 return
             }
