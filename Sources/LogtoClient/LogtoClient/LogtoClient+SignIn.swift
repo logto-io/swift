@@ -10,6 +10,13 @@ import Foundation
 import Logto
 
 public extension LogtoClient {
+    enum SignInResult {
+        case success
+        case failure(error: Errors.SignIn)
+    }
+    
+    typealias SignInCompletion = (SignInResult) -> Void
+    
     internal func fetchOidcConfig(completion: @escaping HttpCompletion<LogtoCore.OidcConfigResponse>) {
         guard oidcConfig == nil else {
             completion(oidcConfig, nil)
@@ -18,7 +25,7 @@ public extension LogtoClient {
 
         let requestCompletion: HttpCompletion<LogtoCore.OidcConfigResponse> = { config, error in
             if error != nil || config == nil {
-                completion(nil, error ?? LogtoClientErrors.Fetch.unableToFetchOidcConfig)
+                completion(nil, error ?? Errors.Fetch.unableToFetchOidcConfig)
                 return
             }
 
@@ -32,32 +39,33 @@ public extension LogtoClient {
             completion: requestCompletion
         )
     }
-
-    // TO-DO: error handling
-    // TO-DO: implement full functions
-    func signInWithBrowser() {
-        fetchOidcConfig { [self] oidcConfig, _ in
-            guard let oidcConfig = oidcConfig else {
-                return
-            }
-
-            let scheme = "io.logto.SwiftUI-Demo"
+    
+    internal func startSession(oidcConfig: LogtoCore.OidcConfigResponse, redirectUri: URL, completion: @escaping SignInCompletion) {
+        do {
+            // Construct auth URI
             let state = LogtoUtilities.generateState()
             let codeVerifier = LogtoUtilities.generateCodeVerifier()
             let codeChallenge = LogtoUtilities.generateCodeChallenge(codeVerifier: codeVerifier)
-
-            guard let authUri = try? LogtoCore.generateSignInUri(
+            let authUri = try LogtoCore.generateSignInUri(
                 authorizationEndpoint: oidcConfig.authorizationEndpoint,
                 clientId: logtoConfig.clientId,
-                redirectUri: "\(scheme)://callback",
+                redirectUri: redirectUri,
                 codeChallenge: codeChallenge,
-                state: state
-            ) else {
-                return
-            }
-
-            let session = ASWebAuthenticationSession(url: authUri, callbackURLScheme: scheme) {
-                print("result", $0 ?? "N/A", $1 ?? "N/A")
+                state: state,
+                scope: nil,
+                resource: nil
+            )
+            
+            // Create session
+            let session = ASWebAuthenticationSession(url: authUri, callbackURLScheme: redirectUri.scheme) {
+                guard let callbackUri = $0 else {
+                    print("auth failed", $1 ?? "N/A")
+                    completion(.failure(error: Errors.SignIn(type: .authFailed, error: $1)))
+                    return
+                }
+                
+                print("auth success", callbackUri)
+                completion(.success)
             }
 
             if #available(iOS 13.0, *) {
@@ -68,6 +76,29 @@ public extension LogtoClient {
             DispatchQueue.main.async {
                 session.start()
             }
+        }
+        catch let error as LogtoErrors.UrlConstruction {
+            completion(.failure(error: Errors.SignIn(type: .unableToConstructAuthUri, error: error)))
+        }
+        catch {
+            completion(.failure(error: Errors.SignIn(type: .unknownError, error: error)))
+        }
+    }
+
+    // TO-DO: implement full functions
+    func signInWithBrowser(redirectUri: String, completion: @escaping SignInCompletion) {
+        guard let redirectUri = URL(string: redirectUri) else {
+            completion(.failure(error: Errors.SignIn(type: .unableToConstructRedirectUri, error: nil)))
+            return
+        }
+        
+        fetchOidcConfig { [self] oidcConfig, error in
+            guard let oidcConfig = oidcConfig else {
+                completion(.failure(error: Errors.SignIn(type: .unableToFetchOidcConfig, error: error)))
+                return
+            }
+
+            startSession(oidcConfig: oidcConfig, redirectUri: redirectUri, completion: completion)
         }
     }
 }
