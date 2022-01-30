@@ -53,7 +53,7 @@ extension LogtoCore {
         codeVerifier: String,
         tokenEndpoint: String,
         clientId: String,
-        resource: String? = nil,
+        resources: String? = nil,
         redirectUri: String,
         completion: @escaping HttpCompletion<CodeTokenResponse>
     ) {
@@ -62,7 +62,7 @@ extension LogtoCore {
             "code": code,
             "code_verifier": codeVerifier,
             "client_id": clientId,
-            "resource": resource as Any,
+            "resource": resources as Any,
             "redirect_uri": redirectUri,
         ].compactMapValues { $0 }
 
@@ -89,16 +89,16 @@ extension LogtoCore {
         byRefreshToken refreshToken: String,
         tokenEndpoint: String,
         clientId: String,
-        resource: String? = nil,
-        scope: ValueOrArray<String>? = nil,
+        resources: String? = nil,
+        scopes: ValueOrArray<String>? = nil,
         completion: @escaping HttpCompletion<CodeTokenResponse>
     ) {
         let body: [String: Any] = [
             "grant_type": TokenGrantType.refreshToken.rawValue,
             "refresh_token": refreshToken,
             "client_id": clientId,
-            "resource": resource as Any,
-            "scope": scope?.inArray.joined(separator: " ") as Any,
+            "resource": resources as Any,
+            "scope": scopes?.inArray.joined(separator: " ") as Any,
         ].compactMapValues { $0 }
 
         do {
