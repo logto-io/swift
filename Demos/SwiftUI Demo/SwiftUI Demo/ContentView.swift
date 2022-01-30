@@ -9,6 +9,9 @@ import LogtoClient
 import SwiftUI
 
 struct ContentView: View {
+    @State var isAuthenticated = false
+    @State var authError: Error?
+
     let client: LogtoClient?
 
     init() {
@@ -22,9 +25,27 @@ struct ContentView: View {
     var body: some View {
         Text("Hello, world!")
             .padding()
+        if isAuthenticated {
+            Text("Signed In")
+                .padding()
+        }
+        if let authError = authError {
+            Text(authError.localizedDescription)
+                .foregroundColor(.red)
+                .padding()
+        }
         if let client = client {
             Button("Sign In") {
-                client.signInWithBrowser()
+                client.signInWithBrowser(redirectUri: "io.logto.SwiftUI-Demo://callback") {
+                    switch $0 {
+                    case .success:
+                        isAuthenticated = true
+                        authError = nil
+                    case let .failure(error):
+                        isAuthenticated = false
+                        authError = error
+                    }
+                }
             }
         }
     }

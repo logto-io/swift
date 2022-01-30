@@ -15,7 +15,7 @@ public extension LogtoCore {
     static func generateSignInUri(
         authorizationEndpoint: String,
         clientId: String,
-        redirectUri: String,
+        redirectUri: URL,
         codeChallenge: String,
         state: String,
         scopes: [String] = [],
@@ -33,7 +33,7 @@ public extension LogtoCore {
             URLQueryItem(name: "client_id", value: clientId),
             URLQueryItem(
                 name: "redirect_uri",
-                value: redirectUri.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)
+                value: redirectUri.absoluteString
             ),
             URLQueryItem(name: "code_challenge", value: codeChallenge),
             URLQueryItem(name: "code_challenge_method", value: LogtoCore.codeChallengeMethod),
