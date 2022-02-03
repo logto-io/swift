@@ -40,67 +40,40 @@ public extension LogtoClient {
         )
     }
 
-    internal func startSession(
-        oidcConfig: LogtoCore.OidcConfigResponse,
-        redirectUri: URL,
-        completion: @escaping SignInCompletion
-    ) {
-        do {
-            // Construct auth URI
-            let state = LogtoUtilities.generateState()
-            let codeVerifier = LogtoUtilities.generateCodeVerifier()
-            let codeChallenge = LogtoUtilities.generateCodeChallenge(codeVerifier: codeVerifier)
-            let authUri = try LogtoCore.generateSignInUri(
-                authorizationEndpoint: oidcConfig.authorizationEndpoint,
-                clientId: logtoConfig.clientId,
-                redirectUri: redirectUri,
-                codeChallenge: codeChallenge,
-                state: state,
-                scopes: [],
-                resources: []
-            )
-
-            // Create session
-            let session = ASWebAuthenticationSession(url: authUri, callbackURLScheme: redirectUri.scheme) {
-                guard let callbackUri = $0 else {
-                    print("auth failed", $1 ?? "N/A")
-                    completion(.failure(error: Errors.SignIn(type: .authFailed, error: $1)))
-                    return
-                }
-
-                print("auth success", callbackUri)
-                completion(.success)
-            }
-
-            if #available(iOS 13.0, *) {
-                session.presentationContextProvider = self.authContext
-                session.prefersEphemeralWebBrowserSession = true
-            }
-
-            DispatchQueue.main.async {
-                session.start()
-            }
-        } catch let error as LogtoErrors.UrlConstruction {
-            completion(.failure(error: Errors.SignIn(type: .unableToConstructAuthUri, error: error)))
-        } catch {
-            completion(.failure(error: Errors.SignIn(type: .unknownError, error: error)))
-        }
-    }
-
-    // TO-DO: implement full functions
     func signInWithBrowser(redirectUri: String, completion: @escaping SignInCompletion) {
         guard let redirectUri = URL(string: redirectUri) else {
-            completion(.failure(error: Errors.SignIn(type: .unableToConstructRedirectUri, error: nil)))
+            completion(.failure(error: Errors.SignIn(type: .unableToConstructRedirectUri, innerError: nil)))
             return
         }
 
         fetchOidcConfig { [self] oidcConfig, error in
             guard let oidcConfig = oidcConfig else {
-                completion(.failure(error: Errors.SignIn(type: .unableToFetchOidcConfig, error: error)))
+                completion(.failure(error: Errors.SignIn(type: .unableToFetchOidcConfig, innerError: error)))
                 return
             }
 
-            startSession(oidcConfig: oidcConfig, redirectUri: redirectUri, completion: completion)
+            let session = LogtoSignInSession(
+                logtoConfig: logtoConfig,
+                oidcConfig: oidcConfig,
+                redirectUri: redirectUri
+            ) {
+                switch $0 {
+                case let .failure(error):
+                    completion(.failure(error: error))
+                case let .success(response):
+                    idToken = response.idToken
+                    refreshToken = response.refreshToken
+                    accessTokenMap[buildAccessTokenKey(scopes: [])] = AccessToken(
+                        token: response.accessToken,
+                        scope: response.scope,
+                        expiresAt: Int64(Date().timeIntervalSince1970 * 1000) + response.expiresIn
+                    )
+                    print("success", response)
+                    completion(.success)
+                }
+            }
+
+            session.start()
         }
     }
 }
