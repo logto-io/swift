@@ -10,13 +10,6 @@ import Foundation
 import Logto
 
 public extension LogtoClient {
-    enum SignInResult {
-        case success
-        case failure(error: Errors.SignIn)
-    }
-
-    typealias SignInCompletion = (SignInResult) -> Void
-
     internal func fetchOidcConfig(completion: @escaping HttpCompletion<LogtoCore.OidcConfigResponse>) {
         guard oidcConfig == nil else {
             completion(oidcConfig, nil)
@@ -40,7 +33,7 @@ public extension LogtoClient {
         )
     }
 
-    func signInWithBrowser(redirectUri: String, completion: @escaping SignInCompletion) {
+    func signInWithBrowser(redirectUri: String, completion: @escaping LogtoCompletion<Errors.SignIn>) {
         guard let redirectUri = URL(string: redirectUri) else {
             completion(.failure(error: Errors.SignIn(type: .unableToConstructRedirectUri, innerError: nil)))
             return
