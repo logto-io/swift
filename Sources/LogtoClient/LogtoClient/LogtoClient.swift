@@ -23,6 +23,8 @@ public class LogtoClient {
         didSet { saveToKeychain(forKey: .accessTokenMap) }
     }
 
+    // MARK: Public Variables
+
     public internal(set) var idToken: String? {
         didSet { saveToKeychain(forKey: .idToken) }
     }
