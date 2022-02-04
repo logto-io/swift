@@ -28,8 +28,8 @@ struct ContentView: View {
         let logtoClient = LogtoClient(useConfig: config)
         client = logtoClient
         isAuthenticated = logtoClient.isAuthenticated
-        
-        if (logtoClient.isAuthenticated) {
+
+        if logtoClient.isAuthenticated {
             print("authed", logtoClient.idToken ?? "N/A")
         }
     }
