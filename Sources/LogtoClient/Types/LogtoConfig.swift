@@ -26,7 +26,7 @@ public struct LogtoConfig {
         clientId: String,
         scopes: [String] = [],
         resources: [String] = [],
-        usingPersistStorage: Bool = false
+        usingPersistStorage: Bool = true
     ) throws {
         guard let endpoint = URL(string: endpoint) else {
             throw LogtoErrors.UrlConstruction.unableToConstructUrl

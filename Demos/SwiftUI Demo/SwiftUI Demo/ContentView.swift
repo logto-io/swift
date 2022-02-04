@@ -10,7 +10,7 @@ import LogtoClient
 import SwiftUI
 
 struct ContentView: View {
-    @State var isAuthenticated = false
+    @State var isAuthenticated: Bool
     @State var authError: Error?
 
     let client: LogtoClient?
@@ -22,9 +22,16 @@ struct ContentView: View {
             resources: ["https://api.logto.io"]
         ) else {
             client = nil
+            isAuthenticated = false
             return
         }
-        client = LogtoClient(useConfig: config)
+        let logtoClient = LogtoClient(useConfig: config)
+        client = logtoClient
+        isAuthenticated = logtoClient.isAuthenticated
+        
+        if (logtoClient.isAuthenticated) {
+            print("authed", logtoClient.idToken ?? "N/A")
+        }
     }
 
     var body: some View {

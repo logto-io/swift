@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct AccessToken {
+public struct AccessToken: Codable {
     let token: String
     let scope: String
     let expiresAt: Int64
