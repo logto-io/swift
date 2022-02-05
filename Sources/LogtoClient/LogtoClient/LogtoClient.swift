@@ -47,6 +47,16 @@ public class LogtoClient {
         idToken != nil
     }
 
+    // MARK: Public Functions
+
+    public func getIdTokenClaims() throws -> IdTokenClaims {
+        guard let idToken = idToken else {
+            throw Errors.IdToken.notAuthenticated
+        }
+
+        return try LogtoUtilities.decodeIdToken(idToken)
+    }
+
     // MARK: Public Init Functions
 
     public init(useConfig config: LogtoConfig, session: NetworkSession = URLSession.shared) {
