@@ -16,6 +16,7 @@ extension LogtoClient {
 
     static let keychainServiceName = "io.logto.client"
     static let jsonEncoder = JSONEncoder()
+    static let jsonDecoder = JSONDecoder()
 
     func loadFromKeychain() {
         guard let keychain = keychain else {
@@ -23,9 +24,9 @@ extension LogtoClient {
         }
 
         if let data = keychain[data: KeyName.accessTokenMap.rawValue],
-           let jsonObject = try? JSONSerialization.jsonObject(with: data)
+           let tokenMap = try? LogtoClient.jsonDecoder.decode([String: AccessToken].self, from: data)
         {
-            accessTokenMap = jsonObject as? [String: AccessToken] ?? [:]
+            accessTokenMap.assign(map: tokenMap)
         }
 
         idToken = keychain[KeyName.idToken.rawValue]
@@ -39,7 +40,7 @@ extension LogtoClient {
 
         switch key {
         case .accessTokenMap:
-            if let data = try? LogtoClient.jsonEncoder.encode(accessTokenMap) {
+            if let data = accessTokenMap.json {
                 keychain[data: key.rawValue] = data
             }
         case .idToken:

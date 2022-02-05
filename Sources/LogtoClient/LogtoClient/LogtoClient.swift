@@ -19,9 +19,7 @@ public class LogtoClient {
 
     // MARK: Internal Variables
 
-    internal var accessTokenMap: [String: AccessToken] = [:] {
-        didSet { saveToKeychain(forKey: .accessTokenMap) }
-    }
+    internal var accessTokenMap = AccessTokenMap()
 
     // MARK: Public Variables
 
@@ -34,12 +32,6 @@ public class LogtoClient {
     }
 
     public internal(set) var oidcConfig: LogtoCore.OidcConfigResponse?
-
-    // MARK: Internal Functions
-
-    internal func buildAccessTokenKey(for resource: String = "", scopes: [String]) -> String {
-        "\(scopes.sorted().joined(separator: " "))@\(resource)"
-    }
 
     // MARK: Public Computed Variables
 
@@ -65,6 +57,7 @@ public class LogtoClient {
 
         if config.usingPersistStorage {
             keychain = Keychain(service: LogtoClient.keychainServiceName)
+            accessTokenMap.client = self
             loadFromKeychain()
         } else {
             keychain = nil

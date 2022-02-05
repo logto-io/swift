@@ -32,7 +32,7 @@ public extension LogtoClient {
             }
         }
 
-        accessTokenMap = [:]
+        accessTokenMap.clear()
         refreshToken = nil
         idToken = nil
     }

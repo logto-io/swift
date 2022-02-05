@@ -17,7 +17,7 @@ extension LogtoClient {
 
         let requestCompletion: HttpCompletion<LogtoCore.OidcConfigResponse> = { config, error in
             if error != nil || config == nil {
-                completion(nil, error ?? Errors.Fetch(type: .unableToFetchOidcConfig, innerError: nil))
+                completion(nil, Errors.OidcConfig(type: .unableToFetchOidcConfig, innerError: error))
                 return
             }
 
@@ -32,24 +32,31 @@ extension LogtoClient {
         )
     }
 
-    public func fetchUserInfo(completion: @escaping Completion<LogtoCore.UserInfoResponse, Errors.Fetch>) {
+    public func fetchUserInfo(completion: @escaping Completion<LogtoCore.UserInfoResponse, Errors.UserInfo>) {
         fetchOidcConfig { [self] oidcConfig, error in
             guard let oidcConfig = oidcConfig else {
-                completion(nil, Errors.Fetch(type: .unableToFetchOidcConfig, innerError: error))
+                completion(nil, Errors.UserInfo(type: .unableToFetchOidcConfig, innerError: error))
                 return
             }
 
-            // TO-DO: Use `.getAccessToken()`
-            let token = accessTokenMap[buildAccessTokenKey(scopes: [])]?.token ?? ""
-            LogtoCore
-                .fetchUserInfo(userInfoEndpoint: oidcConfig.userinfoEndpoint, accessToken: token) { userInfo, error in
-                    guard let userInfo = userInfo else {
-                        completion(nil, Errors.Fetch(type: .unableToFetchUserInfo, innerError: error))
-                        return
-                    }
-
-                    completion(userInfo, nil)
+            getAccessToken(scopes: []) { token, error in
+                guard let token = token else {
+                    completion(nil, Errors.UserInfo(type: .unableToGetAccessToken, innerError: error))
+                    return
                 }
+
+                LogtoCore
+                    .fetchUserInfo(userInfoEndpoint: oidcConfig.userinfoEndpoint,
+                                   accessToken: token)
+                    { userInfo, error in
+                        guard let userInfo = userInfo else {
+                            completion(nil, Errors.UserInfo(type: .unableToFetchUserInfo, innerError: error))
+                            return
+                        }
+
+                        completion(userInfo, nil)
+                    }
+            }
         }
     }
 }

@@ -58,7 +58,7 @@ public extension LogtoCore {
         codeVerifier: String,
         tokenEndpoint: String,
         clientId: String,
-        resource: String? = nil,
+        resource: String?,
         redirectUri: String,
         completion: @escaping HttpCompletion<CodeTokenResponse>
     ) {
@@ -82,7 +82,7 @@ public extension LogtoCore {
 
     struct RefreshTokenTokenResponse: Codable, Equatable {
         public let accessToken: String
-        public let refreshToken: String
+        public let refreshToken: String?
         public let idToken: String?
         public let scope: String
         public let expiresIn: Int64
@@ -95,9 +95,9 @@ public extension LogtoCore {
         byRefreshToken refreshToken: String,
         tokenEndpoint: String,
         clientId: String,
-        resource: String? = nil,
-        scopes: [String] = [],
-        completion: @escaping HttpCompletion<CodeTokenResponse>
+        resource: String?,
+        scopes: [String],
+        completion: @escaping HttpCompletion<RefreshTokenTokenResponse>
     ) {
         let body: [String: String?] = [
             "grant_type": TokenGrantType.refreshToken.rawValue,

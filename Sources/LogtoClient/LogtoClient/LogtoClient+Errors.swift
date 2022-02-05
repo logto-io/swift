@@ -9,13 +9,34 @@ import Foundation
 
 public extension LogtoClient {
     enum Errors {
-        public struct Fetch: LogtoError, LocalizedError {
-            public enum FetchError {
+        public struct AccessToken: LogtoError, LocalizedError {
+            public enum AccessTokenError {
+                case noRefreshTokenFound
                 case unableToFetchOidcConfig
+                case unableToFetchTokenByRefreshToken
+            }
+
+            public let type: AccessTokenError
+            public let innerError: Error?
+        }
+
+        public struct OidcConfig: LogtoError, LocalizedError {
+            public enum OidcConfigError {
+                case unableToFetchOidcConfig
+            }
+
+            public let type: OidcConfigError
+            public let innerError: Error?
+        }
+
+        public struct UserInfo: LogtoError, LocalizedError {
+            public enum UserInfoError {
+                case unableToFetchOidcConfig
+                case unableToGetAccessToken
                 case unableToFetchUserInfo
             }
 
-            public let type: FetchError
+            public let type: UserInfoError
             public let innerError: Error?
         }
 

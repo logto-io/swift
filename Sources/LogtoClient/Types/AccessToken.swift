@@ -10,5 +10,5 @@ import Foundation
 public struct AccessToken: Codable {
     let token: String
     let scope: String
-    let expiresAt: Int64
+    let expiresAt: TimeInterval
 }
