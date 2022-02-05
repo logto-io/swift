@@ -19,6 +19,7 @@ public extension LogtoCore {
         public let tokenEndpoint: String
         public let endSessionEndpoint: String
         public let revocationEndpoint: String
+        public let userinfoEndpoint: String
         public let jwksUri: String
         public let issuer: String
     }

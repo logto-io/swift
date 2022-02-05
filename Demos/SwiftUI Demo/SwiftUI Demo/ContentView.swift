@@ -78,6 +78,14 @@ struct ContentView: View {
                 client.signOut()
                 isAuthenticated = false
             }
+
+            Button("Fetch Userinfo") {
+                client.fetchUserInfo { userInfo, _ in
+                    if let userInfo = userInfo {
+                        print(userInfo)
+                    }
+                }
+            }
         }
     }
 }

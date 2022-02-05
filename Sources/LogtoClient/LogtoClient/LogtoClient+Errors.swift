@@ -9,8 +9,14 @@ import Foundation
 
 public extension LogtoClient {
     enum Errors {
-        public enum Fetch: String, LocalizedError {
-            case unableToFetchOidcConfig
+        public struct Fetch: LogtoError, LocalizedError {
+            public enum FetchError {
+                case unableToFetchOidcConfig
+                case unableToFetchUserInfo
+            }
+
+            public let type: FetchError
+            public let innerError: Error?
         }
 
         public enum IdToken: String, LocalizedError {
