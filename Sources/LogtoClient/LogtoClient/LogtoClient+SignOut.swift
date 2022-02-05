@@ -9,11 +9,11 @@ import Foundation
 import Logto
 
 public extension LogtoClient {
-    func signOut(completion: LogtoCompletion<Errors.SignOut>? = nil) {
+    func signOut(completion: EmptyCompletion<Errors.SignOut>? = nil) {
         if let refreshToken = refreshToken {
             fetchOidcConfig { [self] oidcConfig, error in
                 guard let oidcConfig = oidcConfig else {
-                    completion?(.failure(error: Errors.SignOut(type: .unableToFetchOidcConfig, innerError: error)))
+                    completion?(Errors.SignOut(type: .unableToFetchOidcConfig, innerError: error))
                     return
                 }
 
@@ -23,11 +23,11 @@ public extension LogtoClient {
                     clientId: logtoConfig.clientId
                 ) {
                     guard $0 == nil else {
-                        completion?(.failure(error: Errors.SignOut(type: .unableToRevokeToken, innerError: $0)))
+                        completion?(Errors.SignOut(type: .unableToRevokeToken, innerError: $0))
                         return
                     }
 
-                    completion?(.success)
+                    completion?(nil)
                 }
             }
         }
