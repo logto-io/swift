@@ -7,6 +7,10 @@
 
 import Foundation
 
-public typealias HttpCompletion<T> = (T?, Error?) -> Void
+public typealias Completion<T, E: Error> = (T?, E?) -> Void
 
-public typealias HttpEmptyCompletion = (Error?) -> Void
+public typealias EmptyCompletion<E: Error> = (E?) -> Void
+
+public typealias HttpCompletion<T> = Completion<T, Error>
+
+public typealias HttpEmptyCompletion = EmptyCompletion<Error>

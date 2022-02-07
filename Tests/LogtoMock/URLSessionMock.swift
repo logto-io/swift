@@ -27,6 +27,7 @@ public class NetworkSessionMock: NetworkSession {
                         "token_endpoint": "https://logto.dev/oidc/token",
                         "end_session_endpoint": "https://logto.dev/oidc/session/end",
                         "revocation_endpoint": "https://logto.dev/oidc/token/revocation",
+                        "userinfo_endpoint": "https://logto.dev/oidc/me",
                         "jwks_uri": "https://logto.dev/oidc/jwks",
                         "issuer": "http://localhost:443/oidc"
                     }
