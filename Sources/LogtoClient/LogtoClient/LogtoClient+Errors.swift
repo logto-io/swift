@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  LogtoClient+Errors.swift
 //
 //
 //  Created by Gao Sun on 2022/1/30.
@@ -13,7 +13,11 @@ public extension LogtoClient {
             case unableToFetchOidcConfig
         }
 
-        public struct SignIn: LogtoError {
+        public enum IdToken: String, LocalizedError {
+            case notAuthenticated
+        }
+
+        public struct SignIn: LocalizedError {
             public enum SignInError: String {
                 case unknownError
                 case authFailed

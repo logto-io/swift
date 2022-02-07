@@ -47,6 +47,9 @@ struct ContentView: View {
                 .padding()
         }
         if let client = client {
+            Button("Print ID Token Claims") {
+                print(try! client.getIdTokenClaims())
+            }
             Button("Sign In") {
                 client.signInWithBrowser(redirectUri: "io.logto.SwiftUI-Demo://callback") {
                     switch $0 {
