@@ -17,7 +17,7 @@ public extension LogtoClient {
             case notAuthenticated
         }
 
-        public struct SignIn: LocalizedError {
+        public struct SignIn: LogtoError {
             public enum SignInError: String {
                 case unknownError
                 case authFailed
