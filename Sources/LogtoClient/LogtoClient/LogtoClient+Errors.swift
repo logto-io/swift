@@ -17,7 +17,7 @@ public extension LogtoClient {
             case notAuthenticated
         }
 
-        public struct SignIn: LocalizedError {
+        public struct SignIn: LogtoError {
             public enum SignInError: String {
                 case unknownError
                 case authFailed
@@ -29,6 +29,16 @@ public extension LogtoClient {
             }
 
             public let type: SignInError
+            public let innerError: Error?
+        }
+
+        public struct SignOut: LogtoError {
+            public enum SignOutError: String {
+                case unableToRevokeToken
+                case unableToFetchOidcConfig
+            }
+
+            public let type: SignOutError
             public let innerError: Error?
         }
     }

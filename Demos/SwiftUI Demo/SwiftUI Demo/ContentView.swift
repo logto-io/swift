@@ -30,7 +30,7 @@ struct ContentView: View {
         isAuthenticated = logtoClient.isAuthenticated
 
         if logtoClient.isAuthenticated {
-            print("authed", logtoClient.idToken ?? "N/A")
+            print("authed", logtoClient.refreshToken ?? "N/A")
         }
     }
 
@@ -72,6 +72,11 @@ struct ContentView: View {
                         }
                     }
                 }
+            }
+
+            Button("Sign Out") {
+                client.signOut()
+                isAuthenticated = false
             }
         }
     }

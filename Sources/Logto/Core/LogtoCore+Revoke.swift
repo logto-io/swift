@@ -7,7 +7,7 @@
 
 import Foundation
 
-extension LogtoCore {
+public extension LogtoCore {
     static func revoke(
         useSession session: NetworkSession = URLSession.shared,
         token: String,
@@ -15,16 +15,17 @@ extension LogtoCore {
         clientId: String,
         completion: @escaping HttpEmptyCompletion
     ) {
-        let body: [String: Any] = [
+        let body: [String: String?] = [
             "token": token,
             "client_id": clientId,
         ]
 
-        do {
-            let data = try JSONSerialization.data(withJSONObject: body)
-            LogtoRequest.post(useSession: session, endpoint: revocationEndpoint, body: data, completion: completion)
-        } catch {
-            completion(error)
-        }
+        LogtoRequest.post(
+            useSession: session,
+            endpoint: revocationEndpoint,
+            headers: postHeaders,
+            body: body.urlParamEncoded.data(using: .utf8),
+            completion: completion
+        )
     }
 }
