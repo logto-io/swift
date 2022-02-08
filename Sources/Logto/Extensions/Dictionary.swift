@@ -13,6 +13,6 @@ extension Dictionary where Key == String, Value == String? {
         components.queryItems = compactMapValues { $0 }.compactMap {
             URLQueryItem(name: $0, value: $1)
         }
-        return components.query ?? ""
+        return components.percentEncodedQuery ?? ""
     }
 }

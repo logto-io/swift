@@ -39,7 +39,7 @@ extension LogtoClient {
                 return
             }
 
-            getAccessToken(scopes: []) { token, error in
+            getAccessToken(for: nil) { token, error in
                 guard let token = token else {
                     completion(nil, Errors.UserInfo(type: .unableToGetAccessToken, innerError: error))
                     return

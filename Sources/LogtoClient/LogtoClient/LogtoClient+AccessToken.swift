@@ -8,7 +8,7 @@
 import Foundation
 import Logto
 
-extension LogtoClient {
+public extension LogtoClient {
     class AccessTokenMap {
         var client: LogtoClient?
         internal var accessTokenMap: [String: AccessToken] = [:]
@@ -39,16 +39,15 @@ extension LogtoClient {
         }
     }
 
-    func buildAccessTokenKey(for resource: String = "", scopes: [String]) -> String {
-        "\(scopes.sorted().joined(separator: " "))@\(resource)"
+    func buildAccessTokenKey(for resource: String?, scopes: [String]) -> String {
+        "\(scopes.sorted().joined(separator: " "))@\(resource ?? "")"
     }
 
     func getAccessToken(
-        for resource: String = "",
-        scopes: [String],
+        for resource: String?,
         completion: @escaping Completion<String, Errors.AccessToken>
     ) {
-        let key = buildAccessTokenKey(for: resource, scopes: scopes)
+        let key = buildAccessTokenKey(for: resource, scopes: [])
 
         // Cached access token is still valid
         if let accessToken = accessTokenMap[key], Date().timeIntervalSince1970 < accessToken.expiresAt {
@@ -73,7 +72,7 @@ extension LogtoClient {
                 tokenEndpoint: oidcConfig.tokenEndpoint,
                 clientId: self.logtoConfig.clientId,
                 resource: resource,
-                scopes: scopes
+                scopes: []
             ) { response, error in
                 guard let response = response else {
                     completion(nil, Errors.AccessToken(type: .unableToFetchTokenByRefreshToken, innerError: error))

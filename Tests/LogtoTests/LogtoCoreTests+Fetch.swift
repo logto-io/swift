@@ -76,7 +76,9 @@ extension LogtoCoreTests {
             useSession: NetworkSessionMock.shared,
             byRefreshToken: "123",
             tokenEndpoint: "/token:bad",
-            clientId: "foo"
+            clientId: "foo",
+            resource: nil,
+            scopes: []
         ) {
             XCTAssertNil($0)
             XCTAssertNotNil($1)
