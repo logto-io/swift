@@ -13,13 +13,14 @@ struct ContentView: View {
     @State var isAuthenticated: Bool
     @State var authError: Error?
 
+    let resource = "https://api.logto.io"
     let client: LogtoClient?
 
     init() {
         guard let config = try? LogtoConfig(
             endpoint: "https://logto.dev",
             clientId: "z4skkM1Z8LLVSl1JCmVZO",
-            resources: ["https://api.logto.io"]
+            resources: [resource]
         ) else {
             client = nil
             isAuthenticated = false
@@ -80,10 +81,27 @@ struct ContentView: View {
             }
 
             Button("Fetch Userinfo") {
-                client.fetchUserInfo { userInfo, _ in
+                client.fetchUserInfo { userInfo, error in
+                    if let error = error?.innerError as? LogtoClient.Errors.AccessToken,
+                       let error = error.innerError as? LogtoErrors.Response,
+                       case let LogtoErrors.Response.withCode(
+                           _,
+                           _,
+                           data
+                       ) = error, let data = data
+                    {
+                        print(String(decoding: data, as: UTF8.self))
+                    }
+
                     if let userInfo = userInfo {
                         print(userInfo)
                     }
+                }
+            }
+
+            Button("Fetch access token for \(resource)") {
+                client.getAccessToken(for: resource) {
+                    print($0 ?? "N/A", $1 ?? "N/A")
                 }
             }
         }

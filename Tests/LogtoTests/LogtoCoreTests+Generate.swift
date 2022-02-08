@@ -83,7 +83,7 @@ extension LogtoCoreTests {
         try validateBaseInformation(url: url1)
         XCTAssertEqual(
             url1.query,
-            "client_id=foo&redirect_uri=logto://sign-in/redirect&code_challenge=\(codeChallenge)&code_challenge_method=S256&state=\(state)&scope=offline_access%20openid&response_type=code&prompt=consent&resource%5B%5D=https://api.logto.dev/"
+            "client_id=foo&redirect_uri=logto://sign-in/redirect&code_challenge=\(codeChallenge)&code_challenge_method=S256&state=\(state)&scope=offline_access%20openid&response_type=code&prompt=consent&resource=https://api.logto.dev/"
         )
 
         let url2 = try LogtoCore.generateSignInUri(
@@ -97,7 +97,7 @@ extension LogtoCoreTests {
         try validateBaseInformation(url: url2)
         XCTAssertEqual(
             url2.query,
-            "client_id=foo&redirect_uri=logto://sign-in/redirect&code_challenge=\(codeChallenge)&code_challenge_method=S256&state=\(state)&scope=offline_access%20openid&response_type=code&prompt=consent&resource%5B%5D=https://api.logto.dev/&resource%5B%5D=bar"
+            "client_id=foo&redirect_uri=logto://sign-in/redirect&code_challenge=\(codeChallenge)&code_challenge_method=S256&state=\(state)&scope=offline_access%20openid&response_type=code&prompt=consent&resource=https://api.logto.dev/&resource=bar"
         )
     }
 

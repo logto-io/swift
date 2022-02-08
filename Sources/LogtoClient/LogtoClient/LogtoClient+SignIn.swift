@@ -33,12 +33,11 @@ public extension LogtoClient {
                 case let .success(response):
                     idToken = response.idToken
                     refreshToken = response.refreshToken
-                    accessTokenMap[buildAccessTokenKey(scopes: [])] = AccessToken(
+                    accessTokenMap[buildAccessTokenKey(for: nil, scopes: [])] = AccessToken(
                         token: response.accessToken,
                         scope: response.scope,
-                        expiresAt: Int64(Date().timeIntervalSince1970 * 1000) + response.expiresIn
+                        expiresAt: Date().timeIntervalSince1970 + TimeInterval(response.expiresIn)
                     )
-                    print("success", response)
                     completion(.success)
                 }
             }

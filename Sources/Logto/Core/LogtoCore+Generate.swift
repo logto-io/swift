@@ -43,7 +43,7 @@ public extension LogtoCore {
             URLQueryItem(name: "prompt", value: LogtoCore.prompt),
         ]
         let resourceQueryItems = resources.map {
-            URLQueryItem(name: "resource[]", value: $0)
+            URLQueryItem(name: "resource", value: $0)
         }
 
         components.queryItems = (baseQueryItems + resourceQueryItems).filter { $0.value != "" }

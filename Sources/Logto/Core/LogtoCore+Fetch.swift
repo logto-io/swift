@@ -58,7 +58,6 @@ public extension LogtoCore {
         codeVerifier: String,
         tokenEndpoint: String,
         clientId: String,
-        resource: String? = nil,
         redirectUri: String,
         completion: @escaping HttpCompletion<CodeTokenResponse>
     ) {
@@ -67,7 +66,6 @@ public extension LogtoCore {
             "code": code,
             "code_verifier": codeVerifier,
             "client_id": clientId,
-            "resource[]": resource,
             "redirect_uri": redirectUri,
         ]
 
@@ -95,15 +93,15 @@ public extension LogtoCore {
         byRefreshToken refreshToken: String,
         tokenEndpoint: String,
         clientId: String,
-        resource: String? = nil,
-        scopes: [String] = [],
-        completion: @escaping HttpCompletion<CodeTokenResponse>
+        resource: String?,
+        scopes: [String],
+        completion: @escaping HttpCompletion<RefreshTokenTokenResponse>
     ) {
         let body: [String: String?] = [
             "grant_type": TokenGrantType.refreshToken.rawValue,
             "refresh_token": refreshToken,
             "client_id": clientId,
-            "resource[]": resource,
+            "resource": resource,
             "scope": scopes.joined(separator: " "),
         ]
 

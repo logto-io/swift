@@ -96,7 +96,6 @@ public struct LogtoSignInSession {
                 codeVerifier: codeVerifier,
                 tokenEndpoint: oidcConfig.tokenEndpoint,
                 clientId: logtoConfig.clientId,
-                resource: "https://api.logto.io", // TO-DO: remove this line after core fixed
                 redirectUri: redirectUri.absoluteString
             ) {
                 guard let tokenResponse = $0 else {
