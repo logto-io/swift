@@ -84,11 +84,9 @@ public extension LogtoClient {
                     scope: response.scope,
                     expiresAt: Date().timeIntervalSince1970 + TimeInterval(response.expiresIn)
                 )
-                self.accessTokenMap[key] = accessToken
 
-                response.refreshToken.map {
-                    self.refreshToken = $0
-                }
+                self.accessTokenMap[key] = accessToken
+                self.refreshToken = response.refreshToken
 
                 response.idToken.map {
                     self.idToken = $0
