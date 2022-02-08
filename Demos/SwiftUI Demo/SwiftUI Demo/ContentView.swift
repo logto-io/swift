@@ -52,25 +52,25 @@ struct ContentView: View {
                 print(try! client.getIdTokenClaims())
             }
             Button("Sign In") {
-                client.signInWithBrowser(redirectUri: "io.logto.SwiftUI-Demo://callback") {
-                    switch $0 {
-                    case .success:
+                client.signInWithBrowser(redirectUri: "io.logto.SwiftUI-Demo://callback") { error in
+                    guard let error = error else {
                         isAuthenticated = true
                         authError = nil
-                    case let .failure(error):
-                        isAuthenticated = false
-                        authError = error
-                        print("failure", error)
+                        return
+                    }
 
-                        if let error = error.innerError as? LogtoErrors.Response,
-                           case let LogtoErrors.Response.withCode(
-                               _,
-                               _,
-                               data
-                           ) = error, let data = data
-                        {
-                            print(String(decoding: data, as: UTF8.self))
-                        }
+                    isAuthenticated = false
+                    authError = error
+                    print("failure", error)
+
+                    if let error = error.innerError as? LogtoErrors.Response,
+                       case let LogtoErrors.Response.withCode(
+                           _,
+                           _,
+                           data
+                       ) = error, let data = data
+                    {
+                        print(String(decoding: data, as: UTF8.self))
                     }
                 }
             }

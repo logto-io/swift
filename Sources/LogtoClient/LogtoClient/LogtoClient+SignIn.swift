@@ -10,15 +10,15 @@ import Foundation
 import Logto
 
 public extension LogtoClient {
-    func signInWithBrowser(redirectUri: String, completion: @escaping LogtoCompletion<Errors.SignIn>) {
+    func signInWithBrowser(redirectUri: String, completion: @escaping EmptyCompletion<Errors.SignIn>) {
         guard let redirectUri = URL(string: redirectUri) else {
-            completion(.failure(error: Errors.SignIn(type: .unableToConstructRedirectUri, innerError: nil)))
+            completion(Errors.SignIn(type: .unableToConstructRedirectUri, innerError: nil))
             return
         }
 
         fetchOidcConfig { [self] oidcConfig, error in
             guard let oidcConfig = oidcConfig else {
-                completion(.failure(error: Errors.SignIn(type: .unableToFetchOidcConfig, innerError: error)))
+                completion(Errors.SignIn(type: .unableToFetchOidcConfig, innerError: error))
                 return
             }
 
@@ -29,7 +29,7 @@ public extension LogtoClient {
             ) {
                 switch $0 {
                 case let .failure(error):
-                    completion(.failure(error: error))
+                    completion(error)
                 case let .success(response):
                     idToken = response.idToken
                     refreshToken = response.refreshToken
@@ -38,7 +38,7 @@ public extension LogtoClient {
                         scope: response.scope,
                         expiresAt: Date().timeIntervalSince1970 + TimeInterval(response.expiresIn)
                     )
-                    completion(.success)
+                    completion(nil)
                 }
             }
 
