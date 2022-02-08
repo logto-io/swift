@@ -9,7 +9,7 @@ import Foundation
 
 public extension LogtoCore {
     static let postHeaders: [String: String] = [
-        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "Content-Type": "application/x-www-form-urlencoded",
     ]
 
     // MARK: OIDC Config
