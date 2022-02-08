@@ -19,6 +19,8 @@ public extension LogtoCore {
         public let tokenEndpoint: String
         public let endSessionEndpoint: String
         public let revocationEndpoint: String
+        // Use `userinfo` instead of `userInfo` per OIDC Discovery spec
+        // https://openid.net/specs/openid-connect-discovery-1_0.html [3. OpenID Provider Metadata]
         public let userinfoEndpoint: String
         public let jwksUri: String
         public let issuer: String
