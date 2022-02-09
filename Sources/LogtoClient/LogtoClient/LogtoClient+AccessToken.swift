@@ -9,36 +9,6 @@ import Foundation
 import Logto
 
 public extension LogtoClient {
-    class AccessTokenMap {
-        var client: LogtoClient?
-        internal var accessTokenMap: [String: AccessToken] = [:]
-
-        var json: Data? {
-            try? LogtoClient.jsonEncoder.encode(accessTokenMap)
-        }
-
-        subscript(key: String) -> AccessToken? {
-            get {
-                accessTokenMap[key]
-            }
-
-            set {
-                accessTokenMap[key] = newValue
-                client?.saveToKeychain(forKey: .accessTokenMap)
-            }
-        }
-
-        func clear() {
-            accessTokenMap = [:]
-            client?.saveToKeychain(forKey: .accessTokenMap)
-        }
-
-        func assign(map: [String: AccessToken]) {
-            accessTokenMap = map
-            client?.saveToKeychain(forKey: .accessTokenMap)
-        }
-    }
-
     func buildAccessTokenKey(for resource: String?, scopes: [String]) -> String {
         "\(scopes.sorted().joined(separator: " "))@\(resource ?? "")"
     }

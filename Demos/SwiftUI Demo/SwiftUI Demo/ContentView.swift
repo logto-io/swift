@@ -18,7 +18,7 @@ struct ContentView: View {
 
     init() {
         guard let config = try? LogtoConfig(
-            endpoint: "https://logto.dev",
+            endpoint: "http://localhost:3001",
             clientId: "z4skkM1Z8LLVSl1JCmVZO",
             resources: [resource]
         ) else {
