@@ -9,7 +9,6 @@ import Foundation
 
 extension LogtoClient {
     enum KeyName: String {
-        case accessTokenMap = "access_token_map"
         case idToken = "id_token"
         case refreshToken = "refresh_token"
     }
@@ -23,12 +22,6 @@ extension LogtoClient {
             return
         }
 
-        if let data = keychain[data: KeyName.accessTokenMap.rawValue],
-           let tokenMap = try? LogtoClient.jsonDecoder.decode([String: AccessToken].self, from: data)
-        {
-            accessTokenMap.assign(map: tokenMap)
-        }
-
         idToken = keychain[KeyName.idToken.rawValue]
         refreshToken = keychain[KeyName.refreshToken.rawValue]
     }
@@ -39,10 +32,6 @@ extension LogtoClient {
         }
 
         switch key {
-        case .accessTokenMap:
-            if let data = accessTokenMap.json {
-                keychain[data: key.rawValue] = data
-            }
         case .idToken:
             keychain[key.rawValue] = idToken
         case .refreshToken:

@@ -19,7 +19,7 @@ public class LogtoClient {
 
     // MARK: Internal Variables
 
-    internal var accessTokenMap = AccessTokenMap()
+    internal var accessTokenMap = [String: AccessToken]()
 
     // MARK: Public Variables
 
@@ -57,7 +57,6 @@ public class LogtoClient {
 
         if config.usingPersistStorage {
             keychain = Keychain(service: LogtoClient.keychainServiceName)
-            accessTokenMap.client = self
             loadFromKeychain()
         } else {
             keychain = nil
