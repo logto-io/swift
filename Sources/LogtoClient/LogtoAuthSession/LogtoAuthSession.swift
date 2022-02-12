@@ -9,7 +9,7 @@ import AuthenticationServices
 import Foundation
 import Logto
 
-public struct LogtoSignInSession {
+public struct LogtoAuthSession {
     public typealias Errors = LogtoClient.Errors
 
     public enum Result {
@@ -47,7 +47,7 @@ public struct LogtoSignInSession {
         self.completion = completion
     }
 
-    public func start() {
+    func start<WebAuthSession: LogtoWebAuthSession>(withSessionType _: WebAuthSession.Type) {
         do {
             let authUri = try LogtoCore.generateSignInUri(
                 authorizationEndpoint: oidcConfig.authorizationEndpoint,
@@ -60,7 +60,7 @@ public struct LogtoSignInSession {
             )
 
             // Create session
-            let session = ASWebAuthenticationSession(url: authUri, callbackURLScheme: redirectUri.scheme) { [self] in
+            let session = WebAuthSession(url: authUri, callbackURLScheme: redirectUri.scheme) { [self] in
                 guard let callbackUri = $0 else {
                     completion(.failure(error: Errors.SignIn(type: .authFailed, innerError: $1)))
                     return
@@ -69,7 +69,7 @@ public struct LogtoSignInSession {
                 handle(callbackUri: callbackUri)
             }
 
-            if #available(iOS 13.0, *) {
+            if #available(iOS 13.0, *), let session = session as? ASWebAuthenticationSession {
                 session.presentationContextProvider = self.authContext
                 session.prefersEphemeralWebBrowserSession = true
             }
@@ -82,6 +82,10 @@ public struct LogtoSignInSession {
         } catch {
             completion(.failure(error: Errors.SignIn(type: .unknownError, innerError: error)))
         }
+    }
+
+    public func start() {
+        start(withSessionType: ASWebAuthenticationSession.self)
     }
 
     func handle(callbackUri: URL) {
