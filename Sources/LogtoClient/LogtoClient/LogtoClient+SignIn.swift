@@ -22,7 +22,7 @@ public extension LogtoClient {
                 return
             }
 
-            let session = LogtoSignInSession(
+            let session = LogtoAuthSession(
                 logtoConfig: logtoConfig,
                 oidcConfig: oidcConfig,
                 redirectUri: redirectUri

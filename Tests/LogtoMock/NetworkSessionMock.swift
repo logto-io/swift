@@ -1,5 +1,5 @@
 //
-//  URLSessionMock.swift
+//  NetworkSessionMock.swift
 //  https://www.swiftbysundell.com/articles/mocking-in-swift/
 //
 //  Created by Gao Sun on 2022/1/19.
