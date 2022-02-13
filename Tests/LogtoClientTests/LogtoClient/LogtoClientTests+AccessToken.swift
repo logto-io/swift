@@ -21,7 +21,7 @@ extension LogtoClientTests {
 
         wait(for: [expectOk], timeout: 1)
     }
-    
+
     func testGetAccessTokenByRefreshToken() throws {
         let client = buildClient()
         let expectOk = expectation(description: "Get access token OK")
@@ -41,7 +41,7 @@ extension LogtoClientTests {
 
         wait(for: [expectOk], timeout: 1)
     }
-    
+
     func testGetAccessTokenUnalbeToFetchOidcConfig() throws {
         let client = buildClient(withOidcEndpoint: "/bad")
         let expectFailure = expectation(description: "Get access token failed")
@@ -54,7 +54,7 @@ extension LogtoClientTests {
 
         wait(for: [expectFailure], timeout: 1)
     }
-    
+
     func testGetAccessTokenUnalbeToFetchTokenByRefreshToken() throws {
         let client = buildClient(withOidcEndpoint: "/oidc_config:bad")
         let expectFailure = expectation(description: "Get access token failed")
