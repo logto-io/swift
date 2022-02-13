@@ -19,6 +19,7 @@ public struct LogtoAuthSession {
 
     public typealias Completion = (Result) -> Void
 
+    let session: NetworkSession
     let authContext: LogtoAuthContext
     let state: String
     let codeVerifier: String
@@ -31,6 +32,7 @@ public struct LogtoAuthSession {
     internal var callbackUri: URL?
 
     init(
+        useSession session: NetworkSession = URLSession.shared,
         logtoConfig: LogtoConfig,
         oidcConfig: LogtoCore.OidcConfigResponse,
         redirectUri: URL,
@@ -41,6 +43,7 @@ public struct LogtoAuthSession {
         codeVerifier = LogtoUtilities.generateCodeVerifier()
         codeChallenge = LogtoUtilities.generateCodeChallenge(codeVerifier: codeVerifier)
 
+        self.session = session
         self.logtoConfig = logtoConfig
         self.oidcConfig = oidcConfig
         self.redirectUri = redirectUri
@@ -96,6 +99,7 @@ public struct LogtoAuthSession {
                 state: state
             )
             LogtoCore.fetchToken(
+                useSession: session,
                 byAuthorizationCode: code,
                 codeVerifier: codeVerifier,
                 tokenEndpoint: oidcConfig.tokenEndpoint,
