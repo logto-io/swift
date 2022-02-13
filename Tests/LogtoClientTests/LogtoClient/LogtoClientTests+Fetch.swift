@@ -24,7 +24,7 @@ extension LogtoClientTests {
 
     func testFetchOidcConfigFailed() throws {
         let client = LogtoClient(
-            useConfig: try LogtoConfig(endpoint: "/oidc_config:bad", clientId: "foo"),
+            useConfig: try LogtoConfig(endpoint: "/bad", clientId: "foo"),
             session: NetworkSessionMock.shared
         )
         let expectFailed = expectation(description: "Fetch OpenID config failed")

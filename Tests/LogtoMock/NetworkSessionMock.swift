@@ -23,14 +23,26 @@ public class NetworkSessionMock: NetworkSession {
             case "oidc_config:good":
                 completion(Data("""
                     {
-                        "authorization_endpoint": "https://logto.dev/oidc/auth",
-                        "token_endpoint": "https://logto.dev/oidc/token",
-                        "end_session_endpoint": "https://logto.dev/oidc/session/end",
-                        "revocation_endpoint": "https://logto.dev/oidc/token/revocation",
-                        "userinfo_endpoint": "https://logto.dev/oidc/me",
-                        "jwks_uri": "https://logto.dev/oidc/jwks",
+                        "authorization_endpoint": "https://logto.dev/auth:good",
+                        "token_endpoint": "https://logto.dev/token:good",
+                        "end_session_endpoint": "https://logto.dev/end:good",
+                        "revocation_endpoint": "https://logto.dev/revoke:good",
+                        "userinfo_endpoint": "https://logto.dev/me:good",
+                        "jwks_uri": "https://logto.dev/jwks:good",
                         "issuer": "http://localhost:443/oidc"
                     }
+                """.utf8), nil)
+            case "oidc_config:bad":
+                completion(Data("""
+                   {
+                       "authorization_endpoint": "https://logto.dev/auth:bad",
+                       "token_endpoint": "https://logto.dev/token:bad",
+                       "end_session_endpoint": "https://logto.dev/end:bad",
+                       "revocation_endpoint": "https://logto.dev/revoke:bad",
+                       "userinfo_endpoint": "https://logto.dev/me:bad",
+                       "jwks_uri": "https://logto.dev/jwks:bad",
+                       "issuer": "http://localhost:443/oidc"
+                   }
                 """.utf8), nil)
             case "user":
                 guard request.value(forHTTPHeaderField: "Authorization") == "Bearer good" else {

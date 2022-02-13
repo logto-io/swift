@@ -10,7 +10,13 @@ import Logto
 
 public extension LogtoClient {
     func signOut(completion: EmptyCompletion<Errors.SignOut>? = nil) {
-        if let refreshToken = refreshToken {
+        let tokenToRevoke = refreshToken
+        
+        accessTokenMap = [:]
+        refreshToken = nil
+        idToken = nil
+        
+        if let token = tokenToRevoke {
             fetchOidcConfig { [self] oidcConfig, error in
                 guard let oidcConfig = oidcConfig else {
                     completion?(Errors.SignOut(type: .unableToFetchOidcConfig, innerError: error))
@@ -18,7 +24,8 @@ public extension LogtoClient {
                 }
 
                 LogtoCore.revoke(
-                    token: refreshToken,
+                    useSession: networkSession,
+                    token: token,
                     revocationEndpoint: oidcConfig.revocationEndpoint,
                     clientId: logtoConfig.clientId
                 ) {
@@ -31,9 +38,5 @@ public extension LogtoClient {
                 }
             }
         }
-
-        accessTokenMap = [:]
-        refreshToken = nil
-        idToken = nil
     }
 }

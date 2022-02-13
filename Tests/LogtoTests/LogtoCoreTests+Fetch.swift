@@ -13,7 +13,7 @@ extension LogtoCoreTests {
             expectOk.fulfill()
         }
 
-        LogtoCore.fetchOidcConfig(useSession: NetworkSessionMock.shared, endpoint: "/oidc_config:bad") {
+        LogtoCore.fetchOidcConfig(useSession: NetworkSessionMock.shared, endpoint: "/bad") {
             XCTAssertNil($0)
             XCTAssertNotNil($1)
             expectFailed.fulfill()
