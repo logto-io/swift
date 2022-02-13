@@ -16,12 +16,12 @@ private struct LogtoWebAuthSessionMock: LogtoWebAuthSession {
     }
 
     func start() -> Bool {
-        guard url.path != "/canceled" else {
+        switch url.path {
+        case "/canceled":
             completionHandler(nil, ASWebAuthenticationSessionError(.canceledLogin))
-            return true
+        default:
+            completionHandler(redirectUri, nil)
         }
-
-        completionHandler(redirectUri, nil)
 
         return true
     }
