@@ -19,7 +19,7 @@ extension LogtoClientTests {
 
     func testSignOutUnableToFetchOidcConfig() throws {
         let client = buildClient(withOidcEndpoint: "/bad", withToken: true)
-        let expectFailure = expectation(description: "Sign out OK")
+        let expectFailure = expectation(description: "Sign out failed")
 
         client.signOut {
             XCTAssertEqual(($0!).type, .unableToFetchOidcConfig)
@@ -34,7 +34,7 @@ extension LogtoClientTests {
 
     func testSignOutUnableToRevokeToken() throws {
         let client = buildClient(withOidcEndpoint: "/oidc_config:bad", withToken: true)
-        let expectFailure = expectation(description: "Sign out OK")
+        let expectFailure = expectation(description: "Sign out failed")
 
         client.signOut {
             XCTAssertEqual(($0!).type, .unableToRevokeToken)
