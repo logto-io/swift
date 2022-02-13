@@ -38,6 +38,7 @@ public extension LogtoClient {
             }
 
             LogtoCore.fetchToken(
+                useSession: self.networkSession,
                 byRefreshToken: refreshToken,
                 tokenEndpoint: oidcConfig.tokenEndpoint,
                 clientId: self.logtoConfig.clientId,
