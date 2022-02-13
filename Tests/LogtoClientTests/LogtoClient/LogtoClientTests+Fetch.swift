@@ -90,11 +90,11 @@ extension LogtoClientTests {
         let client = buildClient(withOidcEndpoint: "/oidc_config:good")
         let expectFailure = expectation(description: "Fetch user info failed")
 
-        client
-            .accessTokenMap[client.buildAccessTokenKey(for: nil, scopes: [])] = AccessToken(token: "bad", scope: "",
-                                                                                            expiresAt: Date()
-                                                                                                .timeIntervalSince1970 +
-                                                                                                1000)
+        client.accessTokenMap[client.buildAccessTokenKey(for: nil, scopes: [])] = AccessToken(
+            token: "bad",
+            scope: "",
+            expiresAt: Date().timeIntervalSince1970 + 1000
+        )
 
         client.fetchUserInfo {
             XCTAssertNil($0)
@@ -110,10 +110,11 @@ extension LogtoClientTests {
         let expectOk = expectation(description: "Fetch user info OK")
 
         client
-            .accessTokenMap[client.buildAccessTokenKey(for: nil, scopes: [])] = AccessToken(token: "good", scope: "",
-                                                                                            expiresAt: Date()
-                                                                                                .timeIntervalSince1970 +
-                                                                                                1000)
+            .accessTokenMap[client.buildAccessTokenKey(for: nil, scopes: [])] = AccessToken(
+                token: "good",
+                scope: "",
+                expiresAt: Date().timeIntervalSince1970 + 1000
+            )
 
         client.fetchUserInfo {
             XCTAssertNotNil($0)
