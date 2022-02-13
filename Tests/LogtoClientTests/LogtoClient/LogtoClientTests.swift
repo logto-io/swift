@@ -1,3 +1,4 @@
+import Logto
 @testable import LogtoClient
 import LogtoMock
 import XCTest
@@ -5,11 +6,9 @@ import XCTest
 final class LogtoClientTests: XCTestCase {
     func buildClient(withOidcEndpoint endpoint: String = "/oidc_config:good", withToken: Bool = false) -> LogtoClient {
         let client = LogtoClient(
-            useConfig: try! LogtoConfig(endpoint: endpoint, clientId: "foo"),
+            useConfig: try! LogtoConfig(endpoint: endpoint, clientId: "foo", usingPersistStorage: false),
             session: NetworkSessionMock.shared
         )
-        
-        try! client.keychain?.removeAll()
 
         if withToken {
             client.refreshToken = "foo"
@@ -21,13 +20,38 @@ final class LogtoClientTests: XCTestCase {
 
         return client
     }
-    
+
     func testIsAuthenticated() {
         let client = buildClient()
-        
+
         XCTAssertFalse(client.isAuthenticated)
-        
+
         client.idToken = "foo"
         XCTAssertTrue(client.isAuthenticated)
+    }
+
+    func testGetIdTokenClaims() {
+        let client = buildClient()
+
+        XCTAssertThrowsError(try client.getIdTokenClaims()) {
+            XCTAssertEqual($0 as? LogtoClient.Errors.IdToken, .notAuthenticated)
+        }
+
+        client
+            .idToken =
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiYXVkIjoiZm9vIiwiaXNzIjoiYmFyIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE1MTYyMzkwMjJ9.t2LDedv_3AGjdOnrZuBKl83HfnD1aapuSWbPVIhwecc"
+
+        XCTAssertEqual(
+            try! client.getIdTokenClaims(),
+            try! JSONDecoder().decode(IdTokenClaims.self, from: Data("""
+                {
+                    "sub": "1234567890",
+                    "aud": "foo",
+                    "iss": "bar",
+                    "iat": 1516239022,
+                    "exp": 1516239022
+                }
+            """.utf8))
+        )
     }
 }
