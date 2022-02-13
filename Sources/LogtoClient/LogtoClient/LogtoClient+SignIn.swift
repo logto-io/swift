@@ -9,8 +9,12 @@ import AuthenticationServices
 import Foundation
 import Logto
 
-public extension LogtoClient {
-    func signInWithBrowser(redirectUri: String, completion: @escaping EmptyCompletion<Errors.SignIn>) {
+extension LogtoClient {
+    func signInWithBrowser<AuthSession: LogtoAuthSession>(
+        authSessionType _: AuthSession.Type,
+        redirectUri: String,
+        completion: @escaping EmptyCompletion<Errors.SignIn>
+    ) {
         guard let redirectUri = URL(string: redirectUri) else {
             completion(Errors.SignIn(type: .unableToConstructRedirectUri, innerError: nil))
             return
@@ -22,7 +26,7 @@ public extension LogtoClient {
                 return
             }
 
-            let session = LogtoAuthSession(
+            let session = AuthSession(
                 logtoConfig: logtoConfig,
                 oidcConfig: oidcConfig,
                 redirectUri: redirectUri
@@ -44,5 +48,9 @@ public extension LogtoClient {
 
             session.start()
         }
+    }
+
+    public func signInWithBrowser(redirectUri: String, completion: @escaping EmptyCompletion<Errors.SignIn>) {
+        signInWithBrowser(authSessionType: LogtoAuthSession.self, redirectUri: redirectUri, completion: completion)
     }
 }

@@ -9,7 +9,7 @@ import AuthenticationServices
 import Foundation
 import Logto
 
-public struct LogtoAuthSession {
+public class LogtoAuthSession {
     public typealias Errors = LogtoClient.Errors
 
     public enum Result {
@@ -31,7 +31,7 @@ public struct LogtoAuthSession {
 
     internal var callbackUri: URL?
 
-    init(
+    required init(
         useSession session: NetworkSession = URLSession.shared,
         logtoConfig: LogtoConfig,
         oidcConfig: LogtoCore.OidcConfigResponse,
@@ -105,7 +105,7 @@ public struct LogtoAuthSession {
                 tokenEndpoint: oidcConfig.tokenEndpoint,
                 clientId: logtoConfig.clientId,
                 redirectUri: redirectUri.absoluteString
-            ) {
+            ) { [self] in
                 guard let tokenResponse = $0 else {
                     completion(.failure(error: Errors.SignIn(type: .unableToFetchToken, innerError: $1)))
                     return

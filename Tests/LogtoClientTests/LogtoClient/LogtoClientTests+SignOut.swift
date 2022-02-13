@@ -1,25 +1,9 @@
 @testable import LogtoClient
-import LogtoMock
 import XCTest
 
 extension LogtoClientTests {
-    func buildClient(withOidcEndpoint endpoint: String = "/oidc_config:good") -> LogtoClient {
-        let client = LogtoClient(
-            useConfig: try! LogtoConfig(endpoint: endpoint, clientId: "foo"),
-            session: NetworkSessionMock.shared
-        )
-
-        client.refreshToken = "foo"
-        client.idToken = "bar"
-        client.accessTokenMap = [
-            "scope@resource": AccessToken(token: "", scope: "", expiresAt: 1),
-        ]
-
-        return client
-    }
-
     func testSignOutOk() throws {
-        let client = buildClient()
+        let client = buildClient(withToken: true)
         let expectOk = expectation(description: "Sign out OK")
 
         client.signOut {
@@ -34,7 +18,7 @@ extension LogtoClientTests {
     }
 
     func testSignOutUnableToFetchOidcConfig() throws {
-        let client = buildClient(withOidcEndpoint: "/bad")
+        let client = buildClient(withOidcEndpoint: "/bad", withToken: true)
         let expectFailure = expectation(description: "Sign out OK")
 
         client.signOut {
@@ -49,7 +33,7 @@ extension LogtoClientTests {
     }
 
     func testSignOutUnableToRevokeToken() throws {
-        let client = buildClient(withOidcEndpoint: "/oidc_config:bad")
+        let client = buildClient(withOidcEndpoint: "/oidc_config:bad", withToken: true)
         let expectFailure = expectation(description: "Sign out OK")
 
         client.signOut {

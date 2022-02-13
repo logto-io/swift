@@ -1,13 +1,9 @@
 @testable import LogtoClient
-import LogtoMock
 import XCTest
 
 extension LogtoClientTests {
     func testFetchOidcConfigOk() throws {
-        let client = LogtoClient(
-            useConfig: try LogtoConfig(endpoint: "/oidc_config:good", clientId: "foo"),
-            session: NetworkSessionMock.shared
-        )
+        let client = buildClient()
         let expectOk = expectation(description: "Fetch OpenID config OK")
 
         XCTAssertNil(client.oidcConfig)
@@ -23,10 +19,7 @@ extension LogtoClientTests {
     }
 
     func testFetchOidcConfigFailed() throws {
-        let client = LogtoClient(
-            useConfig: try LogtoConfig(endpoint: "/bad", clientId: "foo"),
-            session: NetworkSessionMock.shared
-        )
+        let client = buildClient(withOidcEndpoint: "/bad")
         let expectFailed = expectation(description: "Fetch OpenID config failed")
 
         XCTAssertNil(client.oidcConfig)
