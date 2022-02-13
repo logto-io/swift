@@ -44,7 +44,7 @@ extension LogtoClientTests {
 
     func testSignInUnableToConstructRedirectUri() throws {
         let client = buildClient()
-        let expectFailure = expectation(description: "Sign in failure")
+        let expectFailure = expectation(description: "Sign in failed")
 
         client.signInWithBrowser(redirectUri: "") {
             XCTAssertEqual($0?.type, .unableToConstructRedirectUri)
@@ -56,7 +56,7 @@ extension LogtoClientTests {
 
     func testSignInUnableToFetchOidcConfig() throws {
         let client = buildClient(withOidcEndpoint: "/bad")
-        let expectFailure = expectation(description: "Sign in failure")
+        let expectFailure = expectation(description: "Sign in failed")
 
         client.signInWithBrowser(redirectUri: "io.logto.dev://callback") {
             XCTAssertEqual($0?.type, .unableToFetchOidcConfig)
@@ -68,7 +68,7 @@ extension LogtoClientTests {
 
     func testSignInUnknownError() throws {
         let client = buildClient()
-        let expectFailure = expectation(description: "Sign in OK")
+        let expectFailure = expectation(description: "Sign in failed")
 
         client.signInWithBrowser(
             authSessionType: LogtoAuthSessionFailureMock.self,

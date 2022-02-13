@@ -46,9 +46,11 @@ extension LogtoClient {
                 }
 
                 LogtoCore
-                    .fetchUserInfo(userInfoEndpoint: oidcConfig.userinfoEndpoint,
-                                   accessToken: token)
-                    { userInfo, error in
+                    .fetchUserInfo(
+                        useSession: networkSession,
+                        userInfoEndpoint: oidcConfig.userinfoEndpoint,
+                        accessToken: token
+                    ) { userInfo, error in
                         guard let userInfo = userInfo else {
                             completion(nil, Errors.UserInfo(type: .unableToFetchUserInfo, innerError: error))
                             return

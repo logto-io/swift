@@ -27,7 +27,7 @@ public class NetworkSessionMock: NetworkSession {
                         "token_endpoint": "https://logto.dev/token:good",
                         "end_session_endpoint": "https://logto.dev/end:good",
                         "revocation_endpoint": "https://logto.dev/revoke:good",
-                        "userinfo_endpoint": "https://logto.dev/me:good",
+                        "userinfo_endpoint": "https://logto.dev/user",
                         "jwks_uri": "https://logto.dev/jwks:good",
                         "issuer": "http://localhost:443/oidc"
                     }
@@ -39,7 +39,7 @@ public class NetworkSessionMock: NetworkSession {
                        "token_endpoint": "https://logto.dev/token:bad",
                        "end_session_endpoint": "https://logto.dev/end:bad",
                        "revocation_endpoint": "https://logto.dev/revoke:bad",
-                       "userinfo_endpoint": "https://logto.dev/me:bad",
+                       "userinfo_endpoint": "https://logto.dev/user",
                        "jwks_uri": "https://logto.dev/jwks:bad",
                        "issuer": "http://localhost:443/oidc"
                    }
