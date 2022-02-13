@@ -11,11 +11,11 @@ import Logto
 public extension LogtoClient {
     func signOut(completion: EmptyCompletion<Errors.SignOut>? = nil) {
         let tokenToRevoke = refreshToken
-        
+
         accessTokenMap = [:]
         refreshToken = nil
         idToken = nil
-        
+
         if let token = tokenToRevoke {
             fetchOidcConfig { [self] oidcConfig, error in
                 guard let oidcConfig = oidcConfig else {
