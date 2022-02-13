@@ -8,6 +8,8 @@ final class LogtoClientTests: XCTestCase {
             useConfig: try! LogtoConfig(endpoint: endpoint, clientId: "foo"),
             session: NetworkSessionMock.shared
         )
+        
+        try! client.keychain?.removeAll()
 
         if withToken {
             client.refreshToken = "foo"
@@ -18,5 +20,14 @@ final class LogtoClientTests: XCTestCase {
         }
 
         return client
+    }
+    
+    func testIsAuthenticated() {
+        let client = buildClient()
+        
+        XCTAssertFalse(client.isAuthenticated)
+        
+        client.idToken = "foo"
+        XCTAssertTrue(client.isAuthenticated)
     }
 }
