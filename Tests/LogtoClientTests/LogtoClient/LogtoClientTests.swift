@@ -54,4 +54,13 @@ final class LogtoClientTests: XCTestCase {
             """.utf8))
         )
     }
+
+    func testUsingPersistStorage() {
+        let client = LogtoClient(
+            useConfig: try! LogtoConfig(endpoint: "/", clientId: "foo"),
+            session: NetworkSessionMock.shared
+        )
+
+        XCTAssertNotNil(client.keychain)
+    }
 }
