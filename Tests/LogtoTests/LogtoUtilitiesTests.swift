@@ -4,11 +4,14 @@ import XCTest
 
 final class LogtoUtilitiesTests: XCTestCase {
     func testWithReservedScopes() throws {
-        XCTAssertEqual(LogtoUtilities.withReservedScopes([]), ["offline_access", "openid"])
-        XCTAssertEqual(LogtoUtilities.withReservedScopes(["foo"]), ["foo", "offline_access", "openid"])
+        XCTAssertEqual(LogtoUtilities.withReservedScopes([]).sorted(), ["offline_access", "openid"].sorted())
         XCTAssertEqual(
-            LogtoUtilities.withReservedScopes(["foo", "xyz"]),
-            ["foo", "offline_access", "openid", "xyz"]
+            LogtoUtilities.withReservedScopes(["foo"]).sorted(),
+            ["foo", "offline_access", "openid"].sorted()
+        )
+        XCTAssertEqual(
+            LogtoUtilities.withReservedScopes(["foo", "xyz"]).sorted(),
+            ["foo", "offline_access", "openid", "xyz"].sorted()
         )
     }
 

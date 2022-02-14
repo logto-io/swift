@@ -20,6 +20,27 @@ extension LogtoCoreTests {
         XCTAssertEqual(url.path, "/oidc")
     }
 
+    func sortByName(a: URLQueryItem, b: URLQueryItem) -> Bool {
+        a.name < b.name || a.name == b.name && (a.value ?? "") < (b.value ?? "")
+    }
+
+    func validate(url: URL, queryItems: [URLQueryItem]) -> Bool {
+        let components = URLComponents(url: url, resolvingAgainstBaseURL: true)
+
+        let itemsA = components?.queryItems?.sorted(by: sortByName) ?? []
+        let itemsB = queryItems.sorted(by: sortByName)
+
+        return itemsA.elementsEqual(itemsB) {
+            switch $0.name {
+            case "scope":
+                return ($0.value?.split(separator: " ") ?? []).sorted() == ($1.value?.split(separator: " ") ?? [])
+                    .sorted()
+            default:
+                return $0 == $1
+            }
+        }
+    }
+
     func testGenerateSignInUri() throws {
         let codeChallenge = LogtoUtilities.generateCodeChallenge(codeVerifier: codeVerifier)
 
@@ -31,10 +52,17 @@ extension LogtoCoreTests {
             state: state
         )
         try validateBaseInformation(url: url)
-        XCTAssertEqual(
-            url.query,
-            "client_id=foo&redirect_uri=logto://sign-in/redirect&code_challenge=\(codeChallenge)&code_challenge_method=S256&state=\(state)&scope=offline_access%20openid&response_type=code&prompt=consent"
-        )
+
+        XCTAssertTrue(validate(url: url, queryItems: [
+            URLQueryItem(name: "client_id", value: "foo"),
+            URLQueryItem(name: "redirect_uri", value: "logto://sign-in/redirect"),
+            URLQueryItem(name: "code_challenge", value: codeChallenge),
+            URLQueryItem(name: "code_challenge_method", value: "S256"),
+            URLQueryItem(name: "state", value: state),
+            URLQueryItem(name: "scope", value: "offline_access openid"),
+            URLQueryItem(name: "response_type", value: "code"),
+            URLQueryItem(name: "prompt", value: "consent"),
+        ]))
     }
 
     func testGenerateSignInUriWithScope() throws {
@@ -49,10 +77,17 @@ extension LogtoCoreTests {
             scopes: ["foo"]
         )
         try validateBaseInformation(url: url1)
-        XCTAssertEqual(
-            url1.query,
-            "client_id=foo&redirect_uri=logto://sign-in/redirect&code_challenge=\(codeChallenge)&code_challenge_method=S256&state=\(state)&scope=foo%20offline_access%20openid&response_type=code&prompt=consent"
-        )
+
+        XCTAssertTrue(validate(url: url1, queryItems: [
+            URLQueryItem(name: "client_id", value: "foo"),
+            URLQueryItem(name: "redirect_uri", value: "logto://sign-in/redirect"),
+            URLQueryItem(name: "code_challenge", value: codeChallenge),
+            URLQueryItem(name: "code_challenge_method", value: "S256"),
+            URLQueryItem(name: "state", value: state),
+            URLQueryItem(name: "scope", value: "foo offline_access openid"),
+            URLQueryItem(name: "response_type", value: "code"),
+            URLQueryItem(name: "prompt", value: "consent"),
+        ]))
 
         let url2 = try LogtoCore.generateSignInUri(
             authorizationEndpoint: authorizationEndpoint,
@@ -63,10 +98,17 @@ extension LogtoCoreTests {
             scopes: ["foo", "bar"]
         )
         try validateBaseInformation(url: url2)
-        XCTAssertEqual(
-            url2.query,
-            "client_id=foo&redirect_uri=logto://sign-in/redirect&code_challenge=\(codeChallenge)&code_challenge_method=S256&state=\(state)&scope=bar%20foo%20offline_access%20openid&response_type=code&prompt=consent"
-        )
+
+        XCTAssertTrue(validate(url: url2, queryItems: [
+            URLQueryItem(name: "client_id", value: "foo"),
+            URLQueryItem(name: "redirect_uri", value: "logto://sign-in/redirect"),
+            URLQueryItem(name: "code_challenge", value: codeChallenge),
+            URLQueryItem(name: "code_challenge_method", value: "S256"),
+            URLQueryItem(name: "state", value: state),
+            URLQueryItem(name: "scope", value: "foo bar offline_access openid"),
+            URLQueryItem(name: "response_type", value: "code"),
+            URLQueryItem(name: "prompt", value: "consent"),
+        ]))
     }
 
     func testGenerateSignInUriWithResource() throws {
@@ -78,13 +120,21 @@ extension LogtoCoreTests {
             redirectUri: URL(string: "logto://sign-in/redirect")!,
             codeChallenge: codeChallenge,
             state: state,
-            resources: ["https://api.logto.dev/"]
+            resources: ["https://api.logto.dev"]
         )
         try validateBaseInformation(url: url1)
-        XCTAssertEqual(
-            url1.query,
-            "client_id=foo&redirect_uri=logto://sign-in/redirect&code_challenge=\(codeChallenge)&code_challenge_method=S256&state=\(state)&scope=offline_access%20openid&response_type=code&prompt=consent&resource=https://api.logto.dev/"
-        )
+
+        XCTAssertTrue(validate(url: url1, queryItems: [
+            URLQueryItem(name: "client_id", value: "foo"),
+            URLQueryItem(name: "redirect_uri", value: "logto://sign-in/redirect"),
+            URLQueryItem(name: "code_challenge", value: codeChallenge),
+            URLQueryItem(name: "code_challenge_method", value: "S256"),
+            URLQueryItem(name: "state", value: state),
+            URLQueryItem(name: "scope", value: "offline_access openid"),
+            URLQueryItem(name: "response_type", value: "code"),
+            URLQueryItem(name: "prompt", value: "consent"),
+            URLQueryItem(name: "resource", value: "https://api.logto.dev"),
+        ]))
 
         let url2 = try LogtoCore.generateSignInUri(
             authorizationEndpoint: authorizationEndpoint,
@@ -92,13 +142,22 @@ extension LogtoCoreTests {
             redirectUri: URL(string: "logto://sign-in/redirect")!,
             codeChallenge: codeChallenge,
             state: state,
-            resources: ["https://api.logto.dev/", "bar"]
+            resources: ["https://api.logto.dev", "bar"]
         )
         try validateBaseInformation(url: url2)
-        XCTAssertEqual(
-            url2.query,
-            "client_id=foo&redirect_uri=logto://sign-in/redirect&code_challenge=\(codeChallenge)&code_challenge_method=S256&state=\(state)&scope=offline_access%20openid&response_type=code&prompt=consent&resource=https://api.logto.dev/&resource=bar"
-        )
+
+        XCTAssertTrue(validate(url: url2, queryItems: [
+            URLQueryItem(name: "client_id", value: "foo"),
+            URLQueryItem(name: "redirect_uri", value: "logto://sign-in/redirect"),
+            URLQueryItem(name: "code_challenge", value: codeChallenge),
+            URLQueryItem(name: "code_challenge_method", value: "S256"),
+            URLQueryItem(name: "state", value: state),
+            URLQueryItem(name: "scope", value: "offline_access openid"),
+            URLQueryItem(name: "response_type", value: "code"),
+            URLQueryItem(name: "prompt", value: "consent"),
+            URLQueryItem(name: "resource", value: "https://api.logto.dev"),
+            URLQueryItem(name: "resource", value: "bar"),
+        ]))
     }
 
     func testGenerateSignOutUri() throws {
@@ -122,6 +181,9 @@ extension LogtoCoreTests {
         XCTAssertEqual(url.scheme, "https")
         XCTAssertEqual(url.host, "logto.dev")
         XCTAssertEqual(url.path, "/oidc/session/end")
-        XCTAssertEqual(url.query, "id_token_hint=\(idToken)&post_logout_redirect_uri=\(postLogoutRedirectUri)")
+        XCTAssertTrue(validate(url: url, queryItems: [
+            URLQueryItem(name: "id_token_hint", value: idToken),
+            URLQueryItem(name: "post_logout_redirect_uri", value: postLogoutRedirectUri),
+        ]))
     }
 }

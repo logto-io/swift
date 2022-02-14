@@ -19,7 +19,7 @@ public enum LogtoUtilities {
     static let reservedScopes = ["openid", "offline_access"]
 
     public static func withReservedScopes(_ scopes: [String]) -> [String] {
-        Array(Set(scopes + reservedScopes)).sorted()
+        Array(Set(scopes + reservedScopes))
     }
 
     public static func generateState() -> String {
