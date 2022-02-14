@@ -46,6 +46,7 @@ extension LogtoClientTests {
         let client = buildClient(withOidcEndpoint: "/bad")
         let expectFailure = expectation(description: "Get access token failed")
 
+        client.refreshToken = "foo"
         client.getAccessToken(for: nil) {
             XCTAssertNil($0)
             XCTAssertEqual($1?.type, .unableToFetchOidcConfig)
@@ -59,6 +60,7 @@ extension LogtoClientTests {
         let client = buildClient(withOidcEndpoint: "/oidc_config:bad")
         let expectFailure = expectation(description: "Get access token failed")
 
+        client.refreshToken = "foo"
         client.getAccessToken(for: nil) {
             XCTAssertNil($0)
             XCTAssertEqual($1?.type, .unableToFetchTokenByRefreshToken)
