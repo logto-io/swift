@@ -24,4 +24,8 @@ jobs:
         working-directory: ./BuildTools
 
       - name: Build & Test
-        run: swift test
+        run: swift test --enable-code-coverage
+      
+      - name: Codecov Report
+        uses: codecov/codecov-action@v2
+        with: flags: swift-sdk
