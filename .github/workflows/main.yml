@@ -25,7 +25,8 @@ jobs:
 
       - name: Build & Test
         run: swift test --enable-code-coverage
-      
+
       - name: Codecov Report
         uses: codecov/codecov-action@v2
-        with: flags: swift-sdk
+        with:
+          flags: swift-sdk
