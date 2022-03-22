@@ -24,4 +24,18 @@ jobs:
         working-directory: ./BuildTools
 
       - name: Build & Test
-        run: swift test
+        run: swift test --enable-code-coverage
+
+      - name: Convert Swift Test Coverage report
+        uses: sersoft-gmbh/swift-coverage-action@v2
+        id: coverage-files
+        with:
+          search-paths: ./.build
+          output: ./.coverage
+          format: lcov
+
+      - name: Codecov Report Upload
+        uses: codecov/codecov-action@v2
+        with:
+          flags: swift-sdk
+          files: ${{join(fromJSON(steps.coverage-files.outputs.files), ',')}}
