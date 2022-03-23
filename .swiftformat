@@ -1,3 +1,4 @@
 --swiftversion 5
 --nospaceoperators ..<, ...
 --maxwidth 120
+--exclude BuildTools
