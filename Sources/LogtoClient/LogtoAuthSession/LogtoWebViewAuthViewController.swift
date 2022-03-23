@@ -8,7 +8,7 @@
 import Foundation
 import WebKit
 
-public class LogtoWebViewAuthViewController: NSViewController {
+public class LogtoWebViewAuthViewController: UnifiedViewController {
     let webView = WKWebView()
     let authSession: LogtoWebViewAuthSession
 
