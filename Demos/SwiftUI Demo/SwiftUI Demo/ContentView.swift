@@ -18,8 +18,8 @@ struct ContentView: View {
 
     init() {
         guard let config = try? LogtoConfig(
-            endpoint: "http://localhost:3001",
-            clientId: "z4skkM1Z8LLVSl1JCmVZO",
+            endpoint: "https://logto.dev",
+            clientId: "R2iRaySQYQlcgUriZW8CZ",
             resources: [resource]
         ) else {
             client = nil
@@ -47,6 +47,7 @@ struct ContentView: View {
                 .foregroundColor(.red)
                 .padding()
         }
+
         if let client = client {
             Button("Print ID Token Claims") {
                 print(try! client.getIdTokenClaims())
