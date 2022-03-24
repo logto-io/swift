@@ -3,23 +3,17 @@ import Logto
 import XCTest
 
 extension LogtoClientTests {
-    func testFetchOidcConfigOk() throws {
+    func testFetchOidcConfigOk() async throws {
         let client = buildClient()
-        let expectOk = expectation(description: "Fetch OpenID config OK")
 
         XCTAssertNil(client.oidcConfig)
 
-        client.fetchOidcConfig {
-            XCTAssertNotNil($0)
-            XCTAssertNil($1)
-            XCTAssertNotNil(client.oidcConfig)
-            expectOk.fulfill()
-        }
-
-        wait(for: [expectOk], timeout: 1)
+        let config = try await client.fetchOidcConfig()
+        XCTAssertNotNil(config)
+        XCTAssertEqual(config, client.oidcConfig)
     }
 
-    func testFetchOidcConfigCachedOk() throws {
+    func testFetchOidcConfigCachedOk() async throws {
         let client = buildClient()
         let mockConfig = try! JSONDecoder().decode(LogtoCore.OidcConfigResponse.self, from: Data("""
             {
@@ -32,63 +26,55 @@ extension LogtoClientTests {
                 "issuer": "7"
             }
         """.utf8))
-        let expectOk = expectation(description: "Fetch OpenID config OK")
 
         client.oidcConfig = mockConfig
-        client.fetchOidcConfig { oidcConfig, _ in
-            XCTAssertEqual(oidcConfig, mockConfig)
-            XCTAssertEqual(client.oidcConfig, mockConfig)
-            expectOk.fulfill()
-        }
-
-        wait(for: [expectOk], timeout: 1)
+        let config = try await client.fetchOidcConfig()
+        XCTAssertEqual(config, mockConfig)
+        XCTAssertEqual(client.oidcConfig, mockConfig)
     }
 
-    func testFetchOidcConfigFailed() throws {
+    func testFetchOidcConfigFailed() async throws {
         let client = buildClient(withOidcEndpoint: "/bad")
-        let expectFailure = expectation(description: "Fetch OpenID config failed")
-
         XCTAssertNil(client.oidcConfig)
 
-        client.fetchOidcConfig {
-            XCTAssertNil($0)
-            XCTAssertNotNil($1)
+        do {
+            _ = try await client.fetchOidcConfig()
+        } catch {
             XCTAssertNil(client.oidcConfig)
-            expectFailure.fulfill()
+            return
         }
 
-        wait(for: [expectFailure], timeout: 1)
+        XCTFail()
     }
 
-    func testFetchUserInfoUnalbeToFetchOidcConfig() throws {
+    func testFetchUserInfoUnalbeToFetchOidcConfig() async throws {
         let client = buildClient(withOidcEndpoint: "/bad")
-        let expectFailure = expectation(description: "Fetch user info failed")
 
-        client.fetchUserInfo {
-            XCTAssertNil($0)
-            XCTAssertEqual($1?.type, .unableToFetchOidcConfig)
-            expectFailure.fulfill()
+        do {
+            _ = try await client.fetchUserInfo()
+        } catch let error as LogtoClient.Errors.OidcConfig {
+            XCTAssertEqual(error.type, .unableToFetchOidcConfig)
+            return
         }
 
-        wait(for: [expectFailure], timeout: 1)
+        XCTFail()
     }
 
-    func testFetchUserInfoUnalbeToGetAccessToken() throws {
+    func testFetchUserInfoUnalbeToGetAccessToken() async throws {
         let client = buildClient(withOidcEndpoint: "/oidc_config:bad")
-        let expectFailure = expectation(description: "Fetch user info failed")
 
-        client.fetchUserInfo {
-            XCTAssertNil($0)
-            XCTAssertEqual($1?.type, .unableToGetAccessToken)
-            expectFailure.fulfill()
+        do {
+            _ = try await client.fetchUserInfo()
+        } catch let error as LogtoClient.Errors.AccessToken {
+            XCTAssertEqual(error.type, .noRefreshTokenFound)
+            return
         }
 
-        wait(for: [expectFailure], timeout: 1)
+        XCTFail()
     }
 
-    func testFetchUserInfoUnableToFetchUserInfo() throws {
+    func testFetchUserInfoUnableToFetchUserInfo() async throws {
         let client = buildClient(withOidcEndpoint: "/oidc_config:good")
-        let expectFailure = expectation(description: "Fetch user info failed")
 
         client.accessTokenMap[client.buildAccessTokenKey(for: nil, scopes: [])] = AccessToken(
             token: "bad",
@@ -96,18 +82,18 @@ extension LogtoClientTests {
             expiresAt: Date().timeIntervalSince1970 + 1000
         )
 
-        client.fetchUserInfo {
-            XCTAssertNil($0)
-            XCTAssertEqual($1?.type, .unableToFetchUserInfo)
-            expectFailure.fulfill()
+        do {
+            _ = try await client.fetchUserInfo()
+        } catch let error as LogtoClient.Errors.UserInfo {
+            XCTAssertEqual(error.type, .unableToFetchUserInfo)
+            return
         }
 
-        wait(for: [expectFailure], timeout: 1)
+        XCTFail()
     }
 
-    func testFetchUserInfoOk() throws {
+    func testFetchUserInfoOk() async throws {
         let client = buildClient(withOidcEndpoint: "/oidc_config:good")
-        let expectOk = expectation(description: "Fetch user info OK")
 
         client
             .accessTokenMap[client.buildAccessTokenKey(for: nil, scopes: [])] = AccessToken(
@@ -116,12 +102,7 @@ extension LogtoClientTests {
                 expiresAt: Date().timeIntervalSince1970 + 1000
             )
 
-        client.fetchUserInfo {
-            XCTAssertNotNil($0)
-            XCTAssertNil($1)
-            expectOk.fulfill()
-        }
-
-        wait(for: [expectOk], timeout: 1)
+        let info = try await client.fetchUserInfo()
+        XCTAssertNotNil(info)
     }
 }

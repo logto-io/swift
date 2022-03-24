@@ -3,9 +3,8 @@ import Logto
 import XCTest
 
 extension LogtoClientTests {
-    func testGetAccessTokenCached() throws {
+    func testGetAccessTokenCached() async throws {
         let client = buildClient()
-        let expectOk = expectation(description: "Get access token OK")
 
         client.accessTokenMap[client.buildAccessTokenKey(for: nil, scopes: [])] = AccessToken(
             token: "foo",
@@ -13,18 +12,12 @@ extension LogtoClientTests {
             expiresAt: Date().timeIntervalSince1970 + 1000
         )
 
-        client.getAccessToken(for: nil) {
-            XCTAssertEqual($0, "foo")
-            XCTAssertNil($1)
-            expectOk.fulfill()
-        }
-
-        wait(for: [expectOk], timeout: 1)
+        let token = try await client.getAccessToken(for: nil)
+        XCTAssertEqual(token, "foo")
     }
 
-    func testGetAccessTokenByRefreshToken() throws {
+    func testGetAccessTokenByRefreshToken() async throws {
         let client = buildClient()
-        let expectOk = expectation(description: "Get access token OK")
 
         client.refreshToken = "bar"
         client.accessTokenMap[client.buildAccessTokenKey(for: "resource1", scopes: [])] = AccessToken(
@@ -33,40 +26,37 @@ extension LogtoClientTests {
             expiresAt: Date().timeIntervalSince1970 - 1
         )
 
-        client.getAccessToken(for: "resource1") {
-            XCTAssertEqual($0, "123")
-            XCTAssertNil($1)
-            expectOk.fulfill()
-        }
-
-        wait(for: [expectOk], timeout: 1)
+        let token = try await client.getAccessToken(for: "resource1")
+        XCTAssertEqual(token, "123")
     }
 
-    func testGetAccessTokenUnalbeToFetchOidcConfig() throws {
+    func testGetAccessTokenUnalbeToFetchOidcConfig() async throws {
         let client = buildClient(withOidcEndpoint: "/bad")
-        let expectFailure = expectation(description: "Get access token failed")
 
         client.refreshToken = "foo"
-        client.getAccessToken(for: nil) {
-            XCTAssertNil($0)
-            XCTAssertEqual($1?.type, .unableToFetchOidcConfig)
-            expectFailure.fulfill()
+
+        do {
+            _ = try await client.getAccessToken(for: nil)
+        } catch let error as LogtoClient.Errors.OidcConfig {
+            XCTAssertEqual(error.type, .unableToFetchOidcConfig)
+            return
         }
 
-        wait(for: [expectFailure], timeout: 1)
+        XCTFail()
     }
 
-    func testGetAccessTokenUnalbeToFetchTokenByRefreshToken() throws {
+    func testGetAccessTokenUnalbeToFetchTokenByRefreshToken() async throws {
         let client = buildClient(withOidcEndpoint: "/oidc_config:bad")
-        let expectFailure = expectation(description: "Get access token failed")
 
         client.refreshToken = "foo"
-        client.getAccessToken(for: nil) {
-            XCTAssertNil($0)
-            XCTAssertEqual($1?.type, .unableToFetchTokenByRefreshToken)
-            expectFailure.fulfill()
+
+        do {
+            _ = try await client.getAccessToken(for: nil)
+        } catch let error as LogtoClient.Errors.AccessToken {
+            XCTAssertEqual(error.type, .unableToFetchTokenByRefreshToken)
+            return
         }
 
-        wait(for: [expectFailure], timeout: 1)
+        XCTFail()
     }
 }

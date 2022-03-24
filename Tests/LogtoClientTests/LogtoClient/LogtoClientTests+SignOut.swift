@@ -2,11 +2,11 @@
 import XCTest
 
 extension LogtoClientTests {
-    func testSignOutOk() throws {
+    func testSignOutOk() async throws {
         let client = buildClient(withToken: true)
         let expectOk = expectation(description: "Sign out OK")
 
-        client.signOut {
+        try await client.signOut {
             XCTAssertNil($0)
             XCTAssertNil(client.refreshToken)
             XCTAssertNil(client.idToken)
@@ -17,26 +17,24 @@ extension LogtoClientTests {
         wait(for: [expectOk], timeout: 1)
     }
 
-    func testSignOutUnableToFetchOidcConfig() throws {
+    func testSignOutUnableToFetchOidcConfig() async throws {
         let client = buildClient(withOidcEndpoint: "/bad", withToken: true)
-        let expectFailure = expectation(description: "Sign out failed")
 
-        client.signOut {
-            XCTAssertEqual(($0!).type, .unableToFetchOidcConfig)
-            XCTAssertNil(client.refreshToken)
-            XCTAssertNil(client.idToken)
-            XCTAssertEqual(client.accessTokenMap.count, 0)
-            expectFailure.fulfill()
+        do {
+            try await client.signOut()
+        } catch let error as LogtoClient.Errors.OidcConfig {
+            XCTAssertEqual(error.type, .unableToFetchOidcConfig)
+            return
         }
 
-        wait(for: [expectFailure], timeout: 1)
+        XCTFail()
     }
 
-    func testSignOutUnableToRevokeToken() throws {
+    func testSignOutUnableToRevokeToken() async throws {
         let client = buildClient(withOidcEndpoint: "/oidc_config:bad", withToken: true)
         let expectFailure = expectation(description: "Sign out failed")
 
-        client.signOut {
+        try await client.signOut {
             XCTAssertEqual(($0!).type, .unableToRevokeToken)
             XCTAssertNil(client.refreshToken)
             XCTAssertNil(client.idToken)
