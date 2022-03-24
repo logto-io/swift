@@ -47,7 +47,7 @@ extension LogtoClient {
 
                 LogtoCore
                     .fetchUserInfo(
-                        useSession: networkSession,
+                        useSession: self.networkSession,
                         userInfoEndpoint: oidcConfig.userinfoEndpoint,
                         accessToken: token
                     ) { userInfo, error in

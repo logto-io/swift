@@ -30,7 +30,7 @@ extension LogtoClient {
                 logtoConfig: logtoConfig,
                 oidcConfig: oidcConfig,
                 redirectUri: redirectUri
-            ) {
+            ) { [self] in
                 switch $0 {
                 case let .failure(error):
                     completion(error)
