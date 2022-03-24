@@ -9,7 +9,7 @@ import Foundation
 import Logto
 
 public extension LogtoClient {
-    func signOut(completion: EmptyCompletion<Errors.SignOut>? = nil) {
+    func signOut(completion: EmptyCompletion<Errors.SignOut>? = nil) async throws {
         let tokenToRevoke = refreshToken
 
         accessTokenMap = [:]
@@ -17,25 +17,20 @@ public extension LogtoClient {
         idToken = nil
 
         if let token = tokenToRevoke {
-            fetchOidcConfig { [self] oidcConfig, error in
-                guard let oidcConfig = oidcConfig else {
-                    completion?(Errors.SignOut(type: .unableToFetchOidcConfig, innerError: error))
+            let oidcConfig = try await fetchOidcConfig()
+
+            LogtoCore.revoke(
+                useSession: networkSession,
+                token: token,
+                revocationEndpoint: oidcConfig.revocationEndpoint,
+                clientId: logtoConfig.clientId
+            ) {
+                guard $0 == nil else {
+                    completion?(Errors.SignOut(type: .unableToRevokeToken, innerError: $0))
                     return
                 }
 
-                LogtoCore.revoke(
-                    useSession: networkSession,
-                    token: token,
-                    revocationEndpoint: oidcConfig.revocationEndpoint,
-                    clientId: logtoConfig.clientId
-                ) {
-                    guard $0 == nil else {
-                        completion?(Errors.SignOut(type: .unableToRevokeToken, innerError: $0))
-                        return
-                    }
-
-                    completion?(nil)
-                }
+                completion?(nil)
             }
         }
     }

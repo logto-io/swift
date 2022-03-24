@@ -24,11 +24,11 @@ class LogtoAuthSessionFailureMock: LogtoAuthSession {
 }
 
 extension LogtoClientTests {
-    func testSignInOk() throws {
+    func testSignInOk() async throws {
         let client = buildClient()
         let expectOk = expectation(description: "Sign in OK")
 
-        client.signInWithBrowser(
+        try await client.signInWithBrowser(
             authSessionType: LogtoAuthSessionSuccessMock.self,
             redirectUri: "io.logto.dev://callback"
         ) {
@@ -42,11 +42,11 @@ extension LogtoClientTests {
         wait(for: [expectOk], timeout: 1)
     }
 
-    func testSignInUnableToConstructRedirectUri() throws {
+    func testSignInUnableToConstructRedirectUri() async throws {
         let client = buildClient()
         let expectFailure = expectation(description: "Sign in failed")
 
-        client.signInWithBrowser(redirectUri: "") {
+        try await client.signInWithBrowser(redirectUri: "") {
             XCTAssertEqual($0?.type, .unableToConstructRedirectUri)
             expectFailure.fulfill()
         }
@@ -54,23 +54,24 @@ extension LogtoClientTests {
         wait(for: [expectFailure], timeout: 1)
     }
 
-    func testSignInUnableToFetchOidcConfig() throws {
+    func testSignInUnableToFetchOidcConfig() async throws {
         let client = buildClient(withOidcEndpoint: "/bad")
-        let expectFailure = expectation(description: "Sign in failed")
 
-        client.signInWithBrowser(redirectUri: "io.logto.dev://callback") {
-            XCTAssertEqual($0?.type, .unableToFetchOidcConfig)
-            expectFailure.fulfill()
+        do {
+            try await client.signInWithBrowser(redirectUri: "io.logto.dev://callback") { _ in }
+        } catch let error as LogtoClient.Errors.OidcConfig {
+            XCTAssertEqual(error.type, .unableToFetchOidcConfig)
+            return
         }
 
-        wait(for: [expectFailure], timeout: 1)
+        XCTFail()
     }
 
-    func testSignInUnknownError() throws {
+    func testSignInUnknownError() async throws {
         let client = buildClient()
         let expectFailure = expectation(description: "Sign in failed")
 
-        client.signInWithBrowser(
+        try await client.signInWithBrowser(
             authSessionType: LogtoAuthSessionFailureMock.self,
             redirectUri: "io.logto.dev://callback"
         ) {
