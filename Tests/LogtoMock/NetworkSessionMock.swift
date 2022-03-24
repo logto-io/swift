@@ -13,6 +13,8 @@ public class MockError: LocalizedError {}
 public class NetworkSessionMock: NetworkSession {
     public static let shared = NetworkSessionMock()
 
+    public var tokenRequestCount = 0
+
     public func loadData(
         with request: URLRequest,
         completion: @escaping HttpCompletion<Data>
@@ -61,6 +63,22 @@ public class NetworkSessionMock: NetworkSession {
         case "POST":
             switch request.url?.pathComponents[safe: 1] {
             case "token:good":
+                tokenRequestCount += 1
+
+                guard tokenRequestCount <= 1 else {
+                    completion(Data("""
+                        {
+                            "access_token": "456",
+                            "refresh_token": "789",
+                            "id_token": "abc",
+                            "token_type": "jwt",
+                            "scope": "",
+                            "expires_in": 123
+                        }
+                    """.utf8), nil)
+                    return
+                }
+
                 completion(Data("""
                     {
                         "access_token": "123",

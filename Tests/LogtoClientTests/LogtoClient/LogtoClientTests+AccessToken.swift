@@ -1,5 +1,6 @@
 import Logto
 @testable import LogtoClient
+import LogtoMock
 import XCTest
 
 extension LogtoClientTests {
@@ -17,8 +18,9 @@ extension LogtoClientTests {
     }
 
     func testGetAccessTokenByRefreshToken() async throws {
-        let client = buildClient()
+        NetworkSessionMock.shared.tokenRequestCount = 0
 
+        let client = buildClient()
         client.refreshToken = "bar"
         client.accessTokenMap[client.buildAccessTokenKey(for: "resource1", scopes: [])] = AccessToken(
             token: "foo",
@@ -26,8 +28,12 @@ extension LogtoClientTests {
             expiresAt: Date().timeIntervalSince1970 - 1
         )
 
-        let token = try await client.getAccessToken(for: "resource1")
-        XCTAssertEqual(token, "123")
+        async let get1 = client.getAccessToken(for: "resource1")
+        async let get2 = client.getAccessToken(for: "resource1")
+        let tokens = try await [get1, get2]
+
+        XCTAssertEqual(tokens[0], "123")
+        XCTAssertEqual(tokens[1], "123")
     }
 
     func testGetAccessTokenUnalbeToFetchOidcConfig() async throws {

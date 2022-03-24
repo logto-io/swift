@@ -20,6 +20,7 @@ public class LogtoClient {
     // MARK: Internal Variables
 
     internal var accessTokenMap = [String: AccessToken]()
+    internal var getAccessTokenTaskMap = [String: Task<String, Error>]()
 
     // MARK: Public Variables
 
