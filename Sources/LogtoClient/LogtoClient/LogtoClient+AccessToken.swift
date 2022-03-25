@@ -13,19 +13,8 @@ public extension LogtoClient {
         "\(scopes.sorted().joined(separator: " "))@\(resource ?? "")"
     }
 
-    func getAccessToken(for resource: String?) async throws -> String {
+    func getAccessToken(by refreshToken: String, for resource: String?) async throws -> String {
         let key = buildAccessTokenKey(for: resource, scopes: [])
-
-        // Cached access token is still valid
-        if let accessToken = accessTokenMap[key], Date().timeIntervalSince1970 < accessToken.expiresAt {
-            return accessToken.token
-        }
-
-        // Use refresh token to fetch a new access token
-        guard let refreshToken = refreshToken else {
-            throw Errors.AccessToken(type: .noRefreshTokenFound, innerError: nil)
-        }
-
         let oidcConfig = try await fetchOidcConfig()
 
         return try await withCheckedThrowingContinuation { continuation in
@@ -60,5 +49,34 @@ public extension LogtoClient {
                 continuation.resume(returning: accessToken.token)
             }
         }
+    }
+
+    @MainActor func getAccessToken(for resource: String?) async throws -> String {
+        let key = buildAccessTokenKey(for: resource, scopes: [])
+
+        // Cached access token is still valid
+        if let accessToken = accessTokenMap[key], Date().timeIntervalSince1970 < accessToken.expiresAt {
+            return accessToken.token
+        }
+
+        // Check existing task
+        if let task = getAccessTokenTaskMap[key] {
+            return try await task.value
+        }
+
+        // Use refresh token to fetch a new access token
+        guard let refreshToken = refreshToken else {
+            throw Errors.AccessToken(type: .noRefreshTokenFound, innerError: nil)
+        }
+
+        let task = Task {
+            try await self.getAccessToken(by: refreshToken, for: resource)
+        }
+        getAccessTokenTaskMap.updateValue(task, forKey: key)
+
+        let token = try await task.value
+        getAccessTokenTaskMap.removeValue(forKey: key)
+
+        return token
     }
 }
