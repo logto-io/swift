@@ -53,56 +53,73 @@ struct ContentView: View {
                 print(try! client.getIdTokenClaims())
             }
             Button("Sign In") {
-                client.signInWithBrowser(redirectUri: "io.logto.SwiftUI-Demo://callback") { error in
-                    guard let error = error else {
-                        isAuthenticated = true
-                        authError = nil
-                        return
-                    }
+                Task { [self] in
+                    do {
+                        try await client.signInWithBrowser(redirectUri: "io.logto.SwiftUI-Demo://callback") { error in
+                            guard let error = error else {
+                                isAuthenticated = true
+                                authError = nil
+                                return
+                            }
 
-                    isAuthenticated = false
-                    authError = error
-                    print("failure", error)
+                            isAuthenticated = false
+                            authError = error
+                            print("failure", error)
 
-                    if let error = error.innerError as? LogtoErrors.Response,
-                       case let LogtoErrors.Response.withCode(
-                           _,
-                           _,
-                           data
-                       ) = error, let data = data
-                    {
-                        print(String(decoding: data, as: UTF8.self))
+                            if let error = error.innerError as? LogtoErrors.Response,
+                               case let LogtoErrors.Response.withCode(
+                                   _,
+                                   _,
+                                   data
+                               ) = error, let data = data
+                            {
+                                print(String(decoding: data, as: UTF8.self))
+                            }
+                        }
+                    } catch {
+                        print(error)
                     }
                 }
             }
 
             Button("Sign Out") {
-                client.signOut()
-                isAuthenticated = false
+                Task {
+                    try await client.signOut()
+                    self.isAuthenticated = false
+                }
             }
 
             Button("Fetch Userinfo") {
-                client.fetchUserInfo { userInfo, error in
-                    if let error = error?.innerError as? LogtoClient.Errors.AccessToken,
-                       let error = error.innerError as? LogtoErrors.Response,
-                       case let LogtoErrors.Response.withCode(
-                           _,
-                           _,
-                           data
-                       ) = error, let data = data
-                    {
-                        print(String(decoding: data, as: UTF8.self))
-                    }
-
-                    if let userInfo = userInfo {
+                Task {
+                    do {
+                        let userInfo = try await client.fetchUserInfo()
                         print(userInfo)
+                    } catch let error as LogtoClient.Errors.UserInfo {
+                        if let error = error.innerError as? LogtoClient.Errors.AccessToken,
+                           let error = error.innerError as? LogtoErrors.Response,
+                           case let LogtoErrors.Response.withCode(
+                               _,
+                               _,
+                               data
+                           ) = error, let data = data
+                        {
+                            print(String(decoding: data, as: UTF8.self))
+                        }
+                    }
+                    catch {
+                        print(error)
                     }
                 }
             }
 
             Button("Fetch access token for \(resource)") {
-                client.getAccessToken(for: resource) {
-                    print($0 ?? "N/A", $1 ?? "N/A")
+                Task {
+                    do {
+                        let token = try await client.getAccessToken(for: resource)
+                        print(token)
+                    } catch {
+                        print(error)
+                    }
                 }
             }
         }

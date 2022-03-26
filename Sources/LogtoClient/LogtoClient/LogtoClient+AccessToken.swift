@@ -17,37 +17,33 @@ public extension LogtoClient {
         let key = buildAccessTokenKey(for: resource, scopes: [])
         let oidcConfig = try await fetchOidcConfig()
 
-        return try await withCheckedThrowingContinuation { continuation in
-            LogtoCore.fetchToken(
-                useSession: self.networkSession,
+        do {
+            let response = try await LogtoCore.fetchToken(
+                useSession: networkSession,
                 byRefreshToken: refreshToken,
                 tokenEndpoint: oidcConfig.tokenEndpoint,
-                clientId: self.logtoConfig.clientId,
+                clientId: logtoConfig.clientId,
                 resource: resource,
                 scopes: []
-            ) { response, error in
-                guard let response = response else {
-                    continuation
-                        .resume(throwing: Errors
-                            .AccessToken(type: .unableToFetchTokenByRefreshToken, innerError: error))
-                    return
-                }
+            )
 
-                let accessToken = AccessToken(
-                    token: response.accessToken,
-                    scope: response.scope,
-                    expiresAt: Date().timeIntervalSince1970 + TimeInterval(response.expiresIn)
-                )
+            let accessToken = AccessToken(
+                token: response.accessToken,
+                scope: response.scope,
+                expiresAt: Date().timeIntervalSince1970 + TimeInterval(response.expiresIn)
+            )
 
-                self.accessTokenMap[key] = accessToken
-                self.refreshToken = response.refreshToken
+            accessTokenMap[key] = accessToken
+            self.refreshToken = response.refreshToken
 
-                response.idToken.map {
-                    self.idToken = $0
-                }
-
-                continuation.resume(returning: accessToken.token)
+            response.idToken.map {
+                self.idToken = $0
             }
+
+            return accessToken.token
+        } catch {
+            throw Errors
+                .AccessToken(type: .unableToFetchTokenByRefreshToken, innerError: error)
         }
     }
 

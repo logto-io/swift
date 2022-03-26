@@ -15,26 +15,23 @@ public enum LogtoRequest {
 
     private static func handleResponse<T: Codable>(
         data: Data?,
-        error: Error?,
-        completion: @escaping HttpCompletion<T>
-    ) {
+        error: Error?
+    ) throws -> T {
         let decoder = LogtoUtilities.getCamelCaseDecoder()
 
-        guard error == nil else {
-            completion(nil, error)
-            return
+        if let error = error {
+            throw error
         }
 
         guard let data = data else {
-            completion(nil, LogtoErrors.Request.noResponseData)
-            return
+            throw LogtoErrors.Request.noResponseData
         }
 
         do {
             let decoded = try decoder.decode(T.self, from: data)
-            completion(decoded, nil)
+            return decoded
         } catch {
-            completion(nil, error)
+            throw error
         }
     }
 
@@ -43,9 +40,8 @@ public enum LogtoRequest {
         method: HttpMethod,
         url: URL,
         headers: [String: String] = [:],
-        body: Data? = nil,
-        completion: @escaping HttpCompletion<Data>
-    ) {
+        body: Data? = nil
+    ) async -> (Data?, Error?) {
         var request = URLRequest(
             url: url,
             cachePolicy: .reloadIgnoringLocalCacheData
@@ -57,7 +53,11 @@ public enum LogtoRequest {
             request.setValue(value, forHTTPHeaderField: key)
         }
 
-        session.loadData(with: request, completion: completion)
+        return await withCheckedContinuation { continuation in
+            session.loadData(with: request) {
+                continuation.resume(returning: ($0, $1))
+            }
+        }
     }
 
     public static func load(
@@ -65,60 +65,55 @@ public enum LogtoRequest {
         method: HttpMethod,
         endpoint: String,
         headers: [String: String] = [:],
-        body: Data? = nil,
-        completion: @escaping HttpCompletion<Data>
-    ) {
+        body: Data? = nil
+    ) async -> (Data?, Error?) {
         guard let url = URL(string: endpoint) else {
-            completion(nil, LogtoErrors.UrlConstruction.unableToConstructUrl)
-            return
+            return (nil, LogtoErrors.UrlConstruction.unableToConstructUrl)
         }
 
-        load(useSession: session, method: method, url: url, headers: headers, body: body, completion: completion)
+        return await load(useSession: session, method: method, url: url, headers: headers, body: body)
     }
 
     public static func get<T: Codable>(
         useSession session: NetworkSession,
         endpoint: String,
-        headers: [String: String] = [:],
-        completion: @escaping HttpCompletion<T>
-    ) {
-        load(useSession: session, method: .get, endpoint: endpoint, headers: headers) { data, error in
-            handleResponse(data: data, error: error, completion: completion)
-        }
+        headers: [String: String] = [:]
+    ) async throws -> T {
+        let (data, error) = await load(useSession: session, method: .get, endpoint: endpoint, headers: headers)
+        return try handleResponse(data: data, error: error)
     }
 
     public static func get<T: Codable>(
         useSession session: NetworkSession,
         url: URL,
-        headers: [String: String] = [:],
-        completion: @escaping HttpCompletion<T>
-    ) {
-        load(useSession: session, method: .get, url: url, headers: headers) { data, error in
-            handleResponse(data: data, error: error, completion: completion)
-        }
+        headers: [String: String] = [:]
+    ) async throws -> T {
+        let (data, error) = await load(useSession: session, method: .get, url: url, headers: headers)
+        return try handleResponse(data: data, error: error)
     }
 
     public static func post<T: Codable>(
         useSession session: NetworkSession,
         endpoint: String,
         headers: [String: String] = [:],
-        body: Data? = nil,
-        completion: @escaping HttpCompletion<T>
-    ) {
-        load(useSession: session, method: .post, endpoint: endpoint, headers: headers, body: body) { data, error in
-            handleResponse(data: data, error: error, completion: completion)
-        }
+        body: Data? = nil
+    ) async throws -> T {
+        let (data, error) = await load(useSession: session, method: .post, endpoint: endpoint, headers: headers,
+                                       body: body)
+        return try handleResponse(data: data, error: error)
     }
 
     public static func post(
         useSession session: NetworkSession,
         endpoint: String,
         headers: [String: String] = [:],
-        body: Data? = nil,
-        completion: @escaping HttpEmptyCompletion
-    ) {
-        load(useSession: session, method: .post, endpoint: endpoint, headers: headers, body: body) {
-            completion($1)
+        body: Data? = nil
+    ) async throws {
+        let (_, error) = await load(useSession: session, method: .post, endpoint: endpoint, headers: headers,
+                                    body: body)
+
+        if let error = error {
+            throw error
         }
     }
 }

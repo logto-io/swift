@@ -26,7 +26,7 @@ final class LogtoAuthSessionTests: XCTestCase {
         """.utf8))
     }
 
-    func testHandleUnableToFetchToken() {
+    func testHandleUnableToFetchToken() async {
         let expectFailure = expectation(description: "Auth handle failure")
         let session = LogtoAuthSession(
             useSession: NetworkSessionMock.shared,
@@ -49,11 +49,11 @@ final class LogtoAuthSessionTests: XCTestCase {
             URLQueryItem(name: "code", value: "abc"),
         ]
 
-        session.handle(callbackUri: components.url!)
+        await session.handle(callbackUri: components.url!)
         wait(for: [expectFailure], timeout: 1)
     }
 
-    func testHandleOk() {
+    func testHandleOk() async {
         let expectOk = expectation(description: "Auth handle OK")
         let session = LogtoAuthSession(
             useSession: NetworkSessionMock.shared,
@@ -79,7 +79,7 @@ final class LogtoAuthSessionTests: XCTestCase {
             URLQueryItem(name: "code", value: "abc"),
         ]
 
-        session.handle(callbackUri: components.url!)
+        await session.handle(callbackUri: components.url!)
         wait(for: [expectOk], timeout: 1)
     }
 }
