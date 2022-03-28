@@ -12,7 +12,6 @@ public extension LogtoClient {
         public struct AccessToken: LogtoError, LocalizedError {
             public enum AccessTokenError {
                 case noRefreshTokenFound
-                case unableToFetchOidcConfig
                 case unableToFetchTokenByRefreshToken
             }
 
@@ -31,8 +30,6 @@ public extension LogtoClient {
 
         public struct UserInfo: LogtoError, LocalizedError {
             public enum UserInfoError {
-                case unableToFetchOidcConfig
-                case unableToGetAccessToken
                 case unableToFetchUserInfo
             }
 
@@ -48,7 +45,6 @@ public extension LogtoClient {
             public enum SignInError: String {
                 case unknownError
                 case authFailed
-                case unableToFetchOidcConfig
                 case unableToConstructRedirectUri
                 case unableToConstructAuthUri
                 case unableToFetchToken
@@ -62,7 +58,6 @@ public extension LogtoClient {
         public struct SignOut: LogtoError {
             public enum SignOutError: String {
                 case unableToRevokeToken
-                case unableToFetchOidcConfig
             }
 
             public let type: SignOutError
