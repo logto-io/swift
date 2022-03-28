@@ -9,7 +9,8 @@ import Foundation
 import Logto
 
 public extension LogtoClient {
-    func signOut(completion: EmptyCompletion<Errors.SignOut>? = nil) async throws {
+    @discardableResult
+    func signOut() async throws -> Errors.SignOut? {
         let tokenToRevoke = refreshToken
 
         accessTokenMap = [:]
@@ -26,10 +27,12 @@ public extension LogtoClient {
                     revocationEndpoint: oidcConfig.revocationEndpoint,
                     clientId: logtoConfig.clientId
                 )
-                completion?(nil)
+                return nil
             } catch {
-                completion?(Errors.SignOut(type: .unableToRevokeToken, innerError: error))
+                return (Errors.SignOut(type: .unableToRevokeToken, innerError: error))
             }
         }
+
+        return nil
     }
 }

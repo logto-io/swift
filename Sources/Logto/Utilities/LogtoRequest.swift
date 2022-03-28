@@ -53,11 +53,7 @@ public enum LogtoRequest {
             request.setValue(value, forHTTPHeaderField: key)
         }
 
-        return await withCheckedContinuation { continuation in
-            session.loadData(with: request) {
-                continuation.resume(returning: ($0, $1))
-            }
-        }
+        return await session.loadData(with: request)
     }
 
     public static func load(
