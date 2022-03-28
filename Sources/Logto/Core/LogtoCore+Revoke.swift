@@ -12,20 +12,18 @@ public extension LogtoCore {
         useSession session: NetworkSession = URLSession.shared,
         token: String,
         revocationEndpoint: String,
-        clientId: String,
-        completion: @escaping HttpEmptyCompletion
-    ) {
+        clientId: String
+    ) async throws {
         let body: [String: String?] = [
             "token": token,
             "client_id": clientId,
         ]
 
-        LogtoRequest.post(
+        try await LogtoRequest.post(
             useSession: session,
             endpoint: revocationEndpoint,
             headers: postHeaders,
-            body: body.urlParamEncoded.data(using: .utf8),
-            completion: completion
+            body: body.urlParamEncoded.data(using: .utf8)
         )
     }
 }

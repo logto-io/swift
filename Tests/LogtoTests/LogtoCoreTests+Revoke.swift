@@ -3,30 +3,19 @@ import LogtoMock
 import XCTest
 
 extension LogtoCoreTests {
-    func testRevokeToken() throws {
-        let expectOk = expectation(description: "Revoke token OK")
-        let expectFailed = expectation(description: "Revoke token failed")
-
-        LogtoCore.revoke(
+    func testRevokeToken() async throws {
+        try await LogtoCore.revoke(
             useSession: NetworkSessionMock.shared,
             token: "123",
             revocationEndpoint: "/revoke:good",
             clientId: "foo"
-        ) {
-            XCTAssertNil($0)
-            expectOk.fulfill()
-        }
+        )
 
-        LogtoCore.revoke(
+        await LogtoCoreTests.assertThrows(try await LogtoCore.revoke(
             useSession: NetworkSessionMock.shared,
             token: "123",
             revocationEndpoint: "/revoke:bad",
             clientId: "foo"
-        ) {
-            XCTAssertNotNil($0)
-            expectFailed.fulfill()
-        }
-
-        wait(for: [expectOk, expectFailed], timeout: 1)
+        ))
     }
 }

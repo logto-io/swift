@@ -23,7 +23,7 @@ public enum LogtoErrors {
         case jwtValueMismatched(field: JwtField)
     }
 
-    enum UriVerification: LocalizedError, Equatable {
+    public enum UriVerification: LocalizedError, Equatable {
         case redirectUriMismatched
         case decodeComponentsFailed
         case stateMismatched

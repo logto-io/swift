@@ -19,18 +19,16 @@ public extension LogtoClient {
         if let token = tokenToRevoke {
             let oidcConfig = try await fetchOidcConfig()
 
-            LogtoCore.revoke(
-                useSession: networkSession,
-                token: token,
-                revocationEndpoint: oidcConfig.revocationEndpoint,
-                clientId: logtoConfig.clientId
-            ) {
-                guard $0 == nil else {
-                    completion?(Errors.SignOut(type: .unableToRevokeToken, innerError: $0))
-                    return
-                }
-
+            do {
+                try await LogtoCore.revoke(
+                    useSession: networkSession,
+                    token: token,
+                    revocationEndpoint: oidcConfig.revocationEndpoint,
+                    clientId: logtoConfig.clientId
+                )
                 completion?(nil)
+            } catch {
+                completion?(Errors.SignOut(type: .unableToRevokeToken, innerError: error))
             }
         }
     }

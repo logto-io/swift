@@ -28,10 +28,9 @@ public extension LogtoCore {
 
     static func fetchOidcConfig(
         useSession session: NetworkSession = URLSession.shared,
-        endpoint: String,
-        completion: @escaping HttpCompletion<OidcConfigResponse>
-    ) {
-        LogtoRequest.get(useSession: session, endpoint: endpoint, completion: completion)
+        uri: URL
+    ) async throws -> OidcConfigResponse {
+        try await LogtoRequest.get(useSession: session, url: uri)
     }
 
     // MARK: Token Endpoint
@@ -60,9 +59,8 @@ public extension LogtoCore {
         codeVerifier: String,
         tokenEndpoint: String,
         clientId: String,
-        redirectUri: String,
-        completion: @escaping HttpCompletion<CodeTokenResponse>
-    ) {
+        redirectUri: String
+    ) async throws -> CodeTokenResponse {
         let body: [String: String?] = [
             "grant_type": TokenGrantType.code.rawValue,
             "code": code,
@@ -71,12 +69,11 @@ public extension LogtoCore {
             "redirect_uri": redirectUri,
         ]
 
-        LogtoRequest.post(
+        return try await LogtoRequest.post(
             useSession: session,
             endpoint: tokenEndpoint,
             headers: postHeaders,
-            body: body.urlParamEncoded.data(using: .utf8),
-            completion: completion
+            body: body.urlParamEncoded.data(using: .utf8)
         )
     }
 
@@ -96,9 +93,8 @@ public extension LogtoCore {
         tokenEndpoint: String,
         clientId: String,
         resource: String?,
-        scopes: [String],
-        completion: @escaping HttpCompletion<RefreshTokenTokenResponse>
-    ) {
+        scopes: [String]
+    ) async throws -> RefreshTokenTokenResponse {
         let body: [String: String?] = [
             "grant_type": TokenGrantType.refreshToken.rawValue,
             "refresh_token": refreshToken,
@@ -107,12 +103,11 @@ public extension LogtoCore {
             "scope": scopes.joined(separator: " "),
         ]
 
-        LogtoRequest.post(
+        return try await LogtoRequest.post(
             useSession: session,
             endpoint: tokenEndpoint,
             headers: postHeaders,
-            body: body.urlParamEncoded.data(using: .utf8),
-            completion: completion
+            body: body.urlParamEncoded.data(using: .utf8)
         )
     }
 
@@ -126,14 +121,12 @@ public extension LogtoCore {
     static func fetchUserInfo(
         useSession session: NetworkSession = URLSession.shared,
         userInfoEndpoint: String,
-        accessToken: String,
-        completion: @escaping HttpCompletion<UserInfoResponse>
-    ) {
-        LogtoRequest.get(
+        accessToken: String
+    ) async throws -> UserInfoResponse {
+        try await LogtoRequest.get(
             useSession: session,
             endpoint: userInfoEndpoint,
-            headers: ["Authorization": "Bearer \(accessToken)"],
-            completion: completion
+            headers: ["Authorization": "Bearer \(accessToken)"]
         )
     }
 }

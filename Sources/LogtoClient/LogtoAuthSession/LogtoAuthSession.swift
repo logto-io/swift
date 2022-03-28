@@ -70,7 +70,7 @@ public class LogtoAuthSession {
                         return
                     }
 
-                    handle(callbackUri: callbackUri)
+                    await handle(callbackUri: callbackUri)
                 }
 
                 DispatchQueue.main.async {
@@ -86,30 +86,26 @@ public class LogtoAuthSession {
         }
     }
 
-    func handle(callbackUri: URL) {
+    func handle(callbackUri: URL) async {
         do {
             let code = try LogtoCore.verifyAndParseSignInCallbackUri(
                 callbackUri,
                 redirectUri: redirectUri,
                 state: state
             )
-            LogtoCore.fetchToken(
+            let tokenResponse = try await LogtoCore.fetchToken(
                 useSession: session,
                 byAuthorizationCode: code,
                 codeVerifier: codeVerifier,
                 tokenEndpoint: oidcConfig.tokenEndpoint,
                 clientId: logtoConfig.clientId,
                 redirectUri: redirectUri.absoluteString
-            ) { [self] in
-                guard let tokenResponse = $0 else {
-                    completion(.failure(error: Errors.SignIn(type: .unableToFetchToken, innerError: $1)))
-                    return
-                }
-
-                completion(.success(response: tokenResponse))
-            }
-        } catch {
+            )
+            completion(.success(response: tokenResponse))
+        } catch let error as LogtoErrors.UriVerification {
             completion(.failure(error: Errors.SignIn(type: .unexpectedSignInCallback, innerError: error)))
+        } catch {
+            completion(.failure(error: Errors.SignIn(type: .unableToFetchToken, innerError: error)))
         }
     }
 }

@@ -11,7 +11,7 @@ import WebKit
 public class LogtoWebViewAuthSession: NSObject {
     #if !os(macOS)
         static func getTopViewController() -> UnifiedViewController? {
-            if var topController = UIApplication.shared.keyWindow?.rootViewController {
+            if var topController = UIApplication.shared.windows.filter({ $0.isKeyWindow }).first?.rootViewController {
                 while let presentedViewController = topController.presentedViewController {
                     topController = presentedViewController
                 }
@@ -27,7 +27,7 @@ public class LogtoWebViewAuthSession: NSObject {
         }
     #endif
 
-    public typealias FinishHandler = (URL?) -> Void
+    public typealias FinishHandler = (URL?) async -> Void
 
     let uri: URL
     let redirectUri: URL
@@ -56,8 +56,8 @@ public class LogtoWebViewAuthSession: NSObject {
         #endif
     }
 
-    internal func didFinish(url: URL?) {
-        onFinish(url)
+    internal func didFinish(url: URL?) async {
+        await onFinish(url)
         DispatchQueue.main.async {
             #if !os(macOS)
                 self.viewController?.dismiss(animated: true, completion: {
@@ -81,7 +81,7 @@ extension LogtoWebViewAuthSession: WKNavigationDelegate {
                 url.host == redirectUri.host,
                 url.path == redirectUri.path
             {
-                didFinish(url: url)
+                await didFinish(url: url)
             }
             return .cancel
         }

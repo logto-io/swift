@@ -14,22 +14,15 @@ extension LogtoClient {
             return config
         }
 
-        return try await withCheckedThrowingContinuation { continuation in
-            let completion: Completion<LogtoCore.OidcConfigResponse, Error> = { config, error in
-                guard error == nil, let config = config else {
-                    continuation.resume(throwing: Errors.OidcConfig(type: .unableToFetchOidcConfig, innerError: error))
-                    return
-                }
-
-                self.oidcConfig = config
-                continuation.resume(returning: config)
-            }
-
-            LogtoRequest.get(
+        do {
+            let config = try await LogtoCore.fetchOidcConfig(
                 useSession: networkSession,
-                url: logtoConfig.endpoint.appendingPathComponent("/oidc/.well-known/openid-configuration"),
-                completion: completion
+                uri: logtoConfig.endpoint.appendingPathComponent("/oidc/.well-known/openid-configuration")
             )
+            oidcConfig = config
+            return config
+        } catch {
+            throw Errors.OidcConfig(type: .unableToFetchOidcConfig, innerError: error)
         }
     }
 
@@ -37,20 +30,15 @@ extension LogtoClient {
         let oidcConfig = try await fetchOidcConfig()
         let token = try await getAccessToken(for: nil)
 
-        return try await withCheckedThrowingContinuation { continuation in
-            LogtoCore
+        do {
+            return try await LogtoCore
                 .fetchUserInfo(
-                    useSession: self.networkSession,
+                    useSession: networkSession,
                     userInfoEndpoint: oidcConfig.userinfoEndpoint,
                     accessToken: token
-                ) { userInfo, error in
-                    guard let userInfo = userInfo else {
-                        continuation.resume(throwing: Errors.UserInfo(type: .unableToFetchUserInfo, innerError: error))
-                        return
-                    }
-
-                    continuation.resume(returning: userInfo)
-                }
+                )
+        } catch {
+            throw Errors.UserInfo(type: .unableToFetchUserInfo, innerError: error)
         }
     }
 }
