@@ -11,7 +11,7 @@ import WebKit
 public class LogtoWebViewAuthSession: NSObject {
     #if !os(macOS)
         static func getTopViewController() -> UnifiedViewController? {
-            if var topController = UIApplication.shared.windows.filter({$0.isKeyWindow}).first?.rootViewController {
+            if var topController = UIApplication.shared.windows.filter({ $0.isKeyWindow }).first?.rootViewController {
                 while let presentedViewController = topController.presentedViewController {
                     topController = presentedViewController
                 }

@@ -105,8 +105,7 @@ struct ContentView: View {
                         {
                             print(String(decoding: data, as: UTF8.self))
                         }
-                    }
-                    catch {
+                    } catch {
                         print(error)
                     }
                 }
