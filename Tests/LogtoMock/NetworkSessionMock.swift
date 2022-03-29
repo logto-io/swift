@@ -16,14 +16,13 @@ public class NetworkSessionMock: NetworkSession {
     public var tokenRequestCount = 0
 
     public func loadData(
-        with request: URLRequest,
-        completion: @escaping HttpCompletion<Data>
-    ) {
+        with request: URLRequest
+    ) async -> (Data?, Error?) {
         switch request.httpMethod {
         case "GET":
             switch request.url?.pathComponents[safe: 1] {
             case "oidc_config:good":
-                completion(Data("""
+                return (Data("""
                     {
                         "authorization_endpoint": "https://logto.dev/auth:good",
                         "token_endpoint": "https://logto.dev/token:good",
@@ -35,7 +34,7 @@ public class NetworkSessionMock: NetworkSession {
                     }
                 """.utf8), nil)
             case "oidc_config:bad":
-                completion(Data("""
+                return (Data("""
                    {
                        "authorization_endpoint": "https://logto.dev/auth:bad",
                        "token_endpoint": "https://logto.dev/token:bad",
@@ -48,17 +47,16 @@ public class NetworkSessionMock: NetworkSession {
                 """.utf8), nil)
             case "user":
                 guard request.value(forHTTPHeaderField: "Authorization") == "Bearer good" else {
-                    completion(nil, MockError())
-                    return
+                    return (nil, MockError())
                 }
 
-                completion(Data("""
+                return (Data("""
                     {
                         "sub": "foo"
                     }
                 """.utf8), nil)
             default:
-                completion(nil, MockError())
+                return (nil, MockError())
             }
         case "POST":
             switch request.url?.pathComponents[safe: 1] {
@@ -66,7 +64,7 @@ public class NetworkSessionMock: NetworkSession {
                 tokenRequestCount += 1
 
                 guard tokenRequestCount <= 1 else {
-                    completion(Data("""
+                    return (Data("""
                         {
                             "access_token": "456",
                             "refresh_token": "789",
@@ -76,10 +74,9 @@ public class NetworkSessionMock: NetworkSession {
                             "expires_in": 123
                         }
                     """.utf8), nil)
-                    return
                 }
 
-                completion(Data("""
+                return (Data("""
                     {
                         "access_token": "123",
                         "refresh_token": "456",
@@ -90,12 +87,12 @@ public class NetworkSessionMock: NetworkSession {
                     }
                 """.utf8), nil)
             case "revoke:good":
-                completion(nil, nil)
+                return (nil, nil)
             default:
-                completion(nil, MockError())
+                return (nil, MockError())
             }
         default:
-            completion(nil, MockError())
+            return (nil, MockError())
         }
     }
 }

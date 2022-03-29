@@ -26,39 +26,29 @@ class LogtoAuthSessionFailureMock: LogtoAuthSession {
 extension LogtoClientTests {
     func testSignInOk() async throws {
         let client = buildClient()
-        let expectOk = expectation(description: "Sign in OK")
-
-        try await client.signInWithBrowser(
+        let error = try await client.signInWithBrowser(
             authSessionType: LogtoAuthSessionSuccessMock.self,
             redirectUri: "io.logto.dev://callback"
-        ) {
-            XCTAssertNil($0)
-            XCTAssertEqual(client.idToken, "baz")
-            XCTAssertEqual(client.refreshToken, "bar")
-            XCTAssertEqual(client.accessTokenMap[client.buildAccessTokenKey(for: nil, scopes: [])]?.token, "foo")
-            expectOk.fulfill()
-        }
+        )
 
-        wait(for: [expectOk], timeout: 1)
+        XCTAssertNil(error)
+        XCTAssertEqual(client.idToken, "baz")
+        XCTAssertEqual(client.refreshToken, "bar")
+        XCTAssertEqual(client.accessTokenMap[client.buildAccessTokenKey(for: nil, scopes: [])]?.token, "foo")
     }
 
     func testSignInUnableToConstructRedirectUri() async throws {
         let client = buildClient()
-        let expectFailure = expectation(description: "Sign in failed")
+        let error = try await client.signInWithBrowser(redirectUri: "")
 
-        try await client.signInWithBrowser(redirectUri: "") {
-            XCTAssertEqual($0?.type, .unableToConstructRedirectUri)
-            expectFailure.fulfill()
-        }
-
-        wait(for: [expectFailure], timeout: 1)
+        XCTAssertEqual(error?.type, .unableToConstructRedirectUri)
     }
 
     func testSignInUnableToFetchOidcConfig() async throws {
         let client = buildClient(withOidcEndpoint: "/bad")
 
         do {
-            try await client.signInWithBrowser(redirectUri: "io.logto.dev://callback") { _ in }
+            _ = try await client.signInWithBrowser(redirectUri: "io.logto.dev://callback")
         } catch let error as LogtoClient.Errors.OidcConfig {
             XCTAssertEqual(error.type, .unableToFetchOidcConfig)
             return
@@ -69,16 +59,11 @@ extension LogtoClientTests {
 
     func testSignInUnknownError() async throws {
         let client = buildClient()
-        let expectFailure = expectation(description: "Sign in failed")
-
-        try await client.signInWithBrowser(
+        let error = try await client.signInWithBrowser(
             authSessionType: LogtoAuthSessionFailureMock.self,
             redirectUri: "io.logto.dev://callback"
-        ) {
-            XCTAssertEqual($0?.type, .unknownError)
-            expectFailure.fulfill()
-        }
+        )
 
-        wait(for: [expectFailure], timeout: 1)
+        XCTAssertEqual(error?.type, .unknownError)
     }
 }

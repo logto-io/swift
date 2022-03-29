@@ -11,33 +11,29 @@ extension URLSession: NetworkSession {
     private func handleResponse(
         data: Data?,
         response: URLResponse?,
-        error: Error?,
-        completion: @escaping HttpCompletion<Data>
-    ) {
+        error: Error?
+    ) -> (Data?, Error?) {
         guard let httpResponse = response as? HTTPURLResponse else {
-            completion(nil, LogtoErrors.Response.notHttpResponse(response: response))
-            return
+            return (nil, LogtoErrors.Response.notHttpResponse(response: response))
         }
 
         guard httpResponse.statusCode < 400 else {
-            completion(
+            return (
                 nil,
                 LogtoErrors.Response.withCode(code: httpResponse.statusCode, httpResponse: httpResponse, data: data)
             )
-            return
         }
 
-        completion(data, error)
+        return (data, error)
     }
 
-    public func loadData(
-        with request: URLRequest,
-        completion: @escaping HttpCompletion<Data>
-    ) {
-        let task = dataTask(with: request) { data, response, error in
-            self.handleResponse(data: data, response: response, error: error, completion: completion)
-        }
+    public func loadData(with request: URLRequest) async -> (Data?, Error?) {
+        await withCheckedContinuation { continuation in
+            let task = dataTask(with: request) { data, response, error in
+                continuation.resume(returning: self.handleResponse(data: data, response: response, error: error))
+            }
 
-        task.resume()
+            task.resume()
+        }
     }
 }

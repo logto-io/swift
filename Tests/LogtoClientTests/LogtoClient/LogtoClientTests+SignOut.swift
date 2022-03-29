@@ -4,17 +4,12 @@ import XCTest
 extension LogtoClientTests {
     func testSignOutOk() async throws {
         let client = buildClient(withToken: true)
-        let expectOk = expectation(description: "Sign out OK")
+        let error = try await client.signOut()
 
-        try await client.signOut {
-            XCTAssertNil($0)
-            XCTAssertNil(client.refreshToken)
-            XCTAssertNil(client.idToken)
-            XCTAssertEqual(client.accessTokenMap.count, 0)
-            expectOk.fulfill()
-        }
-
-        wait(for: [expectOk], timeout: 1)
+        XCTAssertNil(error)
+        XCTAssertNil(client.refreshToken)
+        XCTAssertNil(client.idToken)
+        XCTAssertEqual(client.accessTokenMap.count, 0)
     }
 
     func testSignOutUnableToFetchOidcConfig() async throws {
@@ -32,16 +27,11 @@ extension LogtoClientTests {
 
     func testSignOutUnableToRevokeToken() async throws {
         let client = buildClient(withOidcEndpoint: "/oidc_config:bad", withToken: true)
-        let expectFailure = expectation(description: "Sign out failed")
+        let error = try await client.signOut()
 
-        try await client.signOut {
-            XCTAssertEqual(($0!).type, .unableToRevokeToken)
-            XCTAssertNil(client.refreshToken)
-            XCTAssertNil(client.idToken)
-            XCTAssertEqual(client.accessTokenMap.count, 0)
-            expectFailure.fulfill()
-        }
-
-        wait(for: [expectFailure], timeout: 1)
+        XCTAssertEqual(error?.type, .unableToRevokeToken)
+        XCTAssertNil(client.refreshToken)
+        XCTAssertNil(client.idToken)
+        XCTAssertEqual(client.accessTokenMap.count, 0)
     }
 }
