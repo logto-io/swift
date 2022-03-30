@@ -41,11 +41,19 @@ let package = Package(
         ),
         .target(
             name: "LogtoClient",
-            dependencies: ["Logto", "KeychainAccess"]
+            dependencies: ["Logto", "KeychainAccess", "LogtoSocialPlugin", "LogtoSocialPluginWeb"]
         ),
         .testTarget(
             name: "LogtoClientTests",
             dependencies: ["LogtoClient", "LogtoMock"]
+        ),
+        .target(
+            name: "LogtoSocialPlugin",
+            dependencies: []
+        ),
+        .target(
+            name: "LogtoSocialPluginWeb",
+            dependencies: ["LogtoSocialPlugin"]
         ),
     ]
 )

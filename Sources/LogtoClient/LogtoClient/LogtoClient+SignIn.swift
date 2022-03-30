@@ -24,7 +24,8 @@ extension LogtoClient {
             let session = AuthSession(
                 logtoConfig: logtoConfig,
                 oidcConfig: oidcConfig,
-                redirectUri: redirectUri
+                redirectUri: redirectUri,
+                socialPlugins: socialPlugins
             ) { [self] in
                 switch $0 {
                 case let .failure(error):
