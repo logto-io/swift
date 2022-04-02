@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6C6AC9AC27F5F163008DE3B4 /* LogtoSocialPluginAlipay in Frameworks */ = {isa = PBXBuildFile; productRef = 6C6AC9AB27F5F163008DE3B4 /* LogtoSocialPluginAlipay */; };
 		6C88C0A327A3D8060007B4D4 /* SwiftUI_DemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C88C0A227A3D8060007B4D4 /* SwiftUI_DemoApp.swift */; };
 		6C88C0A527A3D8060007B4D4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C88C0A427A3D8060007B4D4 /* ContentView.swift */; };
 		6C88C0A727A3D8060007B4D4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6C88C0A627A3D8060007B4D4 /* Assets.xcassets */; };
@@ -32,6 +33,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		6C6AC9AD27F5F787008DE3B4 /* SwiftUI-Demo-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "SwiftUI-Demo-Info.plist"; sourceTree = SOURCE_ROOT; };
 		6C88C09F27A3D8060007B4D4 /* SwiftUI Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SwiftUI Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6C88C0A227A3D8060007B4D4 /* SwiftUI_DemoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUI_DemoApp.swift; sourceTree = "<group>"; };
 		6C88C0A427A3D8060007B4D4 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -47,6 +49,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6C6AC9AC27F5F163008DE3B4 /* LogtoSocialPluginAlipay in Frameworks */,
 				6CB2AF5A27A3D8E7003411A4 /* LogtoClient in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -91,6 +94,7 @@
 		6C88C0A127A3D8060007B4D4 /* SwiftUI Demo */ = {
 			isa = PBXGroup;
 			children = (
+				6C6AC9AD27F5F787008DE3B4 /* SwiftUI-Demo-Info.plist */,
 				6C88C0A427A3D8060007B4D4 /* ContentView.swift */,
 				6C88C0A227A3D8060007B4D4 /* SwiftUI_DemoApp.swift */,
 				6C88C0A627A3D8060007B4D4 /* Assets.xcassets */,
@@ -140,6 +144,7 @@
 			name = "SwiftUI Demo";
 			packageProductDependencies = (
 				6CB2AF5927A3D8E7003411A4 /* LogtoClient */,
+				6C6AC9AB27F5F163008DE3B4 /* LogtoSocialPluginAlipay */,
 			);
 			productName = "SwiftUI Demo";
 			productReference = 6C88C09F27A3D8060007B4D4 /* SwiftUI Demo.app */;
@@ -417,6 +422,7 @@
 				DEVELOPMENT_TEAM = VHTRYSL7JK;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "SwiftUI-Demo-Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -446,6 +452,7 @@
 				DEVELOPMENT_TEAM = VHTRYSL7JK;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "SwiftUI-Demo-Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -582,6 +589,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		6C6AC9AB27F5F163008DE3B4 /* LogtoSocialPluginAlipay */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LogtoSocialPluginAlipay;
+		};
 		6CB2AF5927A3D8E7003411A4 /* LogtoClient */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = LogtoClient;

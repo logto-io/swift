@@ -16,6 +16,18 @@ let package = Package(
             name: "LogtoClient",
             targets: ["LogtoClient"]
         ),
+        .library(
+            name: "LogtoSocialPlugin",
+            targets: ["LogtoSocialPlugin"]
+        ),
+        .library(
+            name: "LogtoSocialPluginWeb",
+            targets: ["LogtoSocialPluginWeb"]
+        ),
+        .library(
+            name: "LogtoSocialPluginAlipay",
+            targets: ["LogtoSocialPluginAlipay"]
+        ),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -54,6 +66,15 @@ let package = Package(
         .target(
             name: "LogtoSocialPluginWeb",
             dependencies: ["LogtoSocialPlugin"]
+        ),
+        .binaryTarget(
+            name: "AFServiceSDK",
+            url: "https://github.com/logto-io/social-sdks/raw/92065b00d61dde0d44b4e76394a81334b87000a1/alipay/swift/AFServiceSDK.zip",
+            checksum: "d140f1e4c6a73e3488e5572ccb6e0a4e23227549b7d04b9793423cf2e8608c57"
+        ),
+        .target(
+            name: "LogtoSocialPluginAlipay",
+            dependencies: ["LogtoSocialPlugin", "AFServiceSDK"]
         ),
     ]
 )

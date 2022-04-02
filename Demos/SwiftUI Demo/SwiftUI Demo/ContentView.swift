@@ -7,6 +7,7 @@
 
 import Logto
 import LogtoClient
+import LogtoSocialPluginAlipay
 import SwiftUI
 
 struct ContentView: View {
@@ -15,6 +16,7 @@ struct ContentView: View {
 
     let resource = "https://api.logto.io"
     let client: LogtoClient?
+    let alipayPlugin = LogtoSocialPluginAlipay()
 
     init() {
         guard let config = try? LogtoConfig(
@@ -26,7 +28,7 @@ struct ContentView: View {
             isAuthenticated = false
             return
         }
-        let logtoClient = LogtoClient(useConfig: config)
+        let logtoClient = LogtoClient(useConfig: config, socialPlugins: [LogtoSocialPluginAlipay()])
         client = logtoClient
         isAuthenticated = logtoClient.isAuthenticated
 
@@ -120,6 +122,19 @@ struct ContentView: View {
                         print(error)
                     }
                 }
+            }
+
+            Button("Alipay") {
+                alipayPlugin.start(LogtoSocialPluginConfiguration(
+                    redirectUri: URL(string: "alipay://?app_id=some_app_id&state=foo")!,
+                    callbackUri: URL(string: "https://logto.dev/callback/alipay")!,
+                    completion: { url in
+                        print(url)
+                    },
+                    errorHandler: { error in
+                        print(error)
+                    }
+                ))
             }
         }
     }

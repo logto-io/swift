@@ -8,10 +8,25 @@
 import Foundation
 import KeychainAccess
 import Logto
-import LogtoSocialPlugin
-import LogtoSocialPluginWeb
+@_exported import LogtoSocialPlugin
+@_exported import LogtoSocialPluginWeb
 
 public class LogtoClient {
+    public struct NotificationObject {
+        public let clientId: String?
+        public let url: URL
+    }
+
+    // MARK: Static Members
+
+    public static let HandleNotification = Notification.Name("Logto Handle")
+    public static func handle(forClientId clientId: String? = nil, url: URL) {
+        NotificationCenter.default.post(
+            name: HandleNotification,
+            object: NotificationObject(clientId: clientId, url: url)
+        )
+    }
+
     // MARK: Internal Constants
 
     internal let authContext = LogtoAuthContext()
@@ -53,6 +68,32 @@ public class LogtoClient {
         return try LogtoUtilities.decodeIdToken(idToken)
     }
 
+    @discardableResult
+    public func handle(url: URL) -> Bool {
+        for plugin in socialPlugins {
+            if plugin.handle(url: url) {
+                return true
+            }
+        }
+
+        return false
+    }
+
+    // MARK: Internal Functions
+
+    func handle(notification: Notification) {
+        guard let object = notification.object as? NotificationObject else {
+            return
+        }
+
+        // Notification sends to all clients when `object.clientId` is nil
+        guard object.clientId == nil || object.clientId == logtoConfig.clientId else {
+            return
+        }
+
+        handle(url: object.url)
+    }
+
     // MARK: Public Init Functions
 
     public init(
@@ -70,5 +111,12 @@ public class LogtoClient {
         } else {
             keychain = nil
         }
+
+        NotificationCenter.default.addObserver(
+            forName: LogtoClient.HandleNotification,
+            object: nil,
+            queue: nil,
+            using: handle
+        )
     }
 }
