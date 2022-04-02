@@ -19,23 +19,23 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-spm-
 
+      - name: Install xcpretty
+        run: gem install xcpretty
+
       - name: SwiftFormat
         run: swift run -c release swiftformat ../ --lint
         working-directory: ./BuildTools
 
-      - name: Install xcbeautify
-        run: brew install xcbeautify
-
       - name: Build & Test
         run: |
-          set -o pipefail | \
+          set -o pipefail && \
           xcodebuild \
             -scheme "Logto SDK-Package" \
-            -destination "platform=iOS Simulator,OS=15.4,name=iPhone 13 Pro" \
+            -destination "platform=iOS Simulator,OS=15.2,name=iPhone 13 Pro" \
             -enableCodeCoverage=YES \
             -derivedDataPath ./DerivedData \
             test | \
-          xcbeautify
+          xcpretty
 
       - name: Convert Swift Test Coverage report
         uses: sersoft-gmbh/swift-coverage-action@v2
