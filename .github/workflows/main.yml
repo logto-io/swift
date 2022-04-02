@@ -22,9 +22,9 @@ jobs:
       - name: Install xcpretty
         run: gem install xcpretty
 
-      - name: SwiftFormat
-        run: swift run -c release swiftformat ../ --lint
-        working-directory: ./BuildTools
+      # - name: SwiftFormat
+      #   run: swift run -c release swiftformat ../ --lint
+      #   working-directory: ./BuildTools
 
       - name: Build & Test
         run: |
@@ -33,20 +33,18 @@ jobs:
             -scheme "Logto SDK-Package" \
             -destination "platform=iOS Simulator,OS=15.2,name=iPhone 13 Pro" \
             -enableCodeCoverage=YES \
-            -derivedDataPath ./DerivedData \
+            -resultBundlePath Logto.xcresult \
             test | \
           xcpretty
 
-      - name: Convert Swift Test Coverage report
-        uses: sersoft-gmbh/swift-coverage-action@v2
-        id: coverage-files
-        with:
-          search-paths: ./DerivedData
-          output: ./.coverage
-          format: lcov
+      # From https://github.com/codecov/uploader/issues/223
+      - name: Convert Coverage Report to Codecov Format
+        run: |
+          npm add yargs@^15.1.0
+          node generate-codecov-json.js --archive-path ./Logto.xcresult
 
       - name: Codecov Report Upload
         uses: codecov/codecov-action@v2
         with:
           flags: swift-sdk
-          files: ${{join(fromJSON(steps.coverage-files.outputs.files), ',')}}
+          files: ./coverage-report-Logto.json
