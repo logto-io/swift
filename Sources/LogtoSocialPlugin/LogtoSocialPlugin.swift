@@ -7,10 +7,6 @@
 
 import Foundation
 
-public protocol LogtoSocialPluginError: LocalizedError {
-    var code: String { get }
-}
-
 public struct LogtoSocialPluginConfiguration {
     public let redirectUri: URL
     public let callbackUri: URL
@@ -34,5 +30,12 @@ public struct LogtoSocialPluginConfiguration {
 public protocol LogtoSocialPlugin {
     var urlSchemes: [String] { get }
 
+    func handle(url: URL) -> Bool
     func start(_ configuration: LogtoSocialPluginConfiguration)
+}
+
+public extension LogtoSocialPlugin {
+    func handle(url _: URL) -> Bool {
+        false
+    }
 }

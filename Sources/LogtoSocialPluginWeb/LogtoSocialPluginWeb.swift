@@ -11,14 +11,11 @@ import LogtoSocialPlugin
 
 public enum LogtoSocialPluginWebError: LogtoSocialPluginError {
     case webAuthFailed(innerError: Error?)
-    case unableToConstructCallbackUri
 
     public var code: String {
         switch self {
         case .webAuthFailed:
             return "web_auth_failed"
-        case .unableToConstructCallbackUri:
-            return "unable_to_construct_callback_uri"
         }
     }
 
@@ -26,8 +23,6 @@ public enum LogtoSocialPluginWebError: LogtoSocialPluginError {
         switch self {
         case let .webAuthFailed(innerError):
             return innerError?.localizedDescription ?? "Web authentication failed."
-        case .unableToConstructCallbackUri:
-            return "Unable to construct callback URI."
         }
     }
 }
@@ -48,7 +43,7 @@ public class LogtoSocialPluginWeb: LogtoSocialPlugin {
     public func start(_ configuration: LogtoSocialPluginConfiguration) {
         guard var callbackComponents = URLComponents(url: configuration.callbackUri, resolvingAgainstBaseURL: true)
         else {
-            configuration.errorHandler(LogtoSocialPluginWebError.unableToConstructCallbackUri)
+            configuration.errorHandler(LogtoSocialPluginUriError.unableToConstructCallbackUri)
             return
         }
 
@@ -67,7 +62,7 @@ public class LogtoSocialPluginWeb: LogtoSocialPlugin {
                 .queryItems = (callbackComponents.queryItems ?? []) + (customComponents?.queryItems ?? [])
 
             guard let url = callbackComponents.url else {
-                configuration.errorHandler(LogtoSocialPluginWebError.unableToConstructCallbackUri)
+                configuration.errorHandler(LogtoSocialPluginUriError.unableToConstructCallbackUri)
                 return
             }
 
