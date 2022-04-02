@@ -8,6 +8,7 @@
 import AuthenticationServices
 import Foundation
 import Logto
+import LogtoSocialPlugin
 
 public class LogtoAuthSession {
     public typealias Errors = LogtoClient.Errors
@@ -27,6 +28,7 @@ public class LogtoAuthSession {
     let logtoConfig: LogtoConfig
     let oidcConfig: LogtoCore.OidcConfigResponse
     let redirectUri: URL
+    let socialPlugins: [LogtoSocialPlugin]
     let completion: Completion
 
     internal var callbackUri: URL?
@@ -36,6 +38,7 @@ public class LogtoAuthSession {
         logtoConfig: LogtoConfig,
         oidcConfig: LogtoCore.OidcConfigResponse,
         redirectUri: URL,
+        socialPlugins: [LogtoSocialPlugin],
         completion: @escaping Completion
     ) {
         authContext = LogtoAuthContext()
@@ -47,6 +50,7 @@ public class LogtoAuthSession {
         self.logtoConfig = logtoConfig
         self.oidcConfig = oidcConfig
         self.redirectUri = redirectUri
+        self.socialPlugins = socialPlugins
         self.completion = completion
     }
 
@@ -64,7 +68,8 @@ public class LogtoAuthSession {
 
             #if !os(macOS)
                 // Create session
-                let session = LogtoWebViewAuthSession(authUri, redirectUri: redirectUri) { [self] in
+                let session = LogtoWebViewAuthSession(authUri, redirectUri: redirectUri,
+                                                      socialPlugins: socialPlugins) { [self] in
                     guard let callbackUri = $0 else {
                         completion(.failure(error: Errors.SignIn(type: .authFailed, innerError: nil)))
                         return

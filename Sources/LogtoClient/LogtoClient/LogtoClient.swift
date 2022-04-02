@@ -8,6 +8,8 @@
 import Foundation
 import KeychainAccess
 import Logto
+import LogtoSocialPlugin
+import LogtoSocialPluginWeb
 
 public class LogtoClient {
     // MARK: Internal Constants
@@ -16,6 +18,7 @@ public class LogtoClient {
     internal let keychain: Keychain?
     internal let logtoConfig: LogtoConfig
     internal let networkSession: NetworkSession
+    internal let socialPlugins: [LogtoSocialPlugin]
 
     // MARK: Internal Variables
 
@@ -52,9 +55,14 @@ public class LogtoClient {
 
     // MARK: Public Init Functions
 
-    public init(useConfig config: LogtoConfig, session: NetworkSession = URLSession.shared) {
+    public init(
+        useConfig config: LogtoConfig,
+        socialPlugins: [LogtoSocialPlugin] = [],
+        session: NetworkSession = URLSession.shared
+    ) {
         logtoConfig = config
         networkSession = session
+        self.socialPlugins = [LogtoSocialPluginWeb()] + socialPlugins
 
         if config.usingPersistStorage {
             keychain = Keychain(service: LogtoClient.keychainServiceName)

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import LogtoSocialPlugin
 import WebKit
 
 public class LogtoWebViewAuthSession: NSObject {
@@ -31,12 +32,14 @@ public class LogtoWebViewAuthSession: NSObject {
 
     let uri: URL
     let redirectUri: URL
+    let socialPlugins: [LogtoSocialPlugin]
     let onFinish: FinishHandler
     var viewController: LogtoWebViewAuthViewController?
 
-    public init(_ uri: URL, redirectUri: URL, onFinish: @escaping FinishHandler) {
+    public init(_ uri: URL, redirectUri: URL, socialPlugins: [LogtoSocialPlugin], onFinish: @escaping FinishHandler) {
         self.uri = uri
         self.redirectUri = redirectUri
+        self.socialPlugins = socialPlugins
         self.onFinish = onFinish
         super.init()
     }

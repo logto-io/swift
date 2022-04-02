@@ -7,6 +7,7 @@
 
 import AuthenticationServices
 import Foundation
+import LogtoSocialPlugin
 import WebKit
 
 public class LogtoWebViewAuthViewController: UnifiedViewController {
@@ -33,7 +34,7 @@ public class LogtoWebViewAuthViewController: UnifiedViewController {
         webView.load(URLRequest(url: authSession.uri))
     }
 
-    func postErrorMessage(_ error: LogtoWebViewAuthViewError) {
+    func postErrorMessage(_ error: LogtoSocialPluginError) {
         webView.evaluateJavaScript("""
             window.postMessage({
                 type: 'error',
@@ -70,36 +71,23 @@ extension LogtoWebViewAuthViewController: WKScriptMessageHandler {
     public func userContentController(_: WKUserContentController, didReceive message: WKScriptMessage) {
         guard let body = SocialPostBody.safeParseJson(json: message.body),
               let redirectUri = URL(string: body.redirectTo),
-              let callbackUri = URL(string: body.callbackUri),
-              var callbackComponents = URLComponents(url: callbackUri, resolvingAgainstBaseURL: true)
+              let redirectScheme = URLComponents(url: redirectUri, resolvingAgainstBaseURL: true)?.scheme,
+              let callbackUri = URL(string: body.callbackUri)
         else {
             return
         }
 
-        let session = ASWebAuthenticationSession(
-            url: redirectUri,
-            callbackURLScheme: LogtoWebViewAuthViewController.webAuthCallbackScheme
-        ) { [self] customUri, error in
-            guard let customUri = customUri else {
-                postErrorMessage(.webAuthFailed(innerError: error))
-                return
-            }
-
-            // Construct callback URL for WebView
-            let customComponents = URLComponents(url: customUri, resolvingAgainstBaseURL: true)
-            callbackComponents
-                .queryItems = (callbackComponents.queryItems ?? []) + (customComponents?.queryItems ?? [])
-
-            guard let url = callbackComponents.url else {
-                postErrorMessage(.unableToConstructCallbackUri)
-                return
-            }
-
-            self.webView.load(URLRequest(url: url))
+        guard let socialPlugin = authSession.socialPlugins.first(where: {
+            $0.urlSchemes.contains(redirectScheme)
+        }) else {
+            // TO-DO: error handling
+            return
         }
 
-        session.prefersEphemeralWebBrowserSession = true
-        session.presentationContextProvider = self
-        session.start()
+        socialPlugin
+            .start(LogtoSocialPluginConfiguration(redirectUri: redirectUri, callbackUri: callbackUri,
+                                                  completion: { url in
+                                                      self.webView.load(URLRequest(url: url))
+                                                  }, errorHandler: postErrorMessage))
     }
 }

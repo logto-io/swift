@@ -32,7 +32,8 @@ final class LogtoAuthSessionTests: XCTestCase {
             useSession: NetworkSessionMock.shared,
             logtoConfig: try! LogtoConfig(endpoint: "https://logto.dev", clientId: ""),
             oidcConfig: getMockOidcConfig(authorizationEndpoint: "https://logto.dev/auth"),
-            redirectUri: redirectUri
+            redirectUri: redirectUri,
+            socialPlugins: []
         ) {
             guard case let .failure(error: error) = $0, error.type == .unableToFetchToken
             else {
@@ -62,7 +63,8 @@ final class LogtoAuthSessionTests: XCTestCase {
                 authorizationEndpoint: "https://logto.dev/auth",
                 tokenEndpoint: "https://logto.dev/token:good"
             ),
-            redirectUri: redirectUri
+            redirectUri: redirectUri,
+            socialPlugins: []
         ) {
             guard case .success(response: _) = $0
             else {
