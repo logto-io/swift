@@ -12,14 +12,11 @@ import LogtoSocialPlugin
 public enum LogtoSocialPluginWechatError: LogtoSocialPluginError {
     case authFailed(withCode: String)
     case insufficientInfo
-    case noCodeReturned
 
     public var code: String {
         switch self {
         case .insufficientInfo:
             return "insufficient_info"
-        case .noCodeReturned:
-            return "no_code_return"
         case .authFailed:
             return "auth_failed"
         }
@@ -29,10 +26,8 @@ public enum LogtoSocialPluginWechatError: LogtoSocialPluginError {
         switch self {
         case .insufficientInfo:
             return "The redirect URL contains insufficient information."
-        case .noCodeReturned:
-            return "Wechat didn't return authorization `code`."
         case let .authFailed(withCode):
-            return "Alipay auth failed with code \(withCode)."
+            return "Wechat auth failed with code \(withCode)."
         }
     }
 }
@@ -51,11 +46,6 @@ public class LogtoSocialPluginWechatApiDelegate: NSObject, WXApiDelegate {
             return
         }
 
-        guard let code = response.code else {
-            configuration.errorHandler(LogtoSocialPluginWechatError.noCodeReturned)
-            return
-        }
-
         guard var callbackComponents = URLComponents(url: configuration.callbackUri, resolvingAgainstBaseURL: true)
         else {
             configuration.errorHandler(LogtoSocialPluginUriError.unableToConstructCallbackComponents)
@@ -63,7 +53,7 @@ public class LogtoSocialPluginWechatApiDelegate: NSObject, WXApiDelegate {
         }
 
         callbackComponents.queryItems = (callbackComponents.queryItems ?? []) + [
-            URLQueryItem(name: "code", value: code),
+            URLQueryItem(name: "code", value: response.code),
             URLQueryItem(name: "state", value: response.state),
             URLQueryItem(name: "language", value: response.lang),
             URLQueryItem(name: "country", value: response.country),
