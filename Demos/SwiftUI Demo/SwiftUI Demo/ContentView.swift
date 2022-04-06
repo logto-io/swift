@@ -138,10 +138,12 @@ struct ContentView: View {
                     }
                 ))
             }
-            
+
             Button("Wechat") {
                 wechatPlugin.start(LogtoSocialPluginConfiguration(
-                    redirectUri: URL(string: "wechat://?app_id=some_app_id&state=foo&universal_link=https://logto.io/app/")!,
+                    redirectUri: URL(
+                        string: "wechat://?app_id=wx89d03327bc26d757&state=foo&universal_link=https://logto.io/app/"
+                    )!,
                     callbackUri: URL(string: "https://logto.dev/callback/wechat")!,
                     completion: { url in
                         print(url)
