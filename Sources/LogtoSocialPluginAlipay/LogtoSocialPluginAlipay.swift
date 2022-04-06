@@ -29,7 +29,7 @@ public enum LogtoSocialPluginAlipayError: LogtoSocialPluginError {
 
 // Follows Alipay official docs: https://opendocs.alipay.com/open/218/wy75xo
 public class LogtoSocialPluginAlipay: LogtoSocialPlugin {
-    public let urlSchemes: [String] = ["alipay"]
+    public let urlSchemes = ["alipay"]
 
     public init() {}
 
