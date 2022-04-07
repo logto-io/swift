@@ -8,12 +8,17 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>io.logto.SwiftUI-Demo</string>
+			<string>Main</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>logto-demo</string>
 			</array>
 		</dict>
+	</array>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>weixinULAPI</string>
+		<string>weixin</string>
 	</array>
 </dict>
 </plist>

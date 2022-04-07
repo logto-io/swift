@@ -28,6 +28,10 @@ let package = Package(
             name: "LogtoSocialPluginAlipay",
             targets: ["LogtoSocialPluginAlipay"]
         ),
+        .library(
+            name: "LogtoSocialPluginWechat",
+            targets: ["LogtoSocialPluginWechat"]
+        ),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -75,6 +79,20 @@ let package = Package(
         .target(
             name: "LogtoSocialPluginAlipay",
             dependencies: ["LogtoSocialPlugin", "AFServiceSDK"]
+        ),
+        .binaryTarget(
+            name: "WechatOpenSDK",
+            url: "https://github.com/logto-io/social-sdks/raw/eadafc84b6c0c7a0eb774fd7029cba8209561334/wechat/swift/WechatOpenSDK.zip",
+            checksum: "0e57d10a3e817e843028eac8f2fd29ba45b3ea2ccbf760ec0842ac76e7e1dec6"
+        ),
+        .target(
+            name: "LogtoSocialPluginWechat",
+            dependencies: ["LogtoSocialPlugin", "WechatOpenSDK"],
+            linkerSettings: [
+                .linkedLibrary("sqlite3"),
+                .linkedLibrary("c++"),
+                .linkedLibrary("z"),
+            ]
         ),
     ]
 )

@@ -8,6 +8,7 @@
 import Logto
 import LogtoClient
 import LogtoSocialPluginAlipay
+import LogtoSocialPluginWechat
 import SwiftUI
 
 struct ContentView: View {
@@ -17,6 +18,7 @@ struct ContentView: View {
     let resource = "https://api.logto.io"
     let client: LogtoClient?
     let alipayPlugin = LogtoSocialPluginAlipay()
+    let wechatPlugin = LogtoSocialPluginWechat()
 
     init() {
         guard let config = try? LogtoConfig(
@@ -28,7 +30,7 @@ struct ContentView: View {
             isAuthenticated = false
             return
         }
-        let logtoClient = LogtoClient(useConfig: config, socialPlugins: [LogtoSocialPluginAlipay()])
+        let logtoClient = LogtoClient(useConfig: config, socialPlugins: [alipayPlugin, wechatPlugin])
         client = logtoClient
         isAuthenticated = logtoClient.isAuthenticated
 
@@ -128,6 +130,21 @@ struct ContentView: View {
                 alipayPlugin.start(LogtoSocialPluginConfiguration(
                     redirectUri: URL(string: "alipay://?app_id=some_app_id&state=foo")!,
                     callbackUri: URL(string: "https://logto.dev/callback/alipay")!,
+                    completion: { url in
+                        print(url)
+                    },
+                    errorHandler: { error in
+                        print(error)
+                    }
+                ))
+            }
+
+            Button("Wechat") {
+                wechatPlugin.start(LogtoSocialPluginConfiguration(
+                    redirectUri: URL(
+                        string: "wechat://?app_id=wx89d03327bc26d757&state=foo&universal_link=https://logto.io/app/"
+                    )!,
+                    callbackUri: URL(string: "https://logto.dev/callback/wechat")!,
                     completion: { url in
                         print(url)
                     },
