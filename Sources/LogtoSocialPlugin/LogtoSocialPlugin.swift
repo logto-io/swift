@@ -28,6 +28,7 @@ public struct LogtoSocialPluginConfiguration {
 }
 
 public protocol LogtoSocialPlugin {
+    var connectorId: String { get }
     var urlSchemes: [String] { get }
 
     func handle(url: URL) -> Bool

@@ -36,6 +36,7 @@ class LogtoSocialPluginWebContextProviding: NSObject, ASWebAuthenticationPresent
 public class LogtoSocialPluginWeb: LogtoSocialPlugin {
     private static let callbackUrlScheme = "logto-callback"
 
+    public let connectorId = "web"
     public let urlSchemes = ["http", "https"]
 
     public init() {}
