@@ -20,8 +20,10 @@ public class LogtoWebViewAuthViewController: UnifiedViewController {
     var injectScript: String { """
         const logtoNativeSdk = {
             platform: 'ios',
-            getPostMessage: () => window.webkit.messageHandlers && window.webkit.messageHandlers.\(LogtoWebViewAuthViewController.messageHandlerName),
-            supportedSocialConnectorIds: [\(authSession.socialPlugins.map { "'\($0.connectorId)'" }.joined(separator: ","))],
+            getPostMessage: () => window.webkit.messageHandlers && window.webkit.messageHandlers.\(LogtoWebViewAuthViewController
+        .messageHandlerName),
+            supportedSocialConnectorIds: [\(authSession.socialPlugins.map { "'\($0.connectorId)'" }
+        .joined(separator: ","))],
             callbackUriScheme: '\(LogtoWebViewAuthViewController.webAuthCallbackScheme)'
         };
     """
