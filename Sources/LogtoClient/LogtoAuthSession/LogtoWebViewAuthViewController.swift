@@ -11,8 +11,23 @@ import LogtoSocialPlugin
 import WebKit
 
 public class LogtoWebViewAuthViewController: UnifiedViewController {
+    static let webAuthCallbackScheme = "logto-callback"
+    static let messageHandlerName = "socialHandler"
+
     let webView = WKWebView()
     let authSession: LogtoWebViewAuthSession
+
+    var injectScript: String { """
+        const logtoNativeSdk = {
+            platform: 'ios',
+            getPostMessage: () => window.webkit.messageHandlers && window.webkit.messageHandlers.\(LogtoWebViewAuthViewController
+        .messageHandlerName),
+            supportedSocialConnectorIds: [\(authSession.socialPlugins.map { "'\($0.connectorId)'" }
+        .joined(separator: ","))],
+            callbackUriScheme: '\(LogtoWebViewAuthViewController.webAuthCallbackScheme)'
+        };
+    """
+    }
 
     init(authSession: LogtoWebViewAuthSession) {
         self.authSession = authSession
@@ -27,7 +42,9 @@ public class LogtoWebViewAuthViewController: UnifiedViewController {
     override public func loadView() {
         view = webView
         webView.navigationDelegate = authSession
-        webView.configuration.userContentController.add(self, name: "socialHandler")
+        webView.configuration.userContentController.add(self, name: LogtoWebViewAuthViewController.messageHandlerName)
+        webView.configuration.userContentController
+            .addUserScript(WKUserScript(source: injectScript, injectionTime: .atDocumentStart, forMainFrameOnly: false))
     }
 
     override public func viewDidLoad() {
@@ -52,8 +69,6 @@ extension LogtoWebViewAuthViewController: ASWebAuthenticationPresentationContext
 }
 
 extension LogtoWebViewAuthViewController: WKScriptMessageHandler {
-    static let webAuthCallbackScheme = "logto-callback"
-
     struct SocialPostBody: Codable {
         static func safeParseJson(json: Any) -> SocialPostBody? {
             do {
@@ -85,9 +100,12 @@ extension LogtoWebViewAuthViewController: WKScriptMessageHandler {
         }
 
         socialPlugin
-            .start(LogtoSocialPluginConfiguration(redirectUri: redirectUri, callbackUri: callbackUri,
-                                                  completion: { url in
-                                                      self.webView.load(URLRequest(url: url))
-                                                  }, errorHandler: postErrorMessage))
+            .start(LogtoSocialPluginConfiguration(
+                redirectUri: redirectUri,
+                callbackUri: callbackUri,
+                completion: { url in
+                    self.webView.load(URLRequest(url: url))
+                }, errorHandler: postErrorMessage
+            ))
     }
 }

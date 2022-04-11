@@ -71,6 +71,7 @@ public class LogtoSocialPluginWechatApiDelegate: NSObject, WXApiDelegate {
 public class LogtoSocialPluginWechat: LogtoSocialPlugin {
     let apiDelegate = LogtoSocialPluginWechatApiDelegate()
 
+    public let connectorId = "wechat"
     public let urlSchemes = ["wechat"]
 
     public init() {}
