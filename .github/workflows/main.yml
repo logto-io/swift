@@ -19,7 +19,7 @@ jobs:
             .swiftpm
           key: ${{ runner.os }}-spm-v1-${{ hashFiles('Package.resolved') }}
           restore-keys: |
-            ${{ runner.os }}-spm-
+            ${{ runner.os }}-spm-v1-
       
       - uses: actions/cache@v3
         with:
@@ -28,8 +28,7 @@ jobs:
 
       - name: SwiftFormat
         run: |
-          [ ! -d ".build/" ] && swift build -c release
-          .build/release/swiftformat ../ --lint
+          [ ! -d ".build/" ] && swift run -c release swiftformat ../ --lint || .build/release/swiftformat ../ --lint
         working-directory: ./BuildTools
 
       - name: Build & Test
