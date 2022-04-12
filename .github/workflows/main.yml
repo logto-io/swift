@@ -14,7 +14,9 @@ jobs:
 
       - uses: actions/cache@v3
         with:
-          path: .build
+          path: |
+            .build
+            .swiftpm
           key: ${{ runner.os }}-spm-${{ hashFiles('Package.resolved') }}
           restore-keys: |
             ${{ runner.os }}-spm-
@@ -23,9 +25,6 @@ jobs:
         with:
           path: BuildTools/.build
           key: ${{ runner.os }}-spm-${{ hashFiles('BuildTools/Package.resolved') }}
-
-      - name: Install xcpretty
-        run: gem install xcpretty
 
       - name: SwiftFormat
         run: |
