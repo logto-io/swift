@@ -4,44 +4,54 @@ import LogtoMock
 import XCTest
 
 class LogtoAuthSessionSuccessMock: LogtoAuthSession {
-    override func start() {
-        completion(.success(response: try! JSONDecoder().decode(LogtoCore.CodeTokenResponse.self, from: Data("""
-        {
-            "accessToken": "foo",
-            "refreshToken": "bar",
-            "idToken": "baz",
-            "scope": "openid offline_access",
-            "expiresIn": 300
-        }
-        """.utf8))))
+    override func start() async throws -> LogtoCore.CodeTokenResponse {
+        try! JSONDecoder().decode(LogtoCore.CodeTokenResponse.self, from: Data("""
+            {
+                "accessToken": "foo",
+                "refreshToken": "bar",
+                "idToken": "baz",
+                "scope": "openid offline_access",
+                "expiresIn": 300
+            }
+        """.utf8))
     }
 }
 
 class LogtoAuthSessionFailureMock: LogtoAuthSession {
-    override func start() {
-        completion(.failure(error: LogtoAuthSession.Errors.SignIn(type: .unknownError, innerError: nil)))
+    override func start() async throws -> LogtoCore.CodeTokenResponse {
+        throw LogtoAuthSession.Errors.SignIn(type: .unknownError, innerError: nil)
     }
 }
 
 extension LogtoClientTests {
-    func testSignInOk() async throws {
+    func testSignInUnableToFetchJwkSet() async throws {
         let client = buildClient()
-        let error = try await client.signInWithBrowser(
-            authSessionType: LogtoAuthSessionSuccessMock.self,
-            redirectUri: "io.logto.dev://callback"
-        )
 
-        XCTAssertNil(error)
-        XCTAssertEqual(client.idToken, "baz")
-        XCTAssertEqual(client.refreshToken, "bar")
-        XCTAssertEqual(client.accessTokenMap[client.buildAccessTokenKey(for: nil, scopes: [])]?.token, "foo")
+        do {
+            try await client.signInWithBrowser(
+                authSessionType: LogtoAuthSessionSuccessMock.self,
+                redirectUri: "io.logto.dev://callback"
+            )
+        } catch let error as LogtoClient.Errors.JwkSet {
+            XCTAssertEqual(error.type, .unableToFetchJwkSet)
+            XCTAssertEqual(client.idToken, "baz")
+            return
+        }
+
+        XCTFail()
     }
 
     func testSignInUnableToConstructRedirectUri() async throws {
         let client = buildClient()
-        let error = try await client.signInWithBrowser(redirectUri: "")
 
-        XCTAssertEqual(error?.type, .unableToConstructRedirectUri)
+        do {
+            try await client.signInWithBrowser(redirectUri: "")
+        } catch let error as LogtoClient.Errors.SignIn {
+            XCTAssertEqual(error.type, .unableToConstructRedirectUri)
+            return
+        }
+
+        XCTFail()
     }
 
     func testSignInUnableToFetchOidcConfig() async throws {
@@ -59,11 +69,17 @@ extension LogtoClientTests {
 
     func testSignInUnknownError() async throws {
         let client = buildClient()
-        let error = try await client.signInWithBrowser(
-            authSessionType: LogtoAuthSessionFailureMock.self,
-            redirectUri: "io.logto.dev://callback"
-        )
 
-        XCTAssertEqual(error?.type, .unknownError)
+        do {
+            try await client.signInWithBrowser(
+                authSessionType: LogtoAuthSessionFailureMock.self,
+                redirectUri: "io.logto.dev://callback"
+            )
+        } catch let error as LogtoClient.Errors.SignIn {
+            XCTAssertEqual(error.type, .unknownError)
+            return
+        }
+
+        XCTFail()
     }
 }

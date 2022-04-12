@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import JOSESwift
 
 public extension LogtoCore {
     static let postHeaders: [String: String] = [
@@ -127,6 +128,18 @@ public extension LogtoCore {
             useSession: session,
             endpoint: userInfoEndpoint,
             headers: ["Authorization": "Bearer \(accessToken)"]
+        )
+    }
+
+    // MARK: JWK Set
+
+    static func fetchJwkSet(
+        useSession session: NetworkSession = URLSession.shared,
+        jwksUri: String
+    ) async throws -> JWKSet {
+        try await LogtoRequest.get(
+            useSession: session,
+            endpoint: jwksUri
         )
     }
 }

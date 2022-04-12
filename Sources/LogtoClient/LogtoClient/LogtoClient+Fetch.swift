@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import JOSESwift
 import Logto
 
-extension LogtoClient {
+public extension LogtoClient {
     internal func fetchOidcConfig() async throws -> LogtoCore.OidcConfigResponse {
         if let config = oidcConfig {
             return config
@@ -26,7 +27,7 @@ extension LogtoClient {
         }
     }
 
-    public func fetchUserInfo() async throws -> LogtoCore.UserInfoResponse {
+    func fetchUserInfo() async throws -> LogtoCore.UserInfoResponse {
         let oidcConfig = try await fetchOidcConfig()
         let token = try await getAccessToken(for: nil)
 
@@ -39,6 +40,17 @@ extension LogtoClient {
                 )
         } catch {
             throw Errors.UserInfo(type: .unableToFetchUserInfo, innerError: error)
+        }
+    }
+
+    func fetchJwkSet() async throws -> JWKSet {
+        let oidcConfig = try await fetchOidcConfig()
+
+        do {
+            return try await LogtoCore
+                .fetchJwkSet(jwksUri: oidcConfig.jwksUri)
+        } catch {
+            throw Errors.JwkSet(type: .unableToFetchJwkSet, innerError: error)
         }
     }
 }
