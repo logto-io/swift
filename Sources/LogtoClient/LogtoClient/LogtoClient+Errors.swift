@@ -37,6 +37,15 @@ public extension LogtoClient {
             public let innerError: Error?
         }
 
+        public struct JwkSet: LogtoError, LocalizedError {
+            public enum JwtSetError {
+                case unableToFetchJwkSet
+            }
+
+            public let type: JwtSetError
+            public let innerError: Error?
+        }
+
         public enum IdToken: String, LocalizedError {
             case notAuthenticated
         }

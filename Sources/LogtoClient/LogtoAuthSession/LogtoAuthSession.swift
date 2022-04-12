@@ -13,13 +13,6 @@ import LogtoSocialPlugin
 public class LogtoAuthSession {
     public typealias Errors = LogtoClient.Errors
 
-    public enum Result {
-        case success(response: LogtoCore.CodeTokenResponse)
-        case failure(error: Errors.SignIn)
-    }
-
-    public typealias Completion = (Result) -> Void
-
     let session: NetworkSession
     let authContext: LogtoAuthContext
     let state: String
@@ -29,7 +22,6 @@ public class LogtoAuthSession {
     let oidcConfig: LogtoCore.OidcConfigResponse
     let redirectUri: URL
     let socialPlugins: [LogtoSocialPlugin]
-    let completion: Completion
 
     internal var callbackUri: URL?
 
@@ -38,8 +30,7 @@ public class LogtoAuthSession {
         logtoConfig: LogtoConfig,
         oidcConfig: LogtoCore.OidcConfigResponse,
         redirectUri: URL,
-        socialPlugins: [LogtoSocialPlugin],
-        completion: @escaping Completion
+        socialPlugins: [LogtoSocialPlugin]
     ) {
         authContext = LogtoAuthContext()
         state = LogtoUtilities.generateState()
@@ -51,10 +42,9 @@ public class LogtoAuthSession {
         self.oidcConfig = oidcConfig
         self.redirectUri = redirectUri
         self.socialPlugins = socialPlugins
-        self.completion = completion
     }
 
-    func start() {
+    func start() async throws -> LogtoCore.CodeTokenResponse {
         do {
             let authUri = try LogtoCore.generateSignInUri(
                 authorizationEndpoint: oidcConfig.authorizationEndpoint,
@@ -67,31 +57,41 @@ public class LogtoAuthSession {
             )
 
             #if !os(macOS)
-                // Create session
-                let session = LogtoWebViewAuthSession(authUri, redirectUri: redirectUri,
-                                                      socialPlugins: socialPlugins) { [self] in
-                    guard let callbackUri = $0 else {
-                        completion(.failure(error: Errors.SignIn(type: .authFailed, innerError: nil)))
-                        return
+                return try await withCheckedThrowingContinuation { continuation in
+                    // Create session
+                    let session = LogtoWebViewAuthSession(
+                        authUri,
+                        redirectUri: redirectUri,
+                        socialPlugins: socialPlugins
+                    ) { [self] in
+                        guard let callbackUri = $0 else {
+                            continuation.resume(throwing: Errors.SignIn(type: .authFailed, innerError: nil))
+                            return
+                        }
+
+                        do {
+                            let response = try await handle(callbackUri: callbackUri)
+                            continuation.resume(returning: response)
+                        } catch {
+                            continuation.resume(throwing: error)
+                        }
                     }
 
-                    await handle(callbackUri: callbackUri)
-                }
-
-                DispatchQueue.main.async {
-                    session.start()
+                    DispatchQueue.main.async {
+                        session.start()
+                    }
                 }
             #else
                 fatalError("LogtoAuthSession does not support macOS currently.")
             #endif
         } catch let error as LogtoErrors.UrlConstruction {
-            completion(.failure(error: Errors.SignIn(type: .unableToConstructAuthUri, innerError: error)))
+            throw Errors.SignIn(type: .unableToConstructAuthUri, innerError: error)
         } catch {
-            completion(.failure(error: Errors.SignIn(type: .unknownError, innerError: error)))
+            throw Errors.SignIn(type: .unknownError, innerError: error)
         }
     }
 
-    func handle(callbackUri: URL) async {
+    func handle(callbackUri: URL) async throws -> LogtoCore.CodeTokenResponse {
         do {
             let code = try LogtoCore.verifyAndParseSignInCallbackUri(
                 callbackUri,
@@ -106,11 +106,11 @@ public class LogtoAuthSession {
                 clientId: logtoConfig.clientId,
                 redirectUri: redirectUri.absoluteString
             )
-            completion(.success(response: tokenResponse))
+            return tokenResponse
         } catch let error as LogtoErrors.UriVerification {
-            completion(.failure(error: Errors.SignIn(type: .unexpectedSignInCallback, innerError: error)))
+            throw Errors.SignIn(type: .unexpectedSignInCallback, innerError: error)
         } catch {
-            completion(.failure(error: Errors.SignIn(type: .unableToFetchToken, innerError: error)))
+            throw Errors.SignIn(type: .unableToFetchToken, innerError: error)
         }
     }
 }
