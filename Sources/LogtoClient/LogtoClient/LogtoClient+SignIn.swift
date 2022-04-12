@@ -30,12 +30,6 @@ extension LogtoClient {
         let response = try await session.start()
 
         idToken = response.idToken
-        refreshToken = response.refreshToken
-        accessTokenMap[buildAccessTokenKey(for: nil, scopes: [])] = AccessToken(
-            token: response.accessToken,
-            scope: response.scope,
-            expiresAt: Date().timeIntervalSince1970 + TimeInterval(response.expiresIn)
-        )
 
         if let idToken = idToken {
             let jwks = try await fetchJwkSet()
@@ -46,6 +40,13 @@ extension LogtoClient {
                 jwks: jwks
             )
         }
+
+        refreshToken = response.refreshToken
+        accessTokenMap[buildAccessTokenKey(for: nil, scopes: [])] = AccessToken(
+            token: response.accessToken,
+            scope: response.scope,
+            expiresAt: Date().timeIntervalSince1970 + TimeInterval(response.expiresIn)
+        )
     }
 
     public func signInWithBrowser(

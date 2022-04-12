@@ -24,7 +24,7 @@ class LogtoAuthSessionFailureMock: LogtoAuthSession {
 }
 
 extension LogtoClientTests {
-    func testSignInOk() async throws {
+    func testSignInUnableToFetchJwkSet() async throws {
         let client = buildClient()
 
         do {
@@ -32,10 +32,9 @@ extension LogtoClientTests {
                 authSessionType: LogtoAuthSessionSuccessMock.self,
                 redirectUri: "io.logto.dev://callback"
             )
-        } catch {
+        } catch let error as LogtoClient.Errors.JwkSet {
+            XCTAssertEqual(error.type, .unableToFetchJwkSet)
             XCTAssertEqual(client.idToken, "baz")
-            XCTAssertEqual(client.refreshToken, "bar")
-            XCTAssertEqual(client.accessTokenMap[client.buildAccessTokenKey(for: nil, scopes: [])]?.token, "foo")
             return
         }
 
