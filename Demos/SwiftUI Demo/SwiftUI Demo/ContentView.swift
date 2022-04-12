@@ -59,15 +59,14 @@ struct ContentView: View {
             Button("Sign In") {
                 Task { [self] in
                     do {
-                        let error = try await client.signInWithBrowser(redirectUri: "io.logto.SwiftUI-Demo://callback")
-                        guard let error = error else {
-                            isAuthenticated = true
-                            authError = nil
-                            return
-                        }
+                        try await client.signInWithBrowser(redirectUri: "io.logto.SwiftUI-Demo://callback")
 
+                        isAuthenticated = true
+                        authError = nil
+                    } catch let error as LogtoClient.Errors.SignIn {
                         isAuthenticated = false
                         authError = error
+
                         print("failure", error)
 
                         if let error = error.innerError as? LogtoErrors.Response,
@@ -79,7 +78,6 @@ struct ContentView: View {
                         {
                             print(String(decoding: data, as: UTF8.self))
                         }
-
                     } catch {
                         print(error)
                     }

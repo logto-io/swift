@@ -26,23 +26,14 @@ final class LogtoAuthSessionTests: XCTestCase {
         """.utf8))
     }
 
-    func testHandleUnableToFetchToken() async {
-        let expectFailure = expectation(description: "Auth handle failure")
+    func testHandleUnableToFetchToken() async throws {
         let session = LogtoAuthSession(
             useSession: NetworkSessionMock.shared,
             logtoConfig: try! LogtoConfig(endpoint: "https://logto.dev", clientId: ""),
             oidcConfig: getMockOidcConfig(authorizationEndpoint: "https://logto.dev/auth"),
             redirectUri: redirectUri,
             socialPlugins: []
-        ) {
-            guard case let .failure(error: error) = $0, error.type == .unableToFetchToken
-            else {
-                XCTFail()
-                return
-            }
-
-            expectFailure.fulfill()
-        }
+        )
 
         var components = URLComponents(url: redirectUri, resolvingAgainstBaseURL: true)!
         components.queryItems = [
@@ -50,12 +41,17 @@ final class LogtoAuthSessionTests: XCTestCase {
             URLQueryItem(name: "code", value: "abc"),
         ]
 
-        await session.handle(callbackUri: components.url!)
-        wait(for: [expectFailure], timeout: 1)
+        do {
+            _ = try await session.handle(callbackUri: components.url!)
+        } catch let error as LogtoClient.Errors.SignIn {
+            XCTAssertEqual(error.type, .unableToFetchToken)
+            return
+        }
+
+        XCTFail()
     }
 
-    func testHandleOk() async {
-        let expectOk = expectation(description: "Auth handle OK")
+    func testHandleOk() async throws {
         let session = LogtoAuthSession(
             useSession: NetworkSessionMock.shared,
             logtoConfig: try! LogtoConfig(endpoint: "https://logto.dev", clientId: ""),
@@ -65,15 +61,7 @@ final class LogtoAuthSessionTests: XCTestCase {
             ),
             redirectUri: redirectUri,
             socialPlugins: []
-        ) {
-            guard case .success(response: _) = $0
-            else {
-                XCTFail()
-                return
-            }
-
-            expectOk.fulfill()
-        }
+        )
 
         var components = URLComponents(url: redirectUri, resolvingAgainstBaseURL: true)!
         components.queryItems = [
@@ -81,7 +69,6 @@ final class LogtoAuthSessionTests: XCTestCase {
             URLQueryItem(name: "code", value: "abc"),
         ]
 
-        await session.handle(callbackUri: components.url!)
-        wait(for: [expectOk], timeout: 1)
+        _ = try await session.handle(callbackUri: components.url!)
     }
 }
