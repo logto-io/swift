@@ -61,7 +61,7 @@ extension LogtoCoreTests {
             URLQueryItem(name: "state", value: state),
             URLQueryItem(name: "scope", value: "offline_access openid"),
             URLQueryItem(name: "response_type", value: "code"),
-            URLQueryItem(name: "prompt", value: "consent"),
+            URLQueryItem(name: "prompt", value: "login"),
         ]))
     }
 
@@ -86,7 +86,7 @@ extension LogtoCoreTests {
             URLQueryItem(name: "state", value: state),
             URLQueryItem(name: "scope", value: "foo offline_access openid"),
             URLQueryItem(name: "response_type", value: "code"),
-            URLQueryItem(name: "prompt", value: "consent"),
+            URLQueryItem(name: "prompt", value: "login"),
         ]))
 
         let url2 = try LogtoCore.generateSignInUri(
@@ -107,7 +107,7 @@ extension LogtoCoreTests {
             URLQueryItem(name: "state", value: state),
             URLQueryItem(name: "scope", value: "foo bar offline_access openid"),
             URLQueryItem(name: "response_type", value: "code"),
-            URLQueryItem(name: "prompt", value: "consent"),
+            URLQueryItem(name: "prompt", value: "login"),
         ]))
     }
 
@@ -132,7 +132,7 @@ extension LogtoCoreTests {
             URLQueryItem(name: "state", value: state),
             URLQueryItem(name: "scope", value: "offline_access openid"),
             URLQueryItem(name: "response_type", value: "code"),
-            URLQueryItem(name: "prompt", value: "consent"),
+            URLQueryItem(name: "prompt", value: "login"),
             URLQueryItem(name: "resource", value: "https://api.logto.dev"),
         ]))
 
@@ -154,7 +154,7 @@ extension LogtoCoreTests {
             URLQueryItem(name: "state", value: state),
             URLQueryItem(name: "scope", value: "offline_access openid"),
             URLQueryItem(name: "response_type", value: "code"),
-            URLQueryItem(name: "prompt", value: "consent"),
+            URLQueryItem(name: "prompt", value: "login"),
             URLQueryItem(name: "resource", value: "https://api.logto.dev"),
             URLQueryItem(name: "resource", value: "bar"),
         ]))
