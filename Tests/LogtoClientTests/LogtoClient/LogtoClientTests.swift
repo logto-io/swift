@@ -4,6 +4,9 @@ import LogtoMock
 import XCTest
 
 final class LogtoClientTests: XCTestCase {
+    let initialRefreshToken = "foo"
+    let initialIdToken = "bar"
+
     func buildClient(withOidcEndpoint endpoint: String = "/oidc_config:good", withToken: Bool = false) -> LogtoClient {
         let client = LogtoClient(
             useConfig: try! LogtoConfig(endpoint: endpoint, clientId: "foo", usingPersistStorage: false),
@@ -11,8 +14,8 @@ final class LogtoClientTests: XCTestCase {
         )
 
         if withToken {
-            client.refreshToken = "foo"
-            client.idToken = "bar"
+            client.refreshToken = initialRefreshToken
+            client.idToken = initialIdToken
             client.accessTokenMap = [
                 "scope@resource": AccessToken(token: "", scope: "", expiresAt: 1),
             ]
