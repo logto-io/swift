@@ -6,15 +6,16 @@ import XCTest
 extension LogtoClientTests {
     func testGetAccessTokenCached() async throws {
         let client = buildClient()
+        let cachedAccessToken = "foo"
 
         client.accessTokenMap[client.buildAccessTokenKey(for: nil, scopes: [])] = AccessToken(
-            token: "foo",
+            token: cachedAccessToken,
             scope: "",
             expiresAt: Date().timeIntervalSince1970 + 1000
         )
 
         let token = try await client.getAccessToken(for: nil)
-        XCTAssertEqual(token, "foo")
+        XCTAssertEqual(token, cachedAccessToken)
     }
 
     func testGetAccessTokenByRefreshToken() async throws {

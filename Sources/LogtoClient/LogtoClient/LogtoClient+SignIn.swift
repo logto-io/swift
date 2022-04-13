@@ -28,19 +28,16 @@ extension LogtoClient {
         )
 
         let response = try await session.start()
+        let jwks = try await fetchJwkSet()
+
+        try LogtoUtilities.verifyIdToken(
+            response.idToken,
+            issuer: oidcConfig.issuer,
+            clientId: logtoConfig.clientId,
+            jwks: jwks
+        )
 
         idToken = response.idToken
-
-        if let idToken = idToken {
-            let jwks = try await fetchJwkSet()
-            try LogtoUtilities.verifyIdToken(
-                idToken,
-                issuer: oidcConfig.issuer,
-                clientId: logtoConfig.clientId,
-                jwks: jwks
-            )
-        }
-
         refreshToken = response.refreshToken
         accessTokenMap[buildAccessTokenKey(for: nil, scopes: [])] = AccessToken(
             token: response.accessToken,
