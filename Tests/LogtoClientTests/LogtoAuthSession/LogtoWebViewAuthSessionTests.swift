@@ -61,10 +61,10 @@ final class LogtoWebViewAuthSessionTests: XCTestCase {
 
         session.start()
         await session.didFinish(url: mockUrl)
-        
+
         let value = await calledUrl.value
         XCTAssertEqual(value, mockUrl)
-        
+
         try await Task.sleep(nanoseconds: UInt64(0.05 * Double(NSEC_PER_SEC)))
         XCTAssertNil(session.viewController)
     }
