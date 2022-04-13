@@ -31,7 +31,7 @@ https://github.com/logto-io/swift.git
 | LogtoSocialPlugin | Social plugin foundation for LogtoClient. |
 | LogtoSocialPluginWeb | Social plugin for OAuth-like web IdPs. |
 | LogtoSocialPluginAlipay | Social plugin for Alipay sign in. |
-| LogtoSocialPluginWechat | Social plugin for Wechat sign in. |
+| LogtoSocialPluginWechat | Social plugin for WeChat sign in. |
 
 In most cases, you only need to import `LogtoClient`, which includes `Logto` and `LogtoSocialPluginWeb` under the hood.
 
