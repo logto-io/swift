@@ -12,19 +12,24 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         with:
-          path: .build
-          key: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+          path: |
+            .build
+            .swiftpm
+          key: ${{ runner.os }}-spm-v1-${{ hashFiles('Package.resolved') }}
           restore-keys: |
-            ${{ runner.os }}-spm-
+            ${{ runner.os }}-spm-v1-
+      
+      - uses: actions/cache@v3
+        with:
+          path: BuildTools/.build
+          key: ${{ runner.os }}-spm-v1-${{ hashFiles('BuildTools/Package.resolved') }}
 
-      - name: Install xcpretty
-        run: gem install xcpretty
-
-      # - name: SwiftFormat
-      #   run: swift run -c release swiftformat ../ --lint
-      #   working-directory: ./BuildTools
+      - name: SwiftFormat
+        run: |
+          [ ! -d ".build/" ] && swift run -c release swiftformat ../ --lint || .build/release/swiftformat ../ --lint
+        working-directory: ./BuildTools
 
       - name: Build & Test
         run: |
