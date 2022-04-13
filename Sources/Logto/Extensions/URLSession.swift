@@ -8,7 +8,7 @@
 import Foundation
 
 extension URLSession: NetworkSession {
-    private func handleResponse(
+    internal func handleResponse(
         data: Data?,
         response: URLResponse?,
         error: Error?
