@@ -27,7 +27,7 @@ public class LogtoWebViewAuthViewController: UnifiedViewController {
             const logtoNativeSdk = {
                 platform: 'ios',
                 getPostMessage: () => window.webkit.messageHandlers && window.webkit.messageHandlers.\(LogtoWebViewAuthViewController
-            .messageHandlerName),
+            .messageHandlerName).postMessage,
                 supportedSocialConnectorIds: [\(supportedSocialConnectorIds)],
                 callbackUriScheme: '\(LogtoWebViewAuthViewController.webAuthCallbackScheme)'
             };
