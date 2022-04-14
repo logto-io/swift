@@ -10,24 +10,6 @@ import LogtoSocialPlugin
 import WebKit
 
 public class LogtoWebViewAuthSession: NSObject {
-    #if !os(macOS)
-        static func getTopViewController() -> UnifiedViewController? {
-            if var topController = UIApplication.shared.windows.filter({ $0.isKeyWindow }).first?.rootViewController {
-                while let presentedViewController = topController.presentedViewController {
-                    topController = presentedViewController
-                }
-
-                return topController
-            }
-
-            return nil
-        }
-    #else
-        static func getTopViewController() -> UnifiedViewController? {
-            NSApplication.shared.keyWindow?.contentViewController
-        }
-    #endif
-
     public typealias FinishHandler = (URL?) async -> Void
 
     let uri: URL
@@ -44,8 +26,26 @@ public class LogtoWebViewAuthSession: NSObject {
         super.init()
     }
 
+    #if !os(macOS)
+        func getTopViewController() -> UnifiedViewController? {
+            if var topController = UIApplication.shared.windows.filter({ $0.isKeyWindow }).first?.rootViewController {
+                while let presentedViewController = topController.presentedViewController {
+                    topController = presentedViewController
+                }
+
+                return topController
+            }
+
+            return nil
+        }
+    #else
+        func getTopViewController() -> UnifiedViewController? {
+            NSApplication.shared.keyWindow?.contentViewController
+        }
+    #endif
+
     @discardableResult public func start() -> Bool {
-        guard let topViewController = LogtoWebViewAuthSession.getTopViewController() else {
+        guard let topViewController = getTopViewController() else {
             return false
         }
 
@@ -74,9 +74,10 @@ public class LogtoWebViewAuthSession: NSObject {
 }
 
 extension LogtoWebViewAuthSession: WKNavigationDelegate {
-    public func webView(_: WKWebView,
-                        decidePolicyFor navigationAction: WKNavigationAction) async -> WKNavigationActionPolicy
-    {
+    public func webView(
+        _: WKWebView,
+        decidePolicyFor navigationAction: WKNavigationAction
+    ) async -> WKNavigationActionPolicy {
         if let url = navigationAction.request.url, !["http", "https"].contains(url.scheme) {
             if
                 let scheme = url.scheme,
