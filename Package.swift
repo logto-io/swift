@@ -73,8 +73,8 @@ let package = Package(
         ),
         .binaryTarget(
             name: "AFServiceSDK",
-            url: "https://github.com/logto-io/social-sdks/raw/92065b00d61dde0d44b4e76394a81334b87000a1/alipay/swift/AFServiceSDK.zip",
-            checksum: "d140f1e4c6a73e3488e5572ccb6e0a4e23227549b7d04b9793423cf2e8608c57"
+            url: "https://github.com/logto-io/social-sdks/raw/9441f1c774e430fad54a900581f1091109772189/alipay/swift/AFServiceSDK.zip",
+            checksum: "197f4e7e2930e5331642923c393ee9f1ea85b5db8a7ab82550c94b0c0facc8bc"
         ),
         .target(
             name: "LogtoSocialPluginAlipay",
@@ -82,8 +82,8 @@ let package = Package(
         ),
         .binaryTarget(
             name: "WechatOpenSDK",
-            url: "https://github.com/logto-io/social-sdks/raw/eadafc84b6c0c7a0eb774fd7029cba8209561334/wechat/swift/WechatOpenSDK.zip",
-            checksum: "0e57d10a3e817e843028eac8f2fd29ba45b3ea2ccbf760ec0842ac76e7e1dec6"
+            url: "https://github.com/logto-io/social-sdks/raw/9441f1c774e430fad54a900581f1091109772189/wechat/swift/WechatOpenSDK.zip",
+            checksum: "545fa87232593a76f69f799513096334cb0f491b165cc45ccdd0dc5bdddcd958"
         ),
         .target(
             name: "LogtoSocialPluginWechat",
