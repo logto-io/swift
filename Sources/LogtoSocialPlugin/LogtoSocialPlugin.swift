@@ -30,12 +30,17 @@ public struct LogtoSocialPluginConfiguration {
 public protocol LogtoSocialPlugin {
     var connectorId: String { get }
     var urlSchemes: [String] { get }
+    var isAvailable: Bool { get }
 
     func handle(url: URL) -> Bool
     func start(_ configuration: LogtoSocialPluginConfiguration)
 }
 
 public extension LogtoSocialPlugin {
+    var isAvailable: Bool {
+        true
+    }
+
     func handle(url _: URL) -> Bool {
         false
     }

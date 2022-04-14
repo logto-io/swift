@@ -17,16 +17,21 @@ public class LogtoWebViewAuthViewController: UnifiedViewController {
     let webView = WKWebView()
     let authSession: LogtoWebViewAuthSession
 
-    var injectScript: String { """
-        const logtoNativeSdk = {
-            platform: 'ios',
-            getPostMessage: () => window.webkit.messageHandlers && window.webkit.messageHandlers.\(LogtoWebViewAuthViewController
-        .messageHandlerName),
-            supportedSocialConnectorIds: [\(authSession.socialPlugins.map { "'\($0.connectorId)'" }
-        .joined(separator: ","))],
-            callbackUriScheme: '\(LogtoWebViewAuthViewController.webAuthCallbackScheme)'
-        };
-    """
+    var injectScript: String {
+        let supportedSocialConnectorIds = authSession
+            .socialPlugins.filter { $0.isAvailable }
+            .map { "'\($0.connectorId)'" }
+            .joined(separator: ",")
+
+        return """
+            const logtoNativeSdk = {
+                platform: 'ios',
+                getPostMessage: () => window.webkit.messageHandlers && window.webkit.messageHandlers.\(LogtoWebViewAuthViewController
+            .messageHandlerName),
+                supportedSocialConnectorIds: [\(supportedSocialConnectorIds)],
+                callbackUriScheme: '\(LogtoWebViewAuthViewController.webAuthCallbackScheme)'
+            };
+        """
     }
 
     init(authSession: LogtoWebViewAuthSession) {
