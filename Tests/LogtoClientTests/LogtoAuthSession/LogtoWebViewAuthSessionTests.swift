@@ -31,7 +31,7 @@ final class WKNavigationActionMock: WKNavigationAction {
 final class LogtoWebViewAuthSessionTests: XCTestCase {
     let mockUrl = URL(string: "https://logto.dev")!
 
-    func testStartFailed() {
+    func testStartWithNoTopViewController() {
         let session = LogtoWebViewAuthSession(mockUrl, redirectUri: mockUrl, socialPlugins: []) { _ in }
 
         XCTAssertEqual(session.start(), false)
