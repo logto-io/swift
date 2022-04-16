@@ -28,7 +28,7 @@ Carthage [needs a `xcodeproj` file to build](https://github.com/Carthage/Carthag
 
 ### CocoaPods
 
-Due to local dependency and monorepo are [not supported](https://github.com/CocoaPods/CocoaPods/issues/3276), it's hard to create a `.podspec` for this repo.
+Since local dependency and monorepo are [not supported](https://github.com/CocoaPods/CocoaPods/issues/3276), it's hard to create a `.podspec` for this repo.
 
 ## Products
 
