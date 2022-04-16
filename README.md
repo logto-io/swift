@@ -16,11 +16,19 @@ We also provide [集成指南](https://docs.logto.io/zh-cn/integrate-sdk/swift) 
 
 ### Swift Package Manager
 
-Use the following URL to add Logto SDKs as a dependency:
+Since Xcode 11, you can [directly import a swift package](https://developer.apple.com/documentation/swift_packages/adding_package_dependencies_to_your_app) w/o any additional tool. Use the following URL to add Logto SDKs as a dependency:
 
 ```bash
 https://github.com/logto-io/swift.git
 ```
+
+### Carthage
+
+Carthage [needs a `xcodeproj` file to build](https://github.com/Carthage/Carthage/issues/1226#issuecomment-290931385), but `swift package generate-xcodeproj` will report a failure since we are using binary targets for native social plugins. We will try to find a workaround later.
+
+### CocoaPods
+
+CocoaPods [does not support local dependency](https://github.com/CocoaPods/CocoaPods/issues/3276) and monorepo, thus it's hard to create a `.podspec` for this repo.
 
 ## Products
 
