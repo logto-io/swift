@@ -56,14 +56,14 @@ public class LogtoWebViewAuthViewController: UnifiedViewController {
         webView.load(URLRequest(url: authSession.uri))
     }
 
-    func postErrorMessage(_ error: LogtoSocialPluginError) {
+    func postErrorMessage(_ error: LogtoSocialPluginError, completion: ((Any?, Error?) -> Void)? = nil) {
         webView.evaluateJavaScript("""
             window.postMessage({
                 type: 'error',
                 code: '\(error.code)',
                 description: '\(error.localizedDescription)'
             }, location.origin);
-        """)
+        """, completionHandler: completion)
     }
 }
 
@@ -76,12 +76,10 @@ extension LogtoWebViewAuthViewController: ASWebAuthenticationPresentationContext
 extension LogtoWebViewAuthViewController: WKScriptMessageHandler {
     struct SocialPostBody: Codable {
         static func safeParseJson(json: Any) -> SocialPostBody? {
-            do {
-                let data = try JSONSerialization.data(withJSONObject: json)
-                return try? JSONDecoder().decode(self, from: data)
-            } catch {
+            guard let data = try? JSONSerialization.data(withJSONObject: json) else {
                 return nil
             }
+            return try? JSONDecoder().decode(self, from: data)
         }
 
         let callbackUri: String
@@ -108,9 +106,8 @@ extension LogtoWebViewAuthViewController: WKScriptMessageHandler {
             .start(LogtoSocialPluginConfiguration(
                 redirectUri: redirectUri,
                 callbackUri: callbackUri,
-                completion: { url in
-                    self.webView.load(URLRequest(url: url))
-                }, errorHandler: postErrorMessage
+                completion: { self.webView.load(URLRequest(url: $0)) },
+                errorHandler: { self.postErrorMessage($0) }
             ))
     }
 }
