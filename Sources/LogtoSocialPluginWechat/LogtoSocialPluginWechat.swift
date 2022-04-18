@@ -22,7 +22,8 @@
             // https://developers.weixin.qq.com/doc/oplatform/Mobile_App/WeChat_Login/Development_Guide.html
             guard response.errCode == 0 else {
                 configuration
-                    .errorHandler(LogtoSocialPluginError.authenticationFailed(socialCode: response.errCode.description, socialMessage: response.errStr))
+                    .errorHandler(LogtoSocialPluginError
+                        .authenticationFailed(socialCode: response.errCode.description, socialMessage: response.errStr))
                 return
             }
 

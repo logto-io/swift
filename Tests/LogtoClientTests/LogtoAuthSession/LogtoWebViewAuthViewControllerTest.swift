@@ -20,12 +20,12 @@ class SocialPluginMock: LogtoSocialPlugin {
     func start(_ configuration: LogtoSocialPluginConfiguration) {
         startCalled = true
 
-        guard !configuration.redirectUri.absoluteString.contains("error") else {
+        guard !configuration.redirectTo.absoluteString.contains("error") else {
             configuration.errorHandler(LogtoSocialPluginError.unableToConstructCallbackUri)
             return
         }
 
-        configuration.completion(configuration.redirectUri)
+        configuration.completion(configuration.redirectTo)
     }
 }
 

@@ -34,8 +34,13 @@ public class LogtoSocialPluginWeb: LogtoSocialPlugin {
             url: configuration.redirectTo,
             callbackURLScheme: LogtoSocialPluginWeb.callbackUrlScheme
         ) { customUri, error in
+            let error = error as? NSError
             guard let customUri = customUri else {
-                configuration.errorHandler(LogtoSocialPluginError.authenticationFailed(socialCode: nil, socialMessage: nil))
+                configuration
+                    .errorHandler(LogtoSocialPluginError.authenticationFailed(
+                        socialCode: error?.code.description,
+                        socialMessage: error?.localizedDescription
+                    ))
                 return
             }
 

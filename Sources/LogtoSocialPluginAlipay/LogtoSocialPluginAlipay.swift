@@ -50,7 +50,10 @@
                 guard let response = response, response.responseCode == AFResCode.success else {
                     configuration
                         .errorHandler(LogtoSocialPluginError
-                            .authenticationFailed(socialCode: response?.responseCode.rawValue.description ?? "unknown", socialMessage: nil))
+                            .authenticationFailed(
+                                socialCode: response?.responseCode.rawValue.description ?? "unknown",
+                                socialMessage: nil
+                            ))
                     return
                 }
 
