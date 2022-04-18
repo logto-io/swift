@@ -9,8 +9,13 @@ import Foundation
 import Logto
 
 public extension LogtoClient {
+    /**
+     Clear all tokens in memory and Keychain. Also try to revoke the Refresh Token from the OIDC provider.
+
+     - Returns: An error if failed to revoke the token. Usually the error is safe to ignore.
+     */
     @discardableResult
-    func signOut() async throws -> Errors.SignOut? {
+    func signOut() async -> Errors.SignOut? {
         let tokenToRevoke = refreshToken
 
         accessTokenMap = [:]
@@ -18,9 +23,8 @@ public extension LogtoClient {
         idToken = nil
 
         if let token = tokenToRevoke {
-            let oidcConfig = try await fetchOidcConfig()
-
             do {
+                let oidcConfig = try await fetchOidcConfig()
                 try await LogtoCore.revoke(
                     useSession: networkSession,
                     token: token,

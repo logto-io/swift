@@ -10,7 +10,7 @@ import Foundation
 import LogtoSocialPlugin
 import WebKit
 
-public class LogtoWebViewAuthViewController: UnifiedViewController {
+class LogtoWebViewAuthViewController: UnifiedViewController {
     static let webAuthCallbackScheme = "logto-callback"
     static let messageHandlerName = "socialHandler"
 
