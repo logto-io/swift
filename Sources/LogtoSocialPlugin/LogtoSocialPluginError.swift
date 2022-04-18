@@ -12,7 +12,6 @@ public enum LogtoSocialPluginError: LocalizedError {
     case invalidRedirectTo
     case invalidCallbackUri
     case unableToConstructCallbackUri
-    case appIdNotFound
     case insufficientInformation
 
     public var code: String {
@@ -25,8 +24,6 @@ public enum LogtoSocialPluginError: LocalizedError {
             return "invalid_callback_uri"
         case .unableToConstructCallbackUri:
             return "unable_to_construct_callback_uri"
-        case .appIdNotFound:
-            return "app_id_not_found"
         case .insufficientInformation:
             return "insufficient_information"
         }
