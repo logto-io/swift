@@ -11,29 +11,6 @@
     import LogtoSocialPlugin
     @_exported import WechatOpenSDK
 
-    public enum LogtoSocialPluginWechatError: LogtoSocialPluginError {
-        case authFailed(withCode: String)
-        case insufficientInfo
-
-        public var code: String {
-            switch self {
-            case .insufficientInfo:
-                return "insufficient_info"
-            case .authFailed:
-                return "auth_failed"
-            }
-        }
-
-        var localizedDescription: String {
-            switch self {
-            case .insufficientInfo:
-                return "The redirect URL contains insufficient information."
-            case let .authFailed(withCode):
-                return "Wechat auth failed with code \(withCode)."
-            }
-        }
-    }
-
     public class LogtoSocialPluginWechatApiDelegate: NSObject, WXApiDelegate {
         var configuration: LogtoSocialPluginConfiguration?
 
@@ -45,13 +22,14 @@
             // https://developers.weixin.qq.com/doc/oplatform/Mobile_App/WeChat_Login/Development_Guide.html
             guard response.errCode == 0 else {
                 configuration
-                    .errorHandler(LogtoSocialPluginWechatError.authFailed(withCode: response.errCode.description))
+                    .errorHandler(LogtoSocialPluginError
+                        .authenticationFailed(socialCode: response.errCode.description, socialMessage: response.errStr))
                 return
             }
 
             guard var callbackComponents = URLComponents(url: configuration.callbackUri, resolvingAgainstBaseURL: true)
             else {
-                configuration.errorHandler(LogtoSocialPluginUriError.unableToConstructCallbackComponents)
+                configuration.errorHandler(LogtoSocialPluginError.invalidCallbackUri)
                 return
             }
 
@@ -63,7 +41,7 @@
             ]
 
             guard let url = callbackComponents.url else {
-                configuration.errorHandler(LogtoSocialPluginUriError.unableToConstructCallbackUri)
+                configuration.errorHandler(LogtoSocialPluginError.unableToConstructCallbackUri)
                 return
             }
 
@@ -83,9 +61,9 @@
         public init() {}
 
         public func start(_ configuration: LogtoSocialPluginConfiguration) {
-            guard let redirectComponents = URLComponents(url: configuration.redirectUri, resolvingAgainstBaseURL: true)
+            guard let redirectComponents = URLComponents(url: configuration.redirectTo, resolvingAgainstBaseURL: true)
             else {
-                configuration.errorHandler(LogtoSocialPluginUriError.unableToConstructRedirectComponents)
+                configuration.errorHandler(LogtoSocialPluginError.invalidRedirectTo)
                 return
             }
 
@@ -94,7 +72,7 @@
                 let universalLink = redirectComponents.queryItems?.first(where: { $0.name == "universal_link" })?.value,
                 let state = redirectComponents.queryItems?.first(where: { $0.name == "state" })?.value
             else {
-                configuration.errorHandler(LogtoSocialPluginWechatError.insufficientInfo)
+                configuration.errorHandler(LogtoSocialPluginError.insufficientInformation)
                 return
             }
 

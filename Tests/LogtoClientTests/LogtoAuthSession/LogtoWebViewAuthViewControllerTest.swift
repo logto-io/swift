@@ -20,12 +20,12 @@ class SocialPluginMock: LogtoSocialPlugin {
     func start(_ configuration: LogtoSocialPluginConfiguration) {
         startCalled = true
 
-        guard !configuration.redirectUri.absoluteString.contains("error") else {
-            configuration.errorHandler(LogtoSocialPluginUriError.unableToConstructCallbackUri)
+        guard !configuration.redirectTo.absoluteString.contains("error") else {
+            configuration.errorHandler(LogtoSocialPluginError.unableToConstructCallbackUri)
             return
         }
 
-        configuration.completion(configuration.redirectUri)
+        configuration.completion(configuration.redirectTo)
     }
 }
 
@@ -80,7 +80,7 @@ final class LogtoWebViewAuthViewControllerTest: XCTestCase {
         let (viewController, _) = createViewController()
 
         viewController.postErrorMessage(
-            LogtoSocialPluginWebError.webAuthFailed(innerError: nil)
+            LogtoSocialPluginError.authenticationFailed(socialCode: nil, socialMessage: nil)
         ) {
             XCTAssertNil($0)
             // This is intended since our JS doesn't return

@@ -11,24 +11,6 @@
     import Foundation
     import LogtoSocialPlugin
 
-    public enum LogtoSocialPluginAlipayError: LogtoSocialPluginError {
-        case authFailed(withCode: String)
-
-        public var code: String {
-            switch self {
-            case .authFailed:
-                return "auth_failed"
-            }
-        }
-
-        var localizedDescription: String {
-            switch self {
-            case let .authFailed(withCode):
-                return "Alipay auth failed with code \(withCode)."
-            }
-        }
-    }
-
     // Follows Alipay official docs: https://opendocs.alipay.com/open/218/wy75xo
     public class LogtoSocialPluginAlipay: LogtoSocialPlugin {
         public let connectorId = "alipay"
@@ -37,15 +19,15 @@
         public init() {}
 
         public func start(_ configuration: LogtoSocialPluginConfiguration) {
-            guard let redirectComponents = URLComponents(url: configuration.redirectUri, resolvingAgainstBaseURL: true)
+            guard let redirectComponents = URLComponents(url: configuration.redirectTo, resolvingAgainstBaseURL: true)
             else {
-                configuration.errorHandler(LogtoSocialPluginUriError.unableToConstructRedirectComponents)
+                configuration.errorHandler(LogtoSocialPluginError.invalidRedirectTo)
                 return
             }
 
             guard var callbackComponents = URLComponents(url: configuration.callbackUri, resolvingAgainstBaseURL: true)
             else {
-                configuration.errorHandler(LogtoSocialPluginUriError.unableToConstructCallbackComponents)
+                configuration.errorHandler(LogtoSocialPluginError.invalidCallbackUri)
                 return
             }
 
@@ -67,8 +49,11 @@
             ]) { response in
                 guard let response = response, response.responseCode == AFResCode.success else {
                     configuration
-                        .errorHandler(LogtoSocialPluginAlipayError
-                            .authFailed(withCode: response?.responseCode.rawValue.description ?? "unknown"))
+                        .errorHandler(LogtoSocialPluginError
+                            .authenticationFailed(
+                                socialCode: response?.responseCode.rawValue.description ?? "unknown",
+                                socialMessage: nil
+                            ))
                     return
                 }
 
@@ -78,7 +63,7 @@
                     }
 
                 guard let url = callbackComponents.url else {
-                    configuration.errorHandler(LogtoSocialPluginUriError.unableToConstructCallbackUri)
+                    configuration.errorHandler(LogtoSocialPluginError.unableToConstructCallbackUri)
                     return
                 }
 

@@ -7,34 +7,25 @@
 
 import Foundation
 
-public protocol LogtoSocialPluginError: LocalizedError {
-    var code: String { get }
-}
-
-public enum LogtoSocialPluginUriError: LogtoSocialPluginError {
-    case unableToConstructRedirectComponents
-    case unableToConstructCallbackComponents
+public enum LogtoSocialPluginError: LocalizedError {
+    case authenticationFailed(socialCode: String?, socialMessage: String?)
+    case invalidRedirectTo
+    case invalidCallbackUri
     case unableToConstructCallbackUri
+    case insufficientInformation
 
     public var code: String {
         switch self {
-        case .unableToConstructRedirectComponents:
-            return "unable_to_construct_redirect_components"
-        case .unableToConstructCallbackComponents:
-            return "unable_to_construct_callback_components"
+        case .authenticationFailed:
+            return "authentication_failed"
+        case .invalidRedirectTo:
+            return "invalid_redirect_to"
+        case .invalidCallbackUri:
+            return "invalid_callback_uri"
         case .unableToConstructCallbackUri:
             return "unable_to_construct_callback_uri"
-        }
-    }
-
-    var localizedDescription: String {
-        switch self {
-        case .unableToConstructRedirectComponents:
-            return "Unable to construct redirect components."
-        case .unableToConstructCallbackComponents:
-            return "Unable to construct callback components."
-        case .unableToConstructCallbackUri:
-            return "Unable to construct callback URI."
+        case .insufficientInformation:
+            return "insufficient_information"
         }
     }
 }
