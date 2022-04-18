@@ -89,8 +89,8 @@ extension LogtoWebViewAuthViewController: WKScriptMessageHandler {
 
     public func userContentController(_: WKUserContentController, didReceive message: WKScriptMessage) {
         guard let body = SocialPostBody.safeParseJson(json: message.body),
-              let redirectUri = URL(string: body.redirectTo),
-              let redirectScheme = URLComponents(url: redirectUri, resolvingAgainstBaseURL: true)?.scheme,
+              let redirectTo = URL(string: body.redirectTo),
+              let redirectScheme = URLComponents(url: redirectTo, resolvingAgainstBaseURL: true)?.scheme,
               let callbackUri = URL(string: body.callbackUri)
         else {
             return
@@ -105,7 +105,7 @@ extension LogtoWebViewAuthViewController: WKScriptMessageHandler {
 
         socialPlugin
             .start(LogtoSocialPluginConfiguration(
-                redirectUri: redirectUri,
+                redirectTo: redirectTo,
                 callbackUri: callbackUri,
                 completion: { self.webView.load(URLRequest(url: $0)) },
                 errorHandler: { self.postErrorMessage($0) }

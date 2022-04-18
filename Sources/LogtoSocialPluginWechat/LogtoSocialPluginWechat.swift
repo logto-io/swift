@@ -60,7 +60,7 @@
         public init() {}
 
         public func start(_ configuration: LogtoSocialPluginConfiguration) {
-            guard let redirectComponents = URLComponents(url: configuration.redirectUri, resolvingAgainstBaseURL: true)
+            guard let redirectComponents = URLComponents(url: configuration.redirectTo, resolvingAgainstBaseURL: true)
             else {
                 configuration.errorHandler(LogtoSocialPluginError.invalidRedirectTo)
                 return

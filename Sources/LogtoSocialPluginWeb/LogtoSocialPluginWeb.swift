@@ -31,7 +31,7 @@ public class LogtoSocialPluginWeb: LogtoSocialPlugin {
         }
 
         let session = ASWebAuthenticationSession(
-            url: configuration.redirectUri,
+            url: configuration.redirectTo,
             callbackURLScheme: LogtoSocialPluginWeb.callbackUrlScheme
         ) { customUri, error in
             guard let customUri = customUri else {

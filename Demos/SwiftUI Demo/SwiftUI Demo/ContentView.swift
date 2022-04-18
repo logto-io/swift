@@ -126,7 +126,7 @@ struct ContentView: View {
 
             Button("Alipay") {
                 alipayPlugin.start(LogtoSocialPluginConfiguration(
-                    redirectUri: URL(string: "alipay://?app_id=some_app_id&state=foo")!,
+                    redirectTo: URL(string: "alipay://?app_id=some_app_id&state=foo")!,
                     callbackUri: URL(string: "https://logto.dev/callback/alipay")!,
                     completion: { url in
                         print(url)
@@ -139,7 +139,7 @@ struct ContentView: View {
 
             Button("Wechat") {
                 wechatPlugin.start(LogtoSocialPluginConfiguration(
-                    redirectUri: URL(
+                    redirectTo: URL(
                         string: "wechat://?app_id=wx89d03327bc26d757&state=foo&universal_link=https://logto.io/app/"
                     )!,
                     callbackUri: URL(string: "https://logto.dev/callback/wechat")!,
