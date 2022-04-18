@@ -26,6 +26,52 @@ final class LogtoAuthSessionTests: XCTestCase {
         """.utf8))
     }
 
+    func createGoodSession() -> LogtoAuthSession {
+        LogtoAuthSession(
+            useSession: NetworkSessionMock.shared,
+            logtoConfig: try! LogtoConfig(endpoint: "https://logto.dev", clientId: ""),
+            oidcConfig: getMockOidcConfig(
+                authorizationEndpoint: "https://logto.dev/auth",
+                tokenEndpoint: "https://logto.dev/token:good"
+            ),
+            redirectUri: redirectUri,
+            socialPlugins: []
+        )
+    }
+
+    // Swift cannot directly mock a class or an object unless subclassing or using generic,
+    // which increases unnecessary complecity for now.
+    // So the test case is reduced for minimum verification.
+    func testStartOk() async throws {
+        let session = createGoodSession()
+        let task = Task {
+            _ = try await session.start()
+        }
+
+        // Explicitly sleep 0.1s to ensure there's no error when the function starts
+        try await Task.sleep(nanoseconds: UInt64(0.1 * Double(NSEC_PER_SEC)))
+        task.cancel()
+    }
+
+    func testStartFailed() async throws {
+        let session = LogtoAuthSession(
+            useSession: NetworkSessionMock.shared,
+            logtoConfig: try! LogtoConfig(endpoint: "https://logto.dev", clientId: ""),
+            oidcConfig: getMockOidcConfig(authorizationEndpoint: "foo"),
+            redirectUri: URL(string: "foo")!,
+            socialPlugins: []
+        )
+
+        do {
+            _ = try await session.start()
+        } catch let error as LogtoClient.Errors.SignIn {
+            XCTAssertEqual(error.type, .unableToConstructAuthUri)
+            return
+        }
+
+        XCTFail()
+    }
+
     func testHandleUnableToFetchToken() async throws {
         let session = LogtoAuthSession(
             useSession: NetworkSessionMock.shared,
@@ -51,17 +97,21 @@ final class LogtoAuthSessionTests: XCTestCase {
         XCTFail()
     }
 
+    func testHandleUnexpectedSignInCallback() async throws {
+        let session = createGoodSession()
+
+        do {
+            _ = try await session.handle(callbackUri: URL(string: "https://foo")!)
+        } catch let error as LogtoClient.Errors.SignIn {
+            XCTAssertEqual(error.type, .unexpectedSignInCallback)
+            return
+        }
+
+        XCTFail()
+    }
+
     func testHandleOk() async throws {
-        let session = LogtoAuthSession(
-            useSession: NetworkSessionMock.shared,
-            logtoConfig: try! LogtoConfig(endpoint: "https://logto.dev", clientId: ""),
-            oidcConfig: getMockOidcConfig(
-                authorizationEndpoint: "https://logto.dev/auth",
-                tokenEndpoint: "https://logto.dev/token:good"
-            ),
-            redirectUri: redirectUri,
-            socialPlugins: []
-        )
+        let session = createGoodSession()
 
         var components = URLComponents(url: redirectUri, resolvingAgainstBaseURL: true)!
         components.queryItems = [
