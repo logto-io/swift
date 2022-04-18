@@ -9,7 +9,7 @@ import Foundation
 
 public extension LogtoClient {
     enum Errors {
-        public struct AccessToken: LogtoError, LocalizedError {
+        public struct AccessToken: LogtoError {
             public enum AccessTokenError {
                 /// No Refresh Token presents in the Keychain.
                 case noRefreshTokenFound
@@ -22,7 +22,7 @@ public extension LogtoClient {
             public let innerError: Error?
         }
 
-        public struct OidcConfig: LogtoError, LocalizedError {
+        public struct OidcConfig: LogtoError {
             public enum OidcConfigError {
                 /// Unable to fetch OIDC config from the OIDC provider.
                 case unableToFetchOidcConfig
@@ -32,7 +32,7 @@ public extension LogtoClient {
             public let innerError: Error?
         }
 
-        public struct UserInfo: LogtoError, LocalizedError {
+        public struct UserInfo: LogtoError {
             public enum UserInfoError {
                 /// Unable to fetch user info from the OIDC provider.
                 case unableToFetchUserInfo
@@ -42,7 +42,7 @@ public extension LogtoClient {
             public let innerError: Error?
         }
 
-        public struct JwkSet: LogtoError, LocalizedError {
+        public struct JwkSet: LogtoError {
             public enum JwtSetError {
                 /// Unable to fetch JWK set from the given URI.
                 case unableToFetchJwkSet

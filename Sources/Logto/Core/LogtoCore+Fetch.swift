@@ -115,7 +115,7 @@ public extension LogtoCore {
     // MARK: User Info
 
     struct UserInfoResponse: Codable, Equatable {
-        let sub: String
+        public let sub: String
         // More props TBD by LOG-561
     }
 
