@@ -3,6 +3,26 @@ import Logto
 import LogtoMock
 import XCTest
 
+class LogtoSocialPluginMock: LogtoSocialPlugin {
+    let connectorId = "id"
+    let urlSchemes = ["mock"]
+
+    func start(_: LogtoSocialPluginConfiguration) {}
+
+    func handle(url: URL) -> Bool {
+        urlSchemes.contains(url.scheme!)
+    }
+}
+
+class LogtoClientMockHandleUrl: LogtoClient {
+    var handleUrlCalled = false
+
+    override func handle(url _: URL) -> Bool {
+        handleUrlCalled = true
+        return true
+    }
+}
+
 final class LogtoClientTests: XCTestCase {
     let initialRefreshToken = "foo"
     let initialIdToken = "bar"
@@ -22,6 +42,29 @@ final class LogtoClientTests: XCTestCase {
         }
 
         return client
+    }
+
+    func testStaticHandleUrl() {
+        let clientId = "foo"
+        let url = URL(string: "bar")!
+        var called = false
+
+        let handle: (Notification) -> Void = { notification in
+            let object = notification.object as! LogtoClient.NotificationObject
+            XCTAssertEqual(object.clientId, clientId)
+            XCTAssertEqual(object.url, url)
+            called = true
+        }
+
+        NotificationCenter.default.addObserver(
+            forName: LogtoClient.HandleNotification,
+            object: nil,
+            queue: nil,
+            using: handle
+        )
+
+        LogtoClient.handle(forClientId: clientId, url: url)
+        XCTAssertTrue(called)
     }
 
     func testIsAuthenticated() {
@@ -65,5 +108,24 @@ final class LogtoClientTests: XCTestCase {
         )
 
         XCTAssertNotNil(client.keychain)
+    }
+
+    func testHandleUrl() {
+        let client = LogtoClient(
+            useConfig: try! LogtoConfig(endpoint: "/", clientId: "test-handle-url"),
+            socialPlugins: [LogtoSocialPluginMock()]
+        )
+
+        XCTAssertTrue(client.handle(url: URL(string: "mock://foo")!))
+    }
+
+    func testHandleWrongNotification() {
+        let client = LogtoClientMockHandleUrl(
+            useConfig: try! LogtoConfig(endpoint: "/", clientId: "test-handle-url"),
+            socialPlugins: [LogtoSocialPluginMock()]
+        )
+
+        client.handle(notification: Notification(name: LogtoClient.HandleNotification))
+        XCTAssertFalse(client.handleUrlCalled)
     }
 }
