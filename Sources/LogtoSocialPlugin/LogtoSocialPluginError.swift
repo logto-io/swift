@@ -14,7 +14,6 @@ public enum LogtoSocialPluginError: LocalizedError {
     case unableToConstructCallbackUri
     case appIdNotFound
     case insufficientInformation
-    case unknownError(socialCode: String?, socialMessage: String?)
 
     public var code: String {
         switch self {
@@ -30,8 +29,6 @@ public enum LogtoSocialPluginError: LocalizedError {
             return "app_id_not_found"
         case .insufficientInformation:
             return "insufficient_information"
-        case .unknownError:
-            return "unknown_error"
         }
     }
 }

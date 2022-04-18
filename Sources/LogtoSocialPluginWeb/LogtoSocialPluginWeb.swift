@@ -35,7 +35,7 @@ public class LogtoSocialPluginWeb: LogtoSocialPlugin {
             callbackURLScheme: LogtoSocialPluginWeb.callbackUrlScheme
         ) { customUri, error in
             guard let customUri = customUri else {
-                configuration.errorHandler(LogtoSocialPluginError.unknownError(socialCode: nil, socialMessage: nil))
+                configuration.errorHandler(LogtoSocialPluginError.authenticationFailed(socialCode: nil, socialMessage: nil))
                 return
             }
 
