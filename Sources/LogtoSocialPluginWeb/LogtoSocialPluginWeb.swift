@@ -9,24 +9,6 @@ import AuthenticationServices
 import Foundation
 import LogtoSocialPlugin
 
-public enum LogtoSocialPluginWebError: LogtoSocialPluginError {
-    case webAuthFailed(innerError: Error?)
-
-    public var code: String {
-        switch self {
-        case .webAuthFailed:
-            return "web_auth_failed"
-        }
-    }
-
-    var localizedDescription: String {
-        switch self {
-        case let .webAuthFailed(innerError):
-            return innerError?.localizedDescription ?? "Web authentication failed."
-        }
-    }
-}
-
 class LogtoSocialPluginWebContextProviding: NSObject, ASWebAuthenticationPresentationContextProviding {
     public func presentationAnchor(for _: ASWebAuthenticationSession) -> ASPresentationAnchor {
         ASPresentationAnchor()
@@ -44,7 +26,7 @@ public class LogtoSocialPluginWeb: LogtoSocialPlugin {
     public func start(_ configuration: LogtoSocialPluginConfiguration) {
         guard var callbackComponents = URLComponents(url: configuration.callbackUri, resolvingAgainstBaseURL: true)
         else {
-            configuration.errorHandler(LogtoSocialPluginUriError.unableToConstructCallbackUri)
+            configuration.errorHandler(LogtoSocialPluginError.invalidCallbackUri)
             return
         }
 
@@ -53,7 +35,7 @@ public class LogtoSocialPluginWeb: LogtoSocialPlugin {
             callbackURLScheme: LogtoSocialPluginWeb.callbackUrlScheme
         ) { customUri, error in
             guard let customUri = customUri else {
-                configuration.errorHandler(LogtoSocialPluginWebError.webAuthFailed(innerError: error))
+                configuration.errorHandler(LogtoSocialPluginError.unknownError(socialCode: nil, socialMessage: nil))
                 return
             }
 
@@ -63,7 +45,7 @@ public class LogtoSocialPluginWeb: LogtoSocialPlugin {
                 .queryItems = (callbackComponents.queryItems ?? []) + (customComponents?.queryItems ?? [])
 
             guard let url = callbackComponents.url else {
-                configuration.errorHandler(LogtoSocialPluginUriError.unableToConstructCallbackUri)
+                configuration.errorHandler(LogtoSocialPluginError.unableToConstructCallbackUri)
                 return
             }
 
