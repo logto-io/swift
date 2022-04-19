@@ -13,9 +13,6 @@ struct SwiftUI_DemoApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .onOpenURL { url in
-                    LogtoClient.handle(url: url)
-                }
         }
     }
 }

@@ -63,7 +63,7 @@ public class LogtoClient {
         didSet { saveToKeychain(forKey: .refreshToken) }
     }
 
-    /// Config fetched from [OIDC Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html) endpoint.
+    /// The config fetched from [OIDC Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html) endpoint.
     public internal(set) var oidcConfig: LogtoCore.OidcConfigResponse?
 
     // MARK: Public Computed Variables
