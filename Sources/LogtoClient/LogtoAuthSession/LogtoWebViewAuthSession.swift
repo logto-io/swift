@@ -10,7 +10,7 @@ import LogtoSocialPlugin
 import WebKit
 
 class LogtoWebViewAuthSession: NSObject {
-    public typealias FinishHandler = (URL?) async -> Void
+    typealias FinishHandler = (URL?) async -> Void
 
     let uri: URL
     let redirectUri: URL

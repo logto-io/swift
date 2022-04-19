@@ -79,7 +79,7 @@ public class LogtoClient {
     /// - Throws: An error if no ID Token presents or decode token failed.
     public func getIdTokenClaims() throws -> IdTokenClaims {
         guard let idToken = idToken else {
-            throw Errors.IdToken.notAuthenticated
+            throw LogtoClientErrors.IdToken.notAuthenticated
         }
 
         return try LogtoUtilities.decodeIdToken(idToken)

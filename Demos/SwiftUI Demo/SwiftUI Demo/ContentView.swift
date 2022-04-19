@@ -63,7 +63,7 @@ struct ContentView: View {
 
                         isAuthenticated = true
                         authError = nil
-                    } catch let error as LogtoClient.Errors.SignIn {
+                    } catch let error as LogtoClientErrors.SignIn {
                         isAuthenticated = false
                         authError = error
 
@@ -96,8 +96,8 @@ struct ContentView: View {
                     do {
                         let userInfo = try await client.fetchUserInfo()
                         print(userInfo)
-                    } catch let error as LogtoClient.Errors.UserInfo {
-                        if let error = error.innerError as? LogtoClient.Errors.AccessToken,
+                    } catch let error as LogtoClientErrors.UserInfo {
+                        if let error = error.innerError as? LogtoClientErrors.AccessToken,
                            let error = error.innerError as? LogtoErrors.Response,
                            case let LogtoErrors.Response.withCode(
                                _,

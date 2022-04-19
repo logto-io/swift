@@ -44,7 +44,7 @@ extension LogtoClientTests {
 
         do {
             _ = try await client.getAccessToken(for: nil)
-        } catch let error as LogtoClient.Errors.OidcConfig {
+        } catch let error as LogtoClientErrors.OidcConfig {
             XCTAssertEqual(error.type, .unableToFetchOidcConfig)
             return
         }
@@ -59,7 +59,7 @@ extension LogtoClientTests {
 
         do {
             _ = try await client.getAccessToken(for: nil)
-        } catch let error as LogtoClient.Errors.AccessToken {
+        } catch let error as LogtoClientErrors.AccessToken {
             XCTAssertEqual(error.type, .unableToFetchTokenByRefreshToken)
             return
         }

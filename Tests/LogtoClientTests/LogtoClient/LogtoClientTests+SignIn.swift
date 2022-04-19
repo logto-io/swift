@@ -32,7 +32,7 @@ extension LogtoClientTests {
                 authSessionType: LogtoAuthSessionSuccessMock.self,
                 redirectUri: "io.logto.dev://callback"
             )
-        } catch let error as LogtoClient.Errors.JwkSet {
+        } catch let error as LogtoClientErrors.JwkSet {
             XCTAssertEqual(error.type, .unableToFetchJwkSet)
             XCTAssertEqual(client.idToken, initialIdToken)
             return
@@ -46,7 +46,7 @@ extension LogtoClientTests {
 
         do {
             try await client.signInWithBrowser(redirectUri: "")
-        } catch let error as LogtoClient.Errors.SignIn {
+        } catch let error as LogtoClientErrors.SignIn {
             XCTAssertEqual(error.type, .unableToConstructRedirectUri)
             return
         }
@@ -59,7 +59,7 @@ extension LogtoClientTests {
 
         do {
             _ = try await client.signInWithBrowser(redirectUri: "io.logto.dev://callback")
-        } catch let error as LogtoClient.Errors.OidcConfig {
+        } catch let error as LogtoClientErrors.OidcConfig {
             XCTAssertEqual(error.type, .unableToFetchOidcConfig)
             return
         }
@@ -75,7 +75,7 @@ extension LogtoClientTests {
                 authSessionType: LogtoAuthSessionFailureMock.self,
                 redirectUri: "io.logto.dev://callback"
             )
-        } catch let error as LogtoClient.Errors.SignIn {
+        } catch let error as LogtoClientErrors.SignIn {
             XCTAssertEqual(error.type, .unknownError)
             return
         }

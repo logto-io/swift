@@ -15,7 +15,7 @@ public extension LogtoClient {
      - Returns: An error if failed to revoke the token. Usually the error is safe to ignore.
      */
     @discardableResult
-    func signOut() async -> Errors.SignOut? {
+    func signOut() async -> LogtoClientErrors.SignOut? {
         let tokenToRevoke = refreshToken
 
         accessTokenMap = [:]
@@ -33,7 +33,7 @@ public extension LogtoClient {
                 )
                 return nil
             } catch {
-                return (Errors.SignOut(type: .unableToRevokeToken, innerError: error))
+                return (LogtoClientErrors.SignOut(type: .unableToRevokeToken, innerError: error))
             }
         }
 

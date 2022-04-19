@@ -11,7 +11,7 @@ import Logto
 import LogtoSocialPlugin
 
 class LogtoAuthSession {
-    public typealias Errors = LogtoClient.Errors
+    typealias Errors = LogtoClientErrors
 
     let session: NetworkSession
     let authContext: LogtoAuthContext

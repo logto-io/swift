@@ -11,12 +11,12 @@ import Logto
 public struct LogtoConfig {
     private let _scopes: [String]
 
-    let endpoint: URL
-    let clientId: String
-    let resources: [String]
-    let usingPersistStorage: Bool
+    public let endpoint: URL
+    public let clientId: String
+    public let resources: [String]
+    public let usingPersistStorage: Bool
 
-    var scopes: [String] {
+    public var scopes: [String] {
         LogtoUtilities.withReservedScopes(_scopes)
     }
 
