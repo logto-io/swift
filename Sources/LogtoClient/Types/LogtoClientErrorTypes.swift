@@ -1,6 +1,6 @@
 //
 //  LogtoClientErrorTypes.swift
-//  
+//
 //
 //  Created by Gao Sun on 2022/4/18.
 //
@@ -15,22 +15,22 @@ public enum LogtoClientErrorTypes {
         /// The Refresh Token could be expired or revoked.
         case unableToFetchTokenByRefreshToken
     }
-    
+
     public enum OidcConfig {
         /// Unable to fetch OIDC config from the OIDC provider.
         case unableToFetchOidcConfig
     }
-    
+
     public enum UserInfo {
         /// Unable to fetch user info from the OIDC provider.
         case unableToFetchUserInfo
     }
-    
+
     public enum JwkSet {
         /// Unable to fetch JWK set from the given URI.
         case unableToFetchJwkSet
     }
-    
+
     public enum SignIn: String {
         case unknownError
         /// Failed to complete the authentication.
@@ -46,7 +46,7 @@ public enum LogtoClientErrorTypes {
         /// The sign in callback URI is not valid.
         case unexpectedSignInCallback
     }
-    
+
     public enum SignOut: String {
         /// Unable to revoke token in the OIDC provider.
         /// Usually this error is safe to ignore.

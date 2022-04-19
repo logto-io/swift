@@ -20,4 +20,3 @@ public enum LogtoClientErrors {
         case notAuthenticated
     }
 }
-
