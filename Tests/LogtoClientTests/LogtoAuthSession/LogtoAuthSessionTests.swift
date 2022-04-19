@@ -64,7 +64,7 @@ final class LogtoAuthSessionTests: XCTestCase {
 
         do {
             _ = try await session.start()
-        } catch let error as LogtoClient.Errors.SignIn {
+        } catch let error as LogtoClientErrors.SignIn {
             XCTAssertEqual(error.type, .unableToConstructAuthUri)
             return
         }
@@ -89,7 +89,7 @@ final class LogtoAuthSessionTests: XCTestCase {
 
         do {
             _ = try await session.handle(callbackUri: components.url!)
-        } catch let error as LogtoClient.Errors.SignIn {
+        } catch let error as LogtoClientErrors.SignIn {
             XCTAssertEqual(error.type, .unableToFetchToken)
             return
         }
@@ -102,7 +102,7 @@ final class LogtoAuthSessionTests: XCTestCase {
 
         do {
             _ = try await session.handle(callbackUri: URL(string: "https://foo")!)
-        } catch let error as LogtoClient.Errors.SignIn {
+        } catch let error as LogtoClientErrors.SignIn {
             XCTAssertEqual(error.type, .unexpectedSignInCallback)
             return
         }

@@ -23,7 +23,7 @@ extension LogtoClient {
             oidcConfig = config
             return config
         } catch {
-            throw Errors.OidcConfig(type: .unableToFetchOidcConfig, innerError: error)
+            throw LogtoClientErrors.OidcConfig(type: .unableToFetchOidcConfig, innerError: error)
         }
     }
 
@@ -39,7 +39,7 @@ extension LogtoClient {
                     accessToken: token
                 )
         } catch {
-            throw Errors.UserInfo(type: .unableToFetchUserInfo, innerError: error)
+            throw LogtoClientErrors.UserInfo(type: .unableToFetchUserInfo, innerError: error)
         }
     }
 
@@ -50,7 +50,7 @@ extension LogtoClient {
             return try await LogtoCore
                 .fetchJwkSet(jwksUri: oidcConfig.jwksUri)
         } catch {
-            throw Errors.JwkSet(type: .unableToFetchJwkSet, innerError: error)
+            throw LogtoClientErrors.JwkSet(type: .unableToFetchJwkSet, innerError: error)
         }
     }
 }

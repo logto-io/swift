@@ -80,7 +80,7 @@ final class LogtoClientTests: XCTestCase {
         let client = buildClient()
 
         XCTAssertThrowsError(try client.getIdTokenClaims()) {
-            XCTAssertEqual($0 as? LogtoClient.Errors.IdToken, .notAuthenticated)
+            XCTAssertEqual($0 as? LogtoClientErrors.IdToken, .notAuthenticated)
         }
 
         client

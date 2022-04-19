@@ -7,8 +7,7 @@
 
 import Foundation
 
-public protocol LogtoError: LocalizedError {
-    associatedtype T
-    var type: T { get }
-    var innerError: Error? { get }
+public struct LogtoError<T>: LocalizedError {
+    public let type: T
+    public let innerError: Error?
 }

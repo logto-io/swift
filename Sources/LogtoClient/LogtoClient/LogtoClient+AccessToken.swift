@@ -42,7 +42,7 @@ extension LogtoClient {
 
             return accessToken.token
         } catch {
-            throw Errors
+            throw LogtoClientErrors
                 .AccessToken(type: .unableToFetchTokenByRefreshToken, innerError: error)
         }
     }
@@ -72,7 +72,7 @@ extension LogtoClient {
 
         // Use refresh token to fetch a new access token
         guard let refreshToken = refreshToken else {
-            throw Errors.AccessToken(type: .noRefreshTokenFound, innerError: nil)
+            throw LogtoClientErrors.AccessToken(type: .noRefreshTokenFound, innerError: nil)
         }
 
         let task = Task {

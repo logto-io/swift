@@ -15,7 +15,7 @@ extension LogtoClient {
         redirectUri: String
     ) async throws {
         guard let redirectUri = URL(string: redirectUri) else {
-            throw (Errors.SignIn(type: .unableToConstructRedirectUri, innerError: nil))
+            throw (LogtoClientErrors.SignIn(type: .unableToConstructRedirectUri, innerError: nil))
         }
 
         let oidcConfig = try await fetchOidcConfig()
