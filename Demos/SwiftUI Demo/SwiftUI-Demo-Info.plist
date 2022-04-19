@@ -15,10 +15,5 @@
 			</array>
 		</dict>
 	</array>
-	<key>LSApplicationQueriesSchemes</key>
-	<array>
-		<string>weixinULAPI</string>
-		<string>weixin</string>
-	</array>
 </dict>
 </plist>

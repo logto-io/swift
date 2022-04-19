@@ -7,13 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		6C1C5C5627F759D3005CD20C /* LogtoSocialPluginWechat in Frameworks */ = {isa = PBXBuildFile; productRef = 6C1C5C5527F759D3005CD20C /* LogtoSocialPluginWechat */; };
 		6C88C0A327A3D8060007B4D4 /* SwiftUI_DemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C88C0A227A3D8060007B4D4 /* SwiftUI_DemoApp.swift */; };
 		6C88C0A527A3D8060007B4D4 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C88C0A427A3D8060007B4D4 /* ContentView.swift */; };
 		6C88C0A727A3D8060007B4D4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6C88C0A627A3D8060007B4D4 /* Assets.xcassets */; };
 		6C88C0AA27A3D8060007B4D4 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6C88C0A927A3D8060007B4D4 /* Preview Assets.xcassets */; };
 		6CB2AF5A27A3D8E7003411A4 /* LogtoClient in Frameworks */ = {isa = PBXBuildFile; productRef = 6CB2AF5927A3D8E7003411A4 /* LogtoClient */; };
-		6CB600C527FD74E8008AD679 /* LogtoSocialPluginAlipay in Frameworks */ = {isa = PBXBuildFile; productRef = 6CB600C427FD74E8008AD679 /* LogtoSocialPluginAlipay */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,8 +52,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6CB600C527FD74E8008AD679 /* LogtoSocialPluginAlipay in Frameworks */,
-				6C1C5C5627F759D3005CD20C /* LogtoSocialPluginWechat in Frameworks */,
 				6CB2AF5A27A3D8E7003411A4 /* LogtoClient in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -154,8 +150,6 @@
 			name = "SwiftUI Demo";
 			packageProductDependencies = (
 				6CB2AF5927A3D8E7003411A4 /* LogtoClient */,
-				6C1C5C5527F759D3005CD20C /* LogtoSocialPluginWechat */,
-				6CB600C427FD74E8008AD679 /* LogtoSocialPluginAlipay */,
 			);
 			productName = "SwiftUI Demo";
 			productReference = 6C88C09F27A3D8060007B4D4 /* SwiftUI Demo.app */;
@@ -427,11 +421,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "SwiftUI Demo/SwiftUI Demo.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"SwiftUI Demo/Preview Content\"";
-				DEVELOPMENT_TEAM = M8G2RFZVFV;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "SwiftUI-Demo-Info.plist";
@@ -445,7 +439,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "io.logto.SwiftUI-Demo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -459,11 +453,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "SwiftUI Demo/SwiftUI Demo.entitlements";
+				CODE_SIGN_ENTITLEMENTS = "";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"SwiftUI Demo/Preview Content\"";
-				DEVELOPMENT_TEAM = M8G2RFZVFV;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "SwiftUI-Demo-Info.plist";
@@ -477,7 +471,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				OTHER_LDFLAGS = "-ObjC";
+				OTHER_LDFLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = "io.logto.SwiftUI-Demo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -604,17 +598,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		6C1C5C5527F759D3005CD20C /* LogtoSocialPluginWechat */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = LogtoSocialPluginWechat;
-		};
 		6CB2AF5927A3D8E7003411A4 /* LogtoClient */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = LogtoClient;
-		};
-		6CB600C427FD74E8008AD679 /* LogtoSocialPluginAlipay */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = LogtoSocialPluginAlipay;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
