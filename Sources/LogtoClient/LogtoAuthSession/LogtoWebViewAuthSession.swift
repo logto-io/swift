@@ -12,6 +12,8 @@ import WebKit
 class LogtoWebViewAuthSession: NSObject {
     typealias FinishHandler = (URL?) async -> Void
 
+    private var isFinished = false
+
     let uri: URL
     let redirectUri: URL
     let socialPlugins: [LogtoSocialPlugin]
@@ -60,6 +62,11 @@ class LogtoWebViewAuthSession: NSObject {
     }
 
     internal func didFinish(url: URL?) async {
+        guard !isFinished else {
+            return
+        }
+
+        isFinished = true
         await onFinish(url)
         DispatchQueue.main.async {
             #if !os(macOS)
@@ -70,26 +77,5 @@ class LogtoWebViewAuthSession: NSObject {
                 fatalError("LogtoWebViewAuthSession does not support macOS yet.")
             #endif
         }
-    }
-}
-
-extension LogtoWebViewAuthSession: WKNavigationDelegate {
-    public func webView(
-        _: WKWebView,
-        decidePolicyFor navigationAction: WKNavigationAction
-    ) async -> WKNavigationActionPolicy {
-        if let url = navigationAction.request.url, !["http", "https"].contains(url.scheme) {
-            if
-                let scheme = url.scheme,
-                scheme.lowercased() == redirectUri.scheme?.lowercased(),
-                url.host == redirectUri.host,
-                url.path == redirectUri.path
-            {
-                await didFinish(url: url)
-            }
-            return .cancel
-        }
-
-        return .allow
     }
 }

@@ -47,7 +47,7 @@ class LogtoWebViewAuthViewController: UnifiedViewController {
 
     override public func loadView() {
         view = webView
-        webView.navigationDelegate = authSession
+        webView.navigationDelegate = self
         webView.configuration.userContentController.add(self, name: LogtoWebViewAuthViewController.messageHandlerName)
         webView.configuration.userContentController
             .addUserScript(WKUserScript(source: injectScript, injectionTime: .atDocumentStart, forMainFrameOnly: false))
@@ -55,6 +55,12 @@ class LogtoWebViewAuthViewController: UnifiedViewController {
 
     override public func viewDidLoad() {
         webView.load(URLRequest(url: authSession.uri))
+    }
+
+    override public func viewWillDisappear(_: Bool) {
+        Task {
+            await authSession.didFinish(url: nil)
+        }
     }
 
     func postErrorMessage(_ error: LogtoSocialPluginError, completion: ((Any?, Error?) -> Void)? = nil) {
@@ -71,44 +77,5 @@ class LogtoWebViewAuthViewController: UnifiedViewController {
 extension LogtoWebViewAuthViewController: ASWebAuthenticationPresentationContextProviding {
     public func presentationAnchor(for _: ASWebAuthenticationSession) -> ASPresentationAnchor {
         view.window!
-    }
-}
-
-extension LogtoWebViewAuthViewController: WKScriptMessageHandler {
-    struct SocialPostBody: Codable {
-        static func safeParseJson(json: Any) -> SocialPostBody? {
-            guard let data = try? JSONSerialization.data(withJSONObject: json) else {
-                return nil
-            }
-            return try? JSONDecoder().decode(self, from: data)
-        }
-
-        let callbackUri: String
-        let redirectTo: String
-    }
-
-    public func userContentController(_: WKUserContentController, didReceive message: WKScriptMessage) {
-        guard let body = SocialPostBody.safeParseJson(json: message.body),
-              let redirectTo = URL(string: body.redirectTo),
-              let redirectScheme = URLComponents(url: redirectTo, resolvingAgainstBaseURL: true)?.scheme,
-              let callbackUri = URL(string: body.callbackUri)
-        else {
-            return
-        }
-
-        guard let socialPlugin = authSession.socialPlugins.first(where: {
-            $0.urlSchemes.contains(redirectScheme)
-        }) else {
-            // TO-DO: error handling
-            return
-        }
-
-        socialPlugin
-            .start(LogtoSocialPluginConfiguration(
-                redirectTo: redirectTo,
-                callbackUri: callbackUri,
-                completion: { self.webView.load(URLRequest(url: $0)) },
-                errorHandler: { self.postErrorMessage($0) }
-            ))
     }
 }
