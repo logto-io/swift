@@ -8,10 +8,10 @@
 import Foundation
 
 public struct IdTokenClaims: Codable, Equatable {
-    let sub: String
-    let atHash: String?
-    let aud: String
-    let exp: Int64
-    let iat: Int64
-    let iss: String
+    public let sub: String
+    public let atHash: String?
+    public let aud: String
+    public let exp: Int64
+    public let iat: Int64
+    public let iss: String
 }

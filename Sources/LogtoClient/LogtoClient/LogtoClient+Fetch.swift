@@ -9,8 +9,8 @@ import Foundation
 import JOSESwift
 import Logto
 
-public extension LogtoClient {
-    internal func fetchOidcConfig() async throws -> LogtoCore.OidcConfigResponse {
+extension LogtoClient {
+    func fetchOidcConfig() async throws -> LogtoCore.OidcConfigResponse {
         if let config = oidcConfig {
             return config
         }
@@ -27,7 +27,7 @@ public extension LogtoClient {
         }
     }
 
-    func fetchUserInfo() async throws -> LogtoCore.UserInfoResponse {
+    public func fetchUserInfo() async throws -> LogtoCore.UserInfoResponse {
         let oidcConfig = try await fetchOidcConfig()
         let token = try await getAccessToken(for: nil)
 

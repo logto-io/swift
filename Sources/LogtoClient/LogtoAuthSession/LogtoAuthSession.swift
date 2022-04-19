@@ -10,7 +10,7 @@ import Foundation
 import Logto
 import LogtoSocialPlugin
 
-public class LogtoAuthSession {
+class LogtoAuthSession {
     public typealias Errors = LogtoClient.Errors
 
     let session: NetworkSession

@@ -8,7 +8,7 @@
 import Foundation
 
 public struct AccessToken: Codable {
-    let token: String
-    let scope: String
-    let expiresAt: TimeInterval
+    public let token: String
+    public let scope: String
+    public let expiresAt: TimeInterval
 }

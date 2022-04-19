@@ -8,7 +8,7 @@
 import Foundation
 import Logto
 
-public extension LogtoClient {
+extension LogtoClient {
     func buildAccessTokenKey(for resource: String?, scopes: [String]) -> String {
         "\(scopes.sorted().joined(separator: " "))@\(resource ?? "")"
     }
@@ -47,7 +47,17 @@ public extension LogtoClient {
         }
     }
 
-    @MainActor func getAccessToken(for resource: String?) async throws -> String {
+    /**
+     Get access token for the given resrouce. If resource is `nil`, return the access token for user endpoint.
+
+     If the cached access token has expired, this function will try to use `refreshToken` to fetch a new access token from the OIDC provider.
+
+     - Parameters:
+        - resource: The resource indicator.
+     - Throws: An error if failed to get a valid access token.
+     - Returns: Access token in string.
+     */
+    @MainActor public func getAccessToken(for resource: String?) async throws -> String {
         let key = buildAccessTokenKey(for: resource, scopes: [])
 
         // Cached access token is still valid

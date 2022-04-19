@@ -86,7 +86,7 @@ struct ContentView: View {
 
             Button("Sign Out") {
                 Task {
-                    try await client.signOut()
+                    await client.signOut()
                     self.isAuthenticated = false
                 }
             }

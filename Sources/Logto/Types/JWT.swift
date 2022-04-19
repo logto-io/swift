@@ -9,12 +9,12 @@ import Foundation
 import JOSESwift
 
 public struct JwtHeader: Codable {
-    enum TokenType: String, Codable {
+    public enum TokenType: String, Codable {
         case JWT
     }
 
-    let alg: SignatureAlgorithm
-    let typ: TokenType
+    public let alg: SignatureAlgorithm
+    public let typ: TokenType
 }
 
 public enum JwtField {

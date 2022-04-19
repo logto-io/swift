@@ -53,7 +53,7 @@ public extension LogtoCore {
 
     /// Fetch token by `authorization_code`.
     /// The returned `access_token` is only for user info enpoint.
-    /// Note the func will NOT validate any token in the response.
+    /// Note the function will NOT validate any token in the response.
     static func fetchToken(
         useSession session: NetworkSession = URLSession.shared,
         byAuthorizationCode code: String,
@@ -87,7 +87,7 @@ public extension LogtoCore {
     }
 
     /// Fetch token by `refresh_token`.
-    /// Note the func will NOT validate any token in the response.
+    /// Note the function will NOT validate any token in the response.
     static func fetchToken(
         useSession session: NetworkSession = URLSession.shared,
         byRefreshToken refreshToken: String,
@@ -115,7 +115,7 @@ public extension LogtoCore {
     // MARK: User Info
 
     struct UserInfoResponse: Codable, Equatable {
-        let sub: String
+        public let sub: String
         // More props TBD by LOG-561
     }
 

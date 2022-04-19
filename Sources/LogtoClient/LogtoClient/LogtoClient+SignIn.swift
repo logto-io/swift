@@ -46,6 +46,13 @@ extension LogtoClient {
         )
     }
 
+    /**
+     Start a sign in session with WKWebView. If the function returns with no error threw, it means the user has signed in successfully.
+
+     - Parameters:
+        - redirectUri: One of Redirect URIs of this application.
+     - Throws: An error if the session failed to complete.
+     */
     public func signInWithBrowser(
         redirectUri: String
     ) async throws {

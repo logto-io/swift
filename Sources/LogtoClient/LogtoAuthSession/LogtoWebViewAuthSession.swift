@@ -9,7 +9,7 @@ import Foundation
 import LogtoSocialPlugin
 import WebKit
 
-public class LogtoWebViewAuthSession: NSObject {
+class LogtoWebViewAuthSession: NSObject {
     public typealias FinishHandler = (URL?) async -> Void
 
     let uri: URL

@@ -19,7 +19,17 @@ public class LogtoClient {
 
     // MARK: Static Members
 
+    /// The notification name for LogtoClient to handle.
     public static let HandleNotification = Notification.Name("Logto Handle")
+    /**
+     Post a notification that tells Logto clients to handle the given URL.
+
+     Usually this function need to be called in `onOpenURL(perform:)` in SwiftUI or `application(_:open:options:)` in AppDelegate. See integration guide for detailed information.
+
+     - Parameters:
+        - forClientId: If the notification is for specific client ID only. When `nil`, all Logto clients will try to handle the notification.
+        - url:The URL that needs to be handled.
+     */
     public static func handle(forClientId clientId: String? = nil, url: URL) {
         NotificationCenter.default.post(
             name: HandleNotification,
@@ -42,24 +52,31 @@ public class LogtoClient {
 
     // MARK: Public Variables
 
+    /// The cached ID Token in raw string.
+    /// Use `.getIdTokenClaims()` to retrieve structured data.
     public internal(set) var idToken: String? {
         didSet { saveToKeychain(forKey: .idToken) }
     }
 
+    /// The cached Refresh Token.
     public internal(set) var refreshToken: String? {
         didSet { saveToKeychain(forKey: .refreshToken) }
     }
 
+    /// Config fetched from [OIDC Discovery](https://openid.net/specs/openid-connect-discovery-1_0.html) endpoint.
     public internal(set) var oidcConfig: LogtoCore.OidcConfigResponse?
 
     // MARK: Public Computed Variables
 
+    /// Whether the user has been authenticated.
     public var isAuthenticated: Bool {
         idToken != nil
     }
 
     // MARK: Public Functions
 
+    /// Get structured [ID Token Claims](https://openid.net/specs/openid-connect-core-1_0.html#IDToken).
+    /// - Throws: An error if no ID Token presents or decode token failed.
     public func getIdTokenClaims() throws -> IdTokenClaims {
         guard let idToken = idToken else {
             throw Errors.IdToken.notAuthenticated
@@ -68,6 +85,13 @@ public class LogtoClient {
         return try LogtoUtilities.decodeIdToken(idToken)
     }
 
+    /**
+     Try to handle the given URL by iterating all social plugins.
+
+     The iteration stops when one of the social plugins handled the URL.
+
+     - Returns: `true` if one of the social plugins handled this URL.
+     */
     @discardableResult
     public func handle(url: URL) -> Bool {
         for plugin in socialPlugins {
