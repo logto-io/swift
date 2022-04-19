@@ -71,9 +71,10 @@ final class LogtoWebViewAuthSessionTests: XCTestCase {
 
     func testDelegateNavigationActionAllow() async {
         let session = LogtoWebViewAuthSession(mockUrl, redirectUri: mockUrl, socialPlugins: []) { _ in }
+        let controller = await LogtoWebViewAuthViewController(authSession: session)
 
         let task = Task { @MainActor in
-            let result = await session.webView(
+            let result = await controller.webView(
                 WKWebView(),
                 decidePolicyFor: WKNavigationActionMock(urlRequest: URLRequest(url: mockUrl))
             )
@@ -86,9 +87,10 @@ final class LogtoWebViewAuthSessionTests: XCTestCase {
     func testDelegateNavigationActionCancel() async {
         let mockUrl = URL(string: "logto://callback/path")!
         let session = LogtoWebViewAuthSession(mockUrl, redirectUri: mockUrl, socialPlugins: []) { _ in }
+        let controller = await LogtoWebViewAuthViewController(authSession: session)
 
         let task = Task { @MainActor in
-            let result = await session.webView(
+            let result = await controller.webView(
                 WKWebView(),
                 decidePolicyFor: WKNavigationActionMock(urlRequest: URLRequest(url: mockUrl))
             )
