@@ -36,7 +36,7 @@ let package = Package(
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
-        .package(url: "https://github.com/airsidemobile/JOSESwift.git", from: "2.3.0"),
+        .package(url: "https://github.com/airsidemobile/JOSESwift.git", from: "2.4.0"),
         .package(url: "https://github.com/kishikawakatsumi/KeychainAccess.git", from: "4.2.2"),
     ],
     targets: [
