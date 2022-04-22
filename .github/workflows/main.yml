@@ -49,7 +49,7 @@ jobs:
           node generate-codecov-json.js --archive-path ./Logto.xcresult
 
       - name: Codecov Report Upload
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v3
         with:
           flags: swift-sdk
           files: ./coverage-report-Logto.json
