@@ -28,7 +28,7 @@ public class LogtoClient {
 
      - Parameters:
         - forAppId: If the notification is for specific App ID only. When `nil`, all Logto clients will try to handle the notification.
-        - url:The URL that needs to be handled.
+        - url: The URL that needs to be handled.
      */
     public static func handle(forAppId appId: String? = nil, url: URL) {
         NotificationCenter.default.post(

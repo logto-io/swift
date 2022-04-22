@@ -12,8 +12,8 @@ public extension LogtoUtilities {
     private static let idTokenTolerance: Int64 = 60
 
     /// Decode ID Token claims WITHOUT validation.
-    /// - Parameter token: The JWT to decode
-    /// - Returns: A set of ID Token claims
+    /// - Parameter token: The JWT to decode.
+    /// - Returns: A set of ID Token claims.
     static func decodeIdToken(_ idToken: String) throws -> IdTokenClaims {
         let decoder = LogtoUtilities.getCamelCaseDecoder()
 
