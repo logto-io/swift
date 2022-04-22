@@ -30,7 +30,7 @@ class LogtoWebViewAuthViewController: UnifiedViewController {
             .messageHandlerName).postMessage.bind(window.webkit.messageHandlers.\(LogtoWebViewAuthViewController
             .messageHandlerName)),
                 supportedSocialConnectorIds: [\(supportedSocialConnectorIds)],
-                callbackUriScheme: '\(LogtoWebViewAuthViewController.webAuthCallbackScheme)'
+                callbackLink: '\(LogtoWebViewAuthViewController.webAuthCallbackScheme)://web'
             };
         """
     }
