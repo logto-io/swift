@@ -19,7 +19,7 @@ struct ContentView: View {
     init() {
         guard let config = try? LogtoConfig(
             endpoint: "<your-logto-endpoint>",
-            clientId: "<your-application-id>",
+            appId: "<your-application-id>",
             resources: [resource]
         ) else {
             client = nil

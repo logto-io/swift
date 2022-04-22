@@ -29,7 +29,7 @@ final class LogtoClientTests: XCTestCase {
 
     func buildClient(withOidcEndpoint endpoint: String = "/oidc_config:good", withToken: Bool = false) -> LogtoClient {
         let client = LogtoClient(
-            useConfig: try! LogtoConfig(endpoint: endpoint, clientId: "foo", usingPersistStorage: false),
+            useConfig: try! LogtoConfig(endpoint: endpoint, appId: "foo", usingPersistStorage: false),
             session: NetworkSessionMock.shared
         )
 
@@ -45,13 +45,13 @@ final class LogtoClientTests: XCTestCase {
     }
 
     func testStaticHandleUrl() {
-        let clientId = "foo"
+        let appId = "foo"
         let url = URL(string: "bar")!
         var called = false
 
         let handle: (Notification) -> Void = { notification in
             let object = notification.object as! LogtoClient.NotificationObject
-            XCTAssertEqual(object.clientId, clientId)
+            XCTAssertEqual(object.appId, appId)
             XCTAssertEqual(object.url, url)
             called = true
         }
@@ -63,7 +63,7 @@ final class LogtoClientTests: XCTestCase {
             using: handle
         )
 
-        LogtoClient.handle(forClientId: clientId, url: url)
+        LogtoClient.handle(forAppId: appId, url: url)
         XCTAssertTrue(called)
     }
 
@@ -103,7 +103,7 @@ final class LogtoClientTests: XCTestCase {
 
     func testUsingPersistStorage() {
         let client = LogtoClient(
-            useConfig: try! LogtoConfig(endpoint: "/", clientId: "foo"),
+            useConfig: try! LogtoConfig(endpoint: "/", appId: "foo"),
             session: NetworkSessionMock.shared
         )
 
@@ -112,7 +112,7 @@ final class LogtoClientTests: XCTestCase {
 
     func testHandleUrl() {
         let client = LogtoClient(
-            useConfig: try! LogtoConfig(endpoint: "/", clientId: "test-handle-url"),
+            useConfig: try! LogtoConfig(endpoint: "/", appId: "test-handle-url"),
             socialPlugins: [LogtoSocialPluginMock()]
         )
 
@@ -121,7 +121,7 @@ final class LogtoClientTests: XCTestCase {
 
     func testHandleWrongNotification() {
         let client = LogtoClientMockHandleUrl(
-            useConfig: try! LogtoConfig(endpoint: "/", clientId: "test-handle-url"),
+            useConfig: try! LogtoConfig(endpoint: "/", appId: "test-handle-url"),
             socialPlugins: [LogtoSocialPluginMock()]
         )
 

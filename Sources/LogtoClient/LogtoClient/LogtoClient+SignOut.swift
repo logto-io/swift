@@ -29,7 +29,7 @@ public extension LogtoClient {
                     useSession: networkSession,
                     token: token,
                     revocationEndpoint: oidcConfig.revocationEndpoint,
-                    clientId: logtoConfig.clientId
+                    clientId: logtoConfig.appId
                 )
                 return nil
             } catch {

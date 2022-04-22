@@ -13,7 +13,7 @@ import Logto
 
 public class LogtoClient {
     public struct NotificationObject {
-        public let clientId: String?
+        public let appId: String?
         public let url: URL
     }
 
@@ -27,13 +27,13 @@ public class LogtoClient {
      Usually this function need to be called in `onOpenURL(perform:)` in SwiftUI or `application(_:open:options:)` in AppDelegate. See integration guide for detailed information.
 
      - Parameters:
-        - forClientId: If the notification is for specific client ID only. When `nil`, all Logto clients will try to handle the notification.
+        - forAppId: If the notification is for specific App ID only. When `nil`, all Logto clients will try to handle the notification.
         - url:The URL that needs to be handled.
      */
-    public static func handle(forClientId clientId: String? = nil, url: URL) {
+    public static func handle(forAppId appId: String? = nil, url: URL) {
         NotificationCenter.default.post(
             name: HandleNotification,
-            object: NotificationObject(clientId: clientId, url: url)
+            object: NotificationObject(appId: appId, url: url)
         )
     }
 
@@ -110,8 +110,8 @@ public class LogtoClient {
             return
         }
 
-        // Notification sends to all clients when `object.clientId` is nil
-        guard object.clientId == nil || object.clientId == logtoConfig.clientId else {
+        // Notification sends to all clients when `object.appId` is nil
+        guard object.appId == nil || object.appId == logtoConfig.appId else {
             return
         }
 
