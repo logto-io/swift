@@ -33,7 +33,7 @@ extension LogtoClient {
         try LogtoUtilities.verifyIdToken(
             response.idToken,
             issuer: oidcConfig.issuer,
-            clientId: logtoConfig.clientId,
+            clientId: logtoConfig.appId,
             jwks: jwks
         )
 

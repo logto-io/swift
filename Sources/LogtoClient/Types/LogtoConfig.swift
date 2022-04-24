@@ -12,7 +12,7 @@ public struct LogtoConfig {
     private let _scopes: [String]
 
     public let endpoint: URL
-    public let clientId: String
+    public let appId: String
     public let resources: [String]
     public let usingPersistStorage: Bool
 
@@ -23,7 +23,7 @@ public struct LogtoConfig {
     // Have to do this in Swift
     public init(
         endpoint: String,
-        clientId: String,
+        appId: String,
         scopes: [String] = [],
         resources: [String] = [],
         usingPersistStorage: Bool = true
@@ -33,7 +33,7 @@ public struct LogtoConfig {
         }
 
         self.endpoint = endpoint
-        self.clientId = clientId
+        self.appId = appId
         _scopes = scopes
         self.resources = resources
         self.usingPersistStorage = usingPersistStorage

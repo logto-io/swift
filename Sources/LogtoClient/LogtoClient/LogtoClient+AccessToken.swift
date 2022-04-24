@@ -22,7 +22,7 @@ extension LogtoClient {
                 useSession: networkSession,
                 byRefreshToken: refreshToken,
                 tokenEndpoint: oidcConfig.tokenEndpoint,
-                clientId: logtoConfig.clientId,
+                clientId: logtoConfig.appId,
                 resource: resource,
                 scopes: []
             )

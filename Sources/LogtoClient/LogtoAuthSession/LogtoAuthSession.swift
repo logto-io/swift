@@ -48,7 +48,7 @@ class LogtoAuthSession {
         do {
             let authUri = try LogtoCore.generateSignInUri(
                 authorizationEndpoint: oidcConfig.authorizationEndpoint,
-                clientId: logtoConfig.clientId,
+                clientId: logtoConfig.appId,
                 redirectUri: redirectUri,
                 codeChallenge: codeChallenge,
                 state: state,
@@ -103,7 +103,7 @@ class LogtoAuthSession {
                 byAuthorizationCode: code,
                 codeVerifier: codeVerifier,
                 tokenEndpoint: oidcConfig.tokenEndpoint,
-                clientId: logtoConfig.clientId,
+                clientId: logtoConfig.appId,
                 redirectUri: redirectUri.absoluteString
             )
             return tokenResponse

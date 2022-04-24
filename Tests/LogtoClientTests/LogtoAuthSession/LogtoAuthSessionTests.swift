@@ -29,7 +29,7 @@ final class LogtoAuthSessionTests: XCTestCase {
     func createGoodSession() -> LogtoAuthSession {
         LogtoAuthSession(
             useSession: NetworkSessionMock.shared,
-            logtoConfig: try! LogtoConfig(endpoint: "https://logto.dev", clientId: ""),
+            logtoConfig: try! LogtoConfig(endpoint: "https://logto.dev", appId: ""),
             oidcConfig: getMockOidcConfig(
                 authorizationEndpoint: "https://logto.dev/auth",
                 tokenEndpoint: "https://logto.dev/token:good"
@@ -56,7 +56,7 @@ final class LogtoAuthSessionTests: XCTestCase {
     func testStartFailed() async throws {
         let session = LogtoAuthSession(
             useSession: NetworkSessionMock.shared,
-            logtoConfig: try! LogtoConfig(endpoint: "https://logto.dev", clientId: ""),
+            logtoConfig: try! LogtoConfig(endpoint: "https://logto.dev", appId: ""),
             oidcConfig: getMockOidcConfig(authorizationEndpoint: "foo"),
             redirectUri: URL(string: "foo")!,
             socialPlugins: []
@@ -75,7 +75,7 @@ final class LogtoAuthSessionTests: XCTestCase {
     func testHandleUnableToFetchToken() async throws {
         let session = LogtoAuthSession(
             useSession: NetworkSessionMock.shared,
-            logtoConfig: try! LogtoConfig(endpoint: "https://logto.dev", clientId: ""),
+            logtoConfig: try! LogtoConfig(endpoint: "https://logto.dev", appId: ""),
             oidcConfig: getMockOidcConfig(authorizationEndpoint: "https://logto.dev/auth"),
             redirectUri: redirectUri,
             socialPlugins: []
