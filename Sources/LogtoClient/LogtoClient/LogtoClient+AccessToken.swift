@@ -48,14 +48,14 @@ extension LogtoClient {
     }
 
     /**
-     Get access token for the given resrouce. If resource is `nil`, return the access token for user endpoint.
+     Get an Access Token for the given resource. If resource is `nil`, return the Access Token for user endpoint.
 
-     If the cached access token has expired, this function will try to use `refreshToken` to fetch a new access token from the OIDC provider.
+     If the cached Access Token has expired, this function will try to use `refreshToken` to fetch a new Access Token from the OIDC provider.
 
      - Parameters:
         - resource: The resource indicator.
-     - Throws: An error if failed to get a valid access token.
-     - Returns: Access token in string.
+     - Throws: An error if failed to get a valid Access Token.
+     - Returns: Access Token in string.
      */
     @MainActor public func getAccessToken(for resource: String?) async throws -> String {
         let key = buildAccessTokenKey(for: resource, scopes: [])
