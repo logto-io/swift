@@ -47,6 +47,7 @@ class LogtoWebViewAuthViewController: UnifiedViewController {
 
     override public func loadView() {
         view = webView
+        webView.scrollView.contentInsetAdjustmentBehavior = .never
         webView.navigationDelegate = self
         webView.configuration.userContentController.add(self, name: LogtoWebViewAuthViewController.messageHandlerName)
         webView.configuration.userContentController
@@ -57,7 +58,7 @@ class LogtoWebViewAuthViewController: UnifiedViewController {
         webView.load(URLRequest(url: authSession.uri))
     }
 
-    override public func viewWillDisappear(_: Bool) {
+    override public func viewDidDisappear(_: Bool) {
         Task {
             await authSession.didFinish(url: nil)
         }
