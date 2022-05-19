@@ -12,7 +12,8 @@ import WebKit
 import XCTest
 
 class SocialPluginMock: LogtoSocialPlugin {
-    let connectorId = "id"
+    let connectorPlatform: LogtoSocialPluginPlatform = .native
+    let connectorTarget: String? = "target"
     let urlSchemes = ["mock"]
 
     var startCalled = false

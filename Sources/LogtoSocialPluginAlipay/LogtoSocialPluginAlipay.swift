@@ -13,7 +13,8 @@
 
     // Follows Alipay official docs: https://opendocs.alipay.com/open/218/wy75xo
     public class LogtoSocialPluginAlipay: LogtoSocialPlugin {
-        public let connectorId = "alipay"
+        public let connectorPlatform: LogtoSocialPluginPlatform = .native
+        public let connectorTarget: String? = "alipay"
         public let urlSchemes = ["alipay"]
 
         public init() {}

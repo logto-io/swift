@@ -7,6 +7,11 @@
 
 import Foundation
 
+public enum LogtoSocialPluginPlatform: String {
+    case universal = "Universal"
+    case native = "Native"
+}
+
 public struct LogtoSocialPluginConfiguration {
     public let redirectTo: URL
     public let callbackUri: URL
@@ -28,7 +33,8 @@ public struct LogtoSocialPluginConfiguration {
 }
 
 public protocol LogtoSocialPlugin {
-    var connectorId: String { get }
+    var connectorPlatform: LogtoSocialPluginPlatform { get }
+    var connectorTarget: String? { get }
     var urlSchemes: [String] { get }
     var isAvailable: Bool { get }
 
