@@ -18,18 +18,23 @@ class LogtoWebViewAuthViewController: UnifiedViewController {
     let authSession: LogtoWebViewAuthSession
 
     var injectScript: String {
-        let supportedSocialConnectorIds = authSession
-            .socialPlugins.filter { $0.isAvailable }
-            .map { "'\($0.connectorId)'" }
+        let plugins = authSession.socialPlugins
+        let supportedNativeConnectorTargets = plugins
+            .filter { $0.isAvailable }
+            .compactMap { $0.connectorTarget }
+            .map { "'\($0)'" }
             .joined(separator: ",")
 
         return """
             const logtoNativeSdk = {
                 platform: 'ios',
-                getPostMessage: () => window.webkit.messageHandlers && window.webkit.messageHandlers.\(LogtoWebViewAuthViewController
-            .messageHandlerName).postMessage.bind(window.webkit.messageHandlers.\(LogtoWebViewAuthViewController
-            .messageHandlerName)),
-                supportedSocialConnectorIds: [\(supportedSocialConnectorIds)],
+                getPostMessage: () => window.webkit.messageHandlers && window.webkit.messageHandlers.\(
+                    LogtoWebViewAuthViewController.messageHandlerName
+                ).postMessage.bind(window.webkit.messageHandlers.\(LogtoWebViewAuthViewController.messageHandlerName)),
+                supportedConnector: {
+                    universal: \(plugins.contains(where: { $0.connectorPlatform == .universal })),
+                    nativeTargets: [\(supportedNativeConnectorTargets)]
+                },
                 callbackLink: '\(LogtoWebViewAuthViewController.webAuthCallbackScheme)://web'
             };
         """

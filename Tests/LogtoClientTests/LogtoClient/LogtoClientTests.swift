@@ -4,7 +4,8 @@ import LogtoMock
 import XCTest
 
 class LogtoSocialPluginMock: LogtoSocialPlugin {
-    let connectorId = "id"
+    let connectorPlatform: LogtoSocialPluginPlatform = .native
+    let connectorTarget: String? = "target"
     let urlSchemes = ["mock"]
 
     func start(_: LogtoSocialPluginConfiguration) {}

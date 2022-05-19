@@ -52,7 +52,8 @@
     public class LogtoSocialPluginWechat: LogtoSocialPlugin {
         let apiDelegate = LogtoSocialPluginWechatApiDelegate()
 
-        public let connectorId = "wechat"
+        public let connectorPlatform: LogtoSocialPluginPlatform = .native
+        public let connectorTarget: String? = "wechat"
         public let urlSchemes = ["wechat"]
         public var isAvailable: Bool {
             WXApi.isWXAppInstalled()
