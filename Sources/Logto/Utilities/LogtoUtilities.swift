@@ -16,7 +16,8 @@ public enum LogtoUtilities {
         return decoder
     }
 
-    static let reservedScopes = ["openid", "offline_access"]
+    public static let profileScope = "profile"
+    public static let reservedScopes = ["openid", "offline_access", profileScope]
 
     public static func withReservedScopes(_ scopes: [String]) -> [String] {
         Array(Set(scopes + reservedScopes))

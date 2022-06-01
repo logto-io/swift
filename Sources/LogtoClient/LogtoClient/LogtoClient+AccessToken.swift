@@ -14,7 +14,9 @@ extension LogtoClient {
     }
 
     func getAccessToken(by refreshToken: String, for resource: String?) async throws -> String {
-        let key = buildAccessTokenKey(for: resource, scopes: [])
+        // Hard code profile scope when requesting token for userinfo
+        let scopes = resource == nil ? [LogtoUtilities.profileScope] : []
+        let key = buildAccessTokenKey(for: resource, scopes: scopes)
         let oidcConfig = try await fetchOidcConfig()
 
         do {
