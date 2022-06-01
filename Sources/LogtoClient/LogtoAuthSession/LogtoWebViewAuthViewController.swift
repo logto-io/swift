@@ -52,6 +52,8 @@ class LogtoWebViewAuthViewController: UnifiedViewController {
 
     override public func loadView() {
         view = webView
+        webView.isOpaque = false
+        webView.backgroundColor = .systemBackground
         webView.scrollView.contentInsetAdjustmentBehavior = .never
         webView.navigationDelegate = self
         webView.configuration.userContentController.add(self, name: LogtoWebViewAuthViewController.messageHandlerName)
