@@ -24,7 +24,7 @@ extension LogtoClient {
                 tokenEndpoint: oidcConfig.tokenEndpoint,
                 clientId: logtoConfig.appId,
                 resource: resource,
-                scopes: []
+                scopes: ["offline_access"] // Force pass in offline_access as scope to avoid ID Token being returned
             )
 
             let accessToken = AccessToken(
