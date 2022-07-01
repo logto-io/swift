@@ -14,7 +14,7 @@ public struct IdTokenClaims: Codable, Equatable {
     public let exp: Int64
     public let iat: Int64
     public let iss: String
-    
+
     // Scope `profile`
     public let name: String?
     public let username: String?
