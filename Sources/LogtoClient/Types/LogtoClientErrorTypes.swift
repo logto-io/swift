@@ -21,11 +21,6 @@ public enum LogtoClientErrorTypes {
         case unableToFetchOidcConfig
     }
 
-    public enum UserInfo {
-        /// Unable to fetch user info from the OIDC provider.
-        case unableToFetchUserInfo
-    }
-
     public enum JwkSet {
         /// Unable to fetch JWK set from the given URI.
         case unableToFetchJwkSet

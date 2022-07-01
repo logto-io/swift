@@ -10,7 +10,6 @@ import Foundation
 public enum LogtoClientErrors {
     public typealias AccessToken = LogtoError<LogtoClientErrorTypes.AccessToken>
     public typealias OidcConfig = LogtoError<LogtoClientErrorTypes.OidcConfig>
-    public typealias UserInfo = LogtoError<LogtoClientErrorTypes.UserInfo>
     public typealias JwkSet = LogtoError<LogtoClientErrorTypes.JwkSet>
     public typealias SignIn = LogtoError<LogtoClientErrorTypes.SignIn>
     public typealias SignOut = LogtoError<LogtoClientErrorTypes.SignOut>
