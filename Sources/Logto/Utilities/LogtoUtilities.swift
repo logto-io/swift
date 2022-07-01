@@ -16,10 +16,16 @@ public enum LogtoUtilities {
         return decoder
     }
 
-    static let reservedScopes = ["openid", "offline_access"]
+    public enum Scope: String, CaseIterable {
+        case openid
+        case offlineAccess = "offline_access"
+        case profile
+    }
+
+    public static let reservedScopes = Scope.allCases
 
     public static func withReservedScopes(_ scopes: [String]) -> [String] {
-        Array(Set(scopes + reservedScopes))
+        Array(Set(scopes + reservedScopes.map { $0.rawValue }))
     }
 
     public static func generateState() -> String {

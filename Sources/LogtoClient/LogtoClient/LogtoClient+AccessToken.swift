@@ -14,7 +14,12 @@ extension LogtoClient {
     }
 
     func getAccessToken(by refreshToken: String, for resource: String?) async throws -> String {
-        let key = buildAccessTokenKey(for: resource, scopes: [])
+        // Hard code profile scope when requesting token for userinfo
+        // Force pass in offline_access as scope to avoid ID Token being returned
+        let scopes = resource == nil ?
+            [LogtoUtilities.Scope.profile.rawValue] :
+            [LogtoUtilities.Scope.offlineAccess.rawValue]
+        let key = buildAccessTokenKey(for: resource, scopes: scopes)
         let oidcConfig = try await fetchOidcConfig()
 
         do {
@@ -24,7 +29,7 @@ extension LogtoClient {
                 tokenEndpoint: oidcConfig.tokenEndpoint,
                 clientId: logtoConfig.appId,
                 resource: resource,
-                scopes: ["offline_access"] // Force pass in offline_access as scope to avoid ID Token being returned
+                scopes: scopes
             )
 
             let accessToken = AccessToken(
