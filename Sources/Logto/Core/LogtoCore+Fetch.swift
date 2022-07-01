@@ -112,25 +112,6 @@ public extension LogtoCore {
         )
     }
 
-    // MARK: User Info
-
-    struct UserInfoResponse: Codable, Equatable {
-        public let sub: String
-        // More props TBD by LOG-561
-    }
-
-    static func fetchUserInfo(
-        useSession session: NetworkSession = URLSession.shared,
-        userInfoEndpoint: String,
-        accessToken: String
-    ) async throws -> UserInfoResponse {
-        try await LogtoRequest.get(
-            useSession: session,
-            endpoint: userInfoEndpoint,
-            headers: ["Authorization": "Bearer \(accessToken)"]
-        )
-    }
-
     // MARK: JWK Set
 
     static func fetchJwkSet(
