@@ -9,17 +9,15 @@ import Foundation
 import Logto
 
 extension LogtoClient {
-    func buildAccessTokenKey(for resource: String?, scopes: [String]) -> String {
-        "\(scopes.sorted().joined(separator: " "))@\(resource ?? "")"
+    func buildAccessTokenKey(for resource: String?) -> String {
+        "\(resource ?? "userinfo")"
     }
 
     func getAccessToken(by refreshToken: String, for resource: String?) async throws -> String {
-        // Hard code profile scope when requesting token for userinfo
         // Force pass in offline_access as scope to avoid ID Token being returned
-        let scopes = resource == nil ?
-            [LogtoUtilities.Scope.profile.rawValue] :
-            [LogtoUtilities.Scope.offlineAccess.rawValue]
-        let key = buildAccessTokenKey(for: resource, scopes: scopes)
+        let scopes = resource.map { _ in [LogtoUtilities.Scope.offlineAccess.rawValue] } ?? []
+
+        let key = buildAccessTokenKey(for: resource)
         let oidcConfig = try await fetchOidcConfig()
 
         do {
@@ -63,7 +61,7 @@ extension LogtoClient {
      - Returns: Access Token in string.
      */
     @MainActor public func getAccessToken(for resource: String?) async throws -> String {
-        let key = buildAccessTokenKey(for: resource, scopes: [])
+        let key = buildAccessTokenKey(for: resource)
 
         // Cached access token is still valid
         if let accessToken = accessTokenMap[key], Date().timeIntervalSince1970 < accessToken.expiresAt {
