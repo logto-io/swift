@@ -42,7 +42,7 @@ public extension LogtoCore {
 
     struct CodeTokenResponse: Codable, Equatable {
         public let accessToken: String
-        public let refreshToken: String
+        public let refreshToken: String?
         public let idToken: String
         public let scope: String
         public let expiresIn: Int64

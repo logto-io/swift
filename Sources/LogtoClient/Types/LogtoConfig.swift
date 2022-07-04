@@ -14,6 +14,7 @@ public struct LogtoConfig {
     public let endpoint: URL
     public let appId: String
     public let resources: [String]
+    public let prompt: LogtoCore.Prompt
     public let usingPersistStorage: Bool
 
     public var scopes: [String] {
@@ -26,6 +27,7 @@ public struct LogtoConfig {
         appId: String,
         scopes: [String] = [],
         resources: [String] = [],
+        prompt: LogtoCore.Prompt = .consent,
         usingPersistStorage: Bool = true
     ) throws {
         guard let endpoint = URL(string: endpoint) else {
@@ -36,6 +38,7 @@ public struct LogtoConfig {
         self.appId = appId
         _scopes = scopes
         self.resources = resources
+        self.prompt = prompt
         self.usingPersistStorage = usingPersistStorage
     }
 }
