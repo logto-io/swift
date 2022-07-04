@@ -8,9 +8,13 @@
 import Foundation
 
 public extension LogtoCore {
+    enum Prompt: String {
+        case login
+        case consent
+    }
+
     private static let codeChallengeMethod = "S256"
     private static let responseType = "code"
-    private static let prompt = "consent"
 
     static func generateSignInUri(
         authorizationEndpoint: String,
@@ -19,7 +23,8 @@ public extension LogtoCore {
         codeChallenge: String,
         state: String,
         scopes: [String] = [],
-        resources: [String] = []
+        resources: [String] = [],
+        prompt: Prompt = .consent
     ) throws -> URL {
         guard
             var components = URLComponents(string: authorizationEndpoint),
@@ -40,7 +45,7 @@ public extension LogtoCore {
             URLQueryItem(name: "state", value: state),
             URLQueryItem(name: "scope", value: LogtoUtilities.withReservedScopes(scopes).joined(separator: " ")),
             URLQueryItem(name: "response_type", value: LogtoCore.responseType),
-            URLQueryItem(name: "prompt", value: LogtoCore.prompt),
+            URLQueryItem(name: "prompt", value: prompt.rawValue),
         ]
         let resourceQueryItems = resources.map {
             URLQueryItem(name: "resource", value: $0)

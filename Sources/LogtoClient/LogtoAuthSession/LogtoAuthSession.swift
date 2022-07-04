@@ -53,7 +53,8 @@ class LogtoAuthSession {
                 codeChallenge: codeChallenge,
                 state: state,
                 scopes: logtoConfig.scopes,
-                resources: logtoConfig.resources
+                resources: logtoConfig.resources,
+                prompt: logtoConfig.prompt
             )
 
             #if !os(macOS)
