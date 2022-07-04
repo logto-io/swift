@@ -8,9 +8,9 @@
 
 # Logto Swift SDKs
 
-The monorepo for SDKs and social plugins written in Swift. Check out our [integration guide](https://docs.logto.io/docs/recipes/integrate-logto/ios) or [SDK reference](https://docs.logto.io/sdk/Swift/) for more information.
+The monorepo for SDKs and social plugins written in Swift. Check out our [integration guide](https://docs.logto.io/docs/recipes/integrate-logto/ios) or [SDK reference](https://docs.logto.io/sdk/Swift) for more information.
 
-We also provide [集成指南](https://docs.logto.io/zh-cn/docs/recipes/integrate-logto/ios) and [SDK 参考](https://docs.logto.io/zh-cn/sdk/Swift/) in Simplified Chinese.
+We also provide [集成指南](https://docs.logto.io/zh-cn/docs/recipes/integrate-logto/ios) and [SDK 参考](https://docs.logto.io/zh-cn/sdk/Swift) in Simplified Chinese.
 
 ## Installation
 
