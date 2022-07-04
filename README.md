@@ -3,14 +3,14 @@
         <img src="./logo.png" width="100">
     </a>
     <br/>
-    <span><i><a href="https://logto.io" target="_blank">Logto</a> helps you quickly focus on everything after signing in.</i></span>
+    <span><i><a href="https://logto.io" target="_blank">Logto</a> helps you build the sign-in experience and user identity within minutes.</i></span>
 </p>
 
 # Logto Swift SDKs
 
-The monorepo for SDKs and social plugins written in Swift. Check out our [integration guide](https://docs.logto.io/integrate-sdk/swift) or [docs](https://docs.logto.io/sdk/swift) for more information.
+The monorepo for SDKs and social plugins written in Swift. Check out our [integration guide](https://docs.logto.io/docs/recipes/integrate-logto/ios) or [reference](https://docs.logto.io/sdk/Swift/) for more information.
 
-We also provide [集成指南](https://docs.logto.io/zh-cn/integrate-sdk/swift) and [文档](https://docs.logto.io/zh-cn/sdk/swift) in Simplified Chinese.
+We also provide [集成指南](https://docs.logto.io/zh-cn/docs/recipes/integrate-logto/ios) and [文档](https://docs.logto.io/zh-cn/sdk/Swift/) in Simplified Chinese.
 
 ## Installation
 
@@ -48,5 +48,5 @@ The related plugin is required when you integrate a [connector with native tag](
 ## Resources
 
 [![Website](https://img.shields.io/badge/website-logto.io-8262F8.svg)](https://logto.io/)
-[![Docs](https://img.shields.io/badge/docs-logto.io-green.svg)](https://docs.logto.io/docs/sdk/swift/)
+[![Logto Docs](https://img.shields.io/badge/docs-logto.io-green.svg)](https://docs.logto.io/)
 [![Discord](https://img.shields.io/discord/965845662535147551?logo=discord&logoColor=ffffff&color=7389D8&cacheSeconds=600)](https://discord.gg/UEPaF3j5e6)
