@@ -15,6 +15,7 @@ class LogtoWebViewAuthViewController: UnifiedViewController {
     static let messageHandlerName = "socialHandler"
 
     let webView = WKWebView()
+    let activityIndicator = UIActivityIndicatorView()
     let authSession: LogtoWebViewAuthSession
 
     var injectScript: String {
@@ -51,7 +52,9 @@ class LogtoWebViewAuthViewController: UnifiedViewController {
     }
 
     override public func loadView() {
-        view = webView
+        view = UIView()
+
+        webView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         webView.isOpaque = false
         webView.backgroundColor = .systemBackground
         webView.scrollView.contentInsetAdjustmentBehavior = .never
@@ -59,6 +62,13 @@ class LogtoWebViewAuthViewController: UnifiedViewController {
         webView.configuration.userContentController.add(self, name: LogtoWebViewAuthViewController.messageHandlerName)
         webView.configuration.userContentController
             .addUserScript(WKUserScript(source: injectScript, injectionTime: .atDocumentStart, forMainFrameOnly: false))
+        view.addSubview(webView)
+
+        activityIndicator.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        activityIndicator.center = view.center
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.style = .medium
+        view.addSubview(activityIndicator)
     }
 
     override public func viewDidLoad() {

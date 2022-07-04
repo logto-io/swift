@@ -62,7 +62,7 @@ final class LogtoWebViewAuthViewControllerTest: XCTestCase {
         let (viewController, _) = createViewController(socialPlugins: [LogtoSocialPluginWeb()])
         viewController.loadView()
 
-        XCTAssertEqual(viewController.view, viewController.webView)
+        XCTAssertEqual(viewController.view.subviews[0], viewController.webView)
         XCTAssertEqual(viewController.webView.navigationDelegate as? LogtoWebViewAuthViewController, viewController)
         XCTAssertTrue(viewController.webView.configuration.userContentController.userScripts.contains(where: {
             $0.source == viewController.injectScript
