@@ -27,4 +27,16 @@ extension LogtoWebViewAuthViewController: WKNavigationDelegate {
 
         return .allow
     }
+
+    func webView(_: WKWebView, didStartProvisionalNavigation _: WKNavigation!) {
+        activityIndicator.startAnimating()
+    }
+
+    func webView(_: WKWebView, didFinish _: WKNavigation!) {
+        activityIndicator.stopAnimating()
+    }
+
+    func webView(_: WKWebView, didFail _: WKNavigation!, withError _: Error) {
+        activityIndicator.stopAnimating()
+    }
 }
