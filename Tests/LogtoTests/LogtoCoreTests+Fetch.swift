@@ -56,4 +56,19 @@ extension LogtoCoreTests {
             scopes: []
         ))
     }
+
+    func testFetchUserInfo() async throws {
+        let info = try await LogtoCore.fetchUserInfo(
+            useSession: NetworkSessionMock.shared,
+            userInfoEndpoint: "/user",
+            accessToken: "good"
+        )
+        XCTAssertNotNil(info)
+
+        await LogtoCoreTests.assertThrows(try await LogtoCore.fetchUserInfo(
+            useSession: NetworkSessionMock.shared,
+            userInfoEndpoint: "/user",
+            accessToken: "bad"
+        ))
+    }
 }

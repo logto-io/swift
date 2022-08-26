@@ -8,7 +8,7 @@ extension LogtoClientTests {
         let client = buildClient()
         let cachedAccessToken = "foo"
 
-        client.accessTokenMap[client.buildAccessTokenKey(for: nil)] = AccessToken(
+        client.accessTokenMap[client.buildAccessTokenKey(for: nil, scopes: [])] = AccessToken(
             token: cachedAccessToken,
             scope: "",
             expiresAt: Date().timeIntervalSince1970 + 1000
@@ -23,7 +23,7 @@ extension LogtoClientTests {
 
         let client = buildClient()
         client.refreshToken = "bar"
-        client.accessTokenMap[client.buildAccessTokenKey(for: "resource1")] = AccessToken(
+        client.accessTokenMap[client.buildAccessTokenKey(for: "resource1", scopes: [])] = AccessToken(
             token: "foo",
             scope: "",
             expiresAt: Date().timeIntervalSince1970 - 1

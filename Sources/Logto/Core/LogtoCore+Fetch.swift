@@ -20,6 +20,9 @@ public extension LogtoCore {
         public let tokenEndpoint: String
         public let endSessionEndpoint: String
         public let revocationEndpoint: String
+        // Use `userinfo` instead of `userInfo` per OIDC Discovery spec
+        // https://openid.net/specs/openid-connect-discovery-1_0.html [3. OpenID Provider Metadata]
+        public let userinfoEndpoint: String
         public let jwksUri: String
         public let issuer: String
     }
@@ -106,6 +109,25 @@ public extension LogtoCore {
             endpoint: tokenEndpoint,
             headers: postHeaders,
             body: body.urlParamEncoded.data(using: .utf8)
+        )
+    }
+
+    // MARK: User Info
+
+    struct UserInfoResponse: Codable, Equatable {
+        public let sub: String
+        // More props TBD by LOG-561
+    }
+
+    static func fetchUserInfo(
+        useSession session: NetworkSession = URLSession.shared,
+        userInfoEndpoint: String,
+        accessToken: String
+    ) async throws -> UserInfoResponse {
+        try await LogtoRequest.get(
+            useSession: session,
+            endpoint: userInfoEndpoint,
+            headers: ["Authorization": "Bearer \(accessToken)"]
         )
     }
 

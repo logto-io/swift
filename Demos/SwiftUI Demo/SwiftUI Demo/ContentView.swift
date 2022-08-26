@@ -55,7 +55,7 @@ struct ContentView: View {
             Button("Sign In") {
                 Task { [self] in
                     do {
-                        try await client.signInWithBrowser(redirectUri: "io.logto://callback")
+                        try await client.signInWithBrowser(redirectUri: "io.logto.SwiftUI-Demo://callback")
 
                         isAuthenticated = true
                         authError = nil
@@ -84,6 +84,28 @@ struct ContentView: View {
                 Task {
                     await client.signOut()
                     self.isAuthenticated = false
+                }
+            }
+
+            Button("Fetch Userinfo") {
+                Task {
+                    do {
+                        let userInfo = try await client.fetchUserInfo()
+                        print(userInfo)
+                    } catch let error as LogtoClientErrors.UserInfo {
+                        if let error = error.innerError as? LogtoClientErrors.AccessToken,
+                           let error = error.innerError as? LogtoErrors.Response,
+                           case let LogtoErrors.Response.withCode(
+                               _,
+                               _,
+                               data
+                           ) = error, let data = data
+                        {
+                            print(String(decoding: data, as: UTF8.self))
+                        }
+                    } catch {
+                        print(error)
+                    }
                 }
             }
 
