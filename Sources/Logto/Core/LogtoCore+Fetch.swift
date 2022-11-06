@@ -94,14 +94,14 @@ public extension LogtoCore {
         tokenEndpoint: String,
         clientId: String,
         resource: String?,
-        scopes: [String]
+        scopes: [String]?
     ) async throws -> RefreshTokenTokenResponse {
         let body: [String: String?] = [
             "grant_type": TokenGrantType.refreshToken.rawValue,
             "refresh_token": refreshToken,
             "client_id": clientId,
             "resource": resource,
-            "scope": scopes.joined(separator: " "),
+            "scope": scopes?.joined(separator: " "),
         ]
 
         return try await LogtoRequest.post(
@@ -114,9 +114,17 @@ public extension LogtoCore {
 
     // MARK: User Info
 
-    struct UserInfoResponse: Codable, Equatable {
+    struct UserInfoResponse: UserInfoProtocol {
         public let sub: String
-        // More props TBD by LOG-561
+        public let name: String?
+        public let picture: String?
+        public let username: String?
+        public let email: String?
+        public let emailVerified: String?
+        public let phoneNumber: String?
+        public let phoneNumberVerified: String?
+        public let customData: JsonObject?
+        public let identities: JsonObject?
     }
 
     static func fetchUserInfo(

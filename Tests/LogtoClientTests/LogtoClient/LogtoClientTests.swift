@@ -96,7 +96,8 @@ final class LogtoClientTests: XCTestCase {
                     "aud": "foo",
                     "iss": "bar",
                     "iat": 1516239022,
-                    "exp": 1516239022
+                    "exp": 1516239022,
+                    "name": "John Doe"
                 }
             """.utf8))
         )

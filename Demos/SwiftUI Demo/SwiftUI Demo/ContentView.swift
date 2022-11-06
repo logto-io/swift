@@ -55,7 +55,7 @@ struct ContentView: View {
             Button("Sign In") {
                 Task { [self] in
                     do {
-                        try await client.signInWithBrowser(redirectUri: "io.logto.SwiftUI-Demo://callback")
+                        try await client.signInWithBrowser(redirectUri: "io.logto://callback")
 
                         isAuthenticated = true
                         authError = nil
@@ -102,6 +102,8 @@ struct ContentView: View {
                            ) = error, let data = data
                         {
                             print(String(decoding: data, as: UTF8.self))
+                        } else {
+                            print(error)
                         }
                     } catch {
                         print(error)

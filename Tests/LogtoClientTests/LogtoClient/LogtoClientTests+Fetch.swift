@@ -76,7 +76,7 @@ extension LogtoClientTests {
     func testFetchUserInfoUnableToFetchUserInfo() async throws {
         let client = buildClient(withOidcEndpoint: "/oidc_config:good")
 
-        client.accessTokenMap[client.buildAccessTokenKey(for: nil, scopes: [])] = AccessToken(
+        client.accessTokenMap[client.buildAccessTokenKey(for: nil)] = AccessToken(
             token: "bad",
             scope: "",
             expiresAt: Date().timeIntervalSince1970 + 1000
@@ -96,7 +96,7 @@ extension LogtoClientTests {
         let client = buildClient(withOidcEndpoint: "/oidc_config:good")
 
         client
-            .accessTokenMap[client.buildAccessTokenKey(for: nil, scopes: [])] = AccessToken(
+            .accessTokenMap[client.buildAccessTokenKey(for: nil)] = AccessToken(
                 token: "good",
                 scope: "",
                 expiresAt: Date().timeIntervalSince1970 + 1000
