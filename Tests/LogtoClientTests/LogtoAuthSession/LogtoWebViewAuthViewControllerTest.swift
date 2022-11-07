@@ -89,7 +89,7 @@ final class LogtoWebViewAuthViewControllerTest: XCTestCase {
             expectation.fulfill()
         }
 
-        wait(for: [expectation], timeout: 5)
+        wait(for: [expectation], timeout: 10)
     }
 
     func testPresentationAnchor() {
