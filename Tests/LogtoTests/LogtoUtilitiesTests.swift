@@ -63,9 +63,12 @@ final class LogtoUtilitiesTests: XCTestCase {
                 iat: 1_516_239_022,
                 iss: "https://logto.dev",
                 name: "John Doe",
+                picture: nil,
                 username: nil,
-                avatar: nil,
-                roleNames: nil
+                email: nil,
+                emailVerified: nil,
+                phoneNumber: nil,
+                phoneNumberVerified: nil
             )
         )
         XCTAssertThrowsError(try LogtoUtilities

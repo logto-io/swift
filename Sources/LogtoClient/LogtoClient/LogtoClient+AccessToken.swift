@@ -10,13 +10,14 @@ import Logto
 
 extension LogtoClient {
     func buildAccessTokenKey(for resource: String?) -> String {
-        "\(resource ?? "userinfo")"
+        resource ?? "@"
     }
 
     func getAccessToken(by refreshToken: String, for resource: String?) async throws -> String {
         // Force pass in offline_access as scope to avoid ID Token being returned
-        let scopes = resource.map { _ in [LogtoUtilities.Scope.offlineAccess.rawValue] } ?? []
-
+        let scopes = resource == nil ?
+            nil :
+            [LogtoUtilities.Scope.offlineAccess.rawValue]
         let key = buildAccessTokenKey(for: resource)
         let oidcConfig = try await fetchOidcConfig()
 

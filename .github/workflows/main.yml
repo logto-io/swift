@@ -26,6 +26,8 @@ jobs:
           path: BuildTools/.build
           key: ${{ runner.os }}-spm-v1-${{ hashFiles('BuildTools/Package.resolved') }}
 
+      - run: sudo xcode-select -s /Applications/Xcode_14.1.app
+
       - name: SwiftFormat
         run: |
           [ ! -d ".build/" ] && swift run -c release swiftformat ../ --lint || .build/release/swiftformat ../ --lint
@@ -36,7 +38,7 @@ jobs:
           set -o pipefail && \
           xcodebuild \
             -scheme "LogtoSDK-Package" \
-            -destination "platform=iOS Simulator,OS=15.2,name=iPhone 13 Pro" \
+            -destination "platform=iOS Simulator,OS=16.1,name=iPhone 14 Pro" \
             -enableCodeCoverage=YES \
             -resultBundlePath Logto.xcresult \
             test | \

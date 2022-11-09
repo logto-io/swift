@@ -20,6 +20,9 @@ public extension LogtoCore {
         public let tokenEndpoint: String
         public let endSessionEndpoint: String
         public let revocationEndpoint: String
+        // Use `userinfo` instead of `userInfo` per OIDC Discovery spec
+        // https://openid.net/specs/openid-connect-discovery-1_0.html [3. OpenID Provider Metadata]
+        public let userinfoEndpoint: String
         public let jwksUri: String
         public let issuer: String
     }
@@ -91,14 +94,14 @@ public extension LogtoCore {
         tokenEndpoint: String,
         clientId: String,
         resource: String?,
-        scopes: [String]
+        scopes: [String]?
     ) async throws -> RefreshTokenTokenResponse {
         let body: [String: String?] = [
             "grant_type": TokenGrantType.refreshToken.rawValue,
             "refresh_token": refreshToken,
             "client_id": clientId,
             "resource": resource,
-            "scope": scopes.joined(separator: " "),
+            "scope": scopes?.joined(separator: " "),
         ]
 
         return try await LogtoRequest.post(
@@ -106,6 +109,33 @@ public extension LogtoCore {
             endpoint: tokenEndpoint,
             headers: postHeaders,
             body: body.urlParamEncoded.data(using: .utf8)
+        )
+    }
+
+    // MARK: User Info
+
+    struct UserInfoResponse: UserInfoProtocol {
+        public let sub: String
+        public let name: String?
+        public let picture: String?
+        public let username: String?
+        public let email: String?
+        public let emailVerified: String?
+        public let phoneNumber: String?
+        public let phoneNumberVerified: String?
+        public let customData: JsonObject?
+        public let identities: JsonObject?
+    }
+
+    static func fetchUserInfo(
+        useSession session: NetworkSession = URLSession.shared,
+        userInfoEndpoint: String,
+        accessToken: String
+    ) async throws -> UserInfoResponse {
+        try await LogtoRequest.get(
+            useSession: session,
+            endpoint: userInfoEndpoint,
+            headers: ["Authorization": "Bearer \(accessToken)"]
         )
     }
 

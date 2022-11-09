@@ -27,6 +27,22 @@ extension LogtoClient {
         }
     }
 
+    public func fetchUserInfo() async throws -> LogtoCore.UserInfoResponse {
+        let oidcConfig = try await fetchOidcConfig()
+        let token = try await getAccessToken(for: nil)
+
+        do {
+            return try await LogtoCore
+                .fetchUserInfo(
+                    useSession: networkSession,
+                    userInfoEndpoint: oidcConfig.userinfoEndpoint,
+                    accessToken: token
+                )
+        } catch {
+            throw LogtoClientErrors.UserInfo(type: .unableToFetchUserInfo, innerError: error)
+        }
+    }
+
     func fetchJwkSet() async throws -> JWKSet {
         let oidcConfig = try await fetchOidcConfig()
 

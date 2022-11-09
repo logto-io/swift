@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct IdTokenClaims: Codable, Equatable {
+public struct IdTokenClaims: UserInfoProtocol {
     public let sub: String
     public let atHash: String?
     public let aud: String
@@ -15,9 +15,12 @@ public struct IdTokenClaims: Codable, Equatable {
     public let iat: Int64
     public let iss: String
 
-    // Scope `profile`
+    // Protocol
     public let name: String?
+    public let picture: String?
     public let username: String?
-    public let avatar: String?
-    public let roleNames: [String]?
+    public let email: String?
+    public let emailVerified: String?
+    public let phoneNumber: String?
+    public let phoneNumberVerified: String?
 }

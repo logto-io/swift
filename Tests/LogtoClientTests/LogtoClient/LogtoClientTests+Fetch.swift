@@ -46,4 +46,63 @@ extension LogtoClientTests {
 
         XCTFail()
     }
+
+    func testFetchUserInfoUnalbeToFetchOidcConfig() async throws {
+        let client = buildClient(withOidcEndpoint: "/bad")
+
+        do {
+            _ = try await client.fetchUserInfo()
+        } catch let error as LogtoClientErrors.OidcConfig {
+            XCTAssertEqual(error.type, .unableToFetchOidcConfig)
+            return
+        }
+
+        XCTFail()
+    }
+
+    func testFetchUserInfoUnalbeToGetAccessToken() async throws {
+        let client = buildClient(withOidcEndpoint: "/oidc_config:bad")
+
+        do {
+            _ = try await client.fetchUserInfo()
+        } catch let error as LogtoClientErrors.AccessToken {
+            XCTAssertEqual(error.type, .noRefreshTokenFound)
+            return
+        }
+
+        XCTFail()
+    }
+
+    func testFetchUserInfoUnableToFetchUserInfo() async throws {
+        let client = buildClient(withOidcEndpoint: "/oidc_config:good")
+
+        client.accessTokenMap[client.buildAccessTokenKey(for: nil)] = AccessToken(
+            token: "bad",
+            scope: "",
+            expiresAt: Date().timeIntervalSince1970 + 1000
+        )
+
+        do {
+            _ = try await client.fetchUserInfo()
+        } catch let error as LogtoClientErrors.UserInfo {
+            XCTAssertEqual(error.type, .unableToFetchUserInfo)
+            return
+        }
+
+        XCTFail()
+    }
+
+    func testFetchUserInfoOk() async throws {
+        let client = buildClient(withOidcEndpoint: "/oidc_config:good")
+
+        client
+            .accessTokenMap[client.buildAccessTokenKey(for: nil)] = AccessToken(
+                token: "good",
+                scope: "",
+                expiresAt: Date().timeIntervalSince1970 + 1000
+            )
+
+        let info = try await client.fetchUserInfo()
+        XCTAssertNotNil(info)
+    }
 }

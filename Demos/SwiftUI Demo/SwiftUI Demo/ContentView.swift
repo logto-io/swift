@@ -87,6 +87,30 @@ struct ContentView: View {
                 }
             }
 
+            Button("Fetch Userinfo") {
+                Task {
+                    do {
+                        let userInfo = try await client.fetchUserInfo()
+                        print(userInfo)
+                    } catch let error as LogtoClientErrors.UserInfo {
+                        if let error = error.innerError as? LogtoClientErrors.AccessToken,
+                           let error = error.innerError as? LogtoErrors.Response,
+                           case let LogtoErrors.Response.withCode(
+                               _,
+                               _,
+                               data
+                           ) = error, let data = data
+                        {
+                            print(String(decoding: data, as: UTF8.self))
+                        } else {
+                            print(error)
+                        }
+                    } catch {
+                        print(error)
+                    }
+                }
+            }
+
             Button("Fetch access token for \(resource)") {
                 Task {
                     do {
