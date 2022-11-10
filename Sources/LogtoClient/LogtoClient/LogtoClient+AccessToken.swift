@@ -69,23 +69,12 @@ extension LogtoClient {
             return accessToken.token
         }
 
-        // Check existing task
-        if let task = getAccessTokenTaskMap[key] {
-            return try await task.value
-        }
-
         // Use refresh token to fetch a new access token
         guard let refreshToken = refreshToken else {
             throw LogtoClientErrors.AccessToken(type: .noRefreshTokenFound, innerError: nil)
         }
 
-        let task = Task {
-            try await self.getAccessToken(by: refreshToken, for: resource)
-        }
-        getAccessTokenTaskMap.updateValue(task, forKey: key)
-
-        let token = try await task.value
-        getAccessTokenTaskMap.removeValue(forKey: key)
+        let token = try await getAccessToken(by: refreshToken, for: resource)
 
         return token
     }
