@@ -34,7 +34,7 @@ extension LogtoClientTests {
         let tokens = try await [get1, get2]
 
         XCTAssertEqual(tokens[0], "123")
-        XCTAssertEqual(tokens[1], "123")
+        XCTAssertEqual(tokens[1], "456")
     }
 
     func testGetAccessTokenUnalbeToFetchOidcConfig() async throws {
