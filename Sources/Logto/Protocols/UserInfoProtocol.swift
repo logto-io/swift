@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  UserInfoProtocol.swift
 //
 //
 //  Created by Gao Sun on 2022/11/6.
