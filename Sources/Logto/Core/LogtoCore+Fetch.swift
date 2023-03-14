@@ -120,9 +120,9 @@ public extension LogtoCore {
         public let picture: String?
         public let username: String?
         public let email: String?
-        public let emailVerified: String?
+        public let emailVerified: Bool?
         public let phoneNumber: String?
-        public let phoneNumberVerified: String?
+        public let phoneNumberVerified: Bool?
         public let customData: JsonObject?
         public let identities: JsonObject?
     }
