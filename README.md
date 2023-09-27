@@ -1,16 +1,12 @@
 <p align="center">
     <a href="https://logto.io" target="_blank" align="center" alt="Logto Logo">
-        <img src="./logo.png" width="100">
+        <img src="https://raw.githubusercontent.com/logto-io/logto/master/logo.png" height="120">
     </a>
-    <br/>
-    <span><i><a href="https://logto.io" target="_blank">Logto</a> helps you build the sign-in experience and user identity within minutes.</i></span>
 </p>
 
 # Logto Swift SDKs
 
-The monorepo for SDKs and social plugins written in Swift. Check out our [integration guide](https://docs.logto.io/docs/recipes/integrate-logto/ios) or [SDK reference](https://docs.logto.io/sdk/Swift) for more information.
-
-We also provide [集成指南](https://docs.logto.io/zh-cn/docs/recipes/integrate-logto/ios) and [SDK 参考](https://docs.logto.io/zh-cn/sdk/Swift) in Simplified Chinese.
+The monorepo for [Logto](https://github.com/logto-io) SDKs and social plugins written in Swift. Check out our [integration guide](https://docs.logto.io/docs/recipes/integrate-logto/ios) or [SDK reference](https://docs.logto.io/sdk/Swift) for more information.
 
 ## Installation
 
