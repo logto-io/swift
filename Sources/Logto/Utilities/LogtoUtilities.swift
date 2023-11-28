@@ -16,16 +16,27 @@ public enum LogtoUtilities {
         return decoder
     }
 
-    public enum Scope: String, CaseIterable {
-        case openid
-        case offlineAccess = "offline_access"
-        case profile
-    }
-
-    public static let reservedScopes = Scope.allCases
+    public static let reservedScopes = [UserScope.openid, UserScope.offlineAccess, UserScope.profile]
 
     public static func withReservedScopes(_ scopes: [String]) -> [String] {
         Array(Set(scopes + reservedScopes.map { $0.rawValue }))
+    }
+
+    /// The prefix for Logto organization URNs.
+    public static let organizationUrnPrefix = "urn:logto:organization:"
+
+    /// Build the organization URN from the organization ID.
+    ///
+    /// # Examlpe #
+    /// ```swift
+    /// buildOrganizationUrn("1") // returns "urn:logto:organization:1"
+    /// ```
+    public static func buildOrganizationUrn(forId id: String) -> String {
+        organizationUrnPrefix + id
+    }
+
+    public static func isOrganizationUrn(_ value: String?) -> Bool {
+        value?.hasPrefix(organizationUrnPrefix) ?? false
     }
 
     public static func generateState() -> String {

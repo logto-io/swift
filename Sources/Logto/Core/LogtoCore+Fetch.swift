@@ -96,11 +96,14 @@ public extension LogtoCore {
         resource: String?,
         scopes: [String]?
     ) async throws -> RefreshTokenTokenResponse {
+        let isResourceOrganizationUrn = LogtoUtilities.isOrganizationUrn(resource)
         let body: [String: String?] = [
             "grant_type": TokenGrantType.refreshToken.rawValue,
             "refresh_token": refreshToken,
             "client_id": clientId,
-            "resource": resource,
+            "resource": isResourceOrganizationUrn ? nil : resource,
+            "organization_id": isResourceOrganizationUrn ? resource?
+                .suffix(from: LogtoUtilities.organizationUrnPrefix.endIndex).description : nil,
             "scope": scopes?.joined(separator: " "),
         ]
 
@@ -123,6 +126,9 @@ public extension LogtoCore {
         public let emailVerified: Bool?
         public let phoneNumber: String?
         public let phoneNumberVerified: Bool?
+        public let roles: [String]?
+        public let organizations: [String]?
+        public let organizationRoles: [String]?
         public let customData: JsonObject?
         public let identities: JsonObject?
     }

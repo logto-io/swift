@@ -20,7 +20,15 @@ struct ContentView: View {
         guard let config = try? LogtoConfig(
             endpoint: "<your-logto-endpoint>",
             appId: "<your-application-id>",
-            resources: [resource]
+            // Update per your needs
+            scopes: [
+                UserScope.email.rawValue,
+                UserScope.roles.rawValue,
+                UserScope.organizations.rawValue,
+                UserScope.organizationRoles.rawValue,
+            ],
+            // Update per your needs
+            resources: []
         ) else {
             client = nil
             isAuthenticated = false
@@ -115,6 +123,18 @@ struct ContentView: View {
                 Task {
                     do {
                         let token = try await client.getAccessToken(for: resource)
+                        print(token)
+                    } catch {
+                        print(error)
+                    }
+                }
+            }
+
+            Button("Fetch organization token") {
+                Task {
+                    do {
+                        // Replace `<organization-id>` with a valid organization ID
+                        let token = try await client.getOrganizationToken(forId: "<organization-id>")
                         print(token)
                     } catch {
                         print(error)
