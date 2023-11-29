@@ -33,6 +33,18 @@ public class NetworkSessionMock: NetworkSession {
                         "issuer": "http://localhost:443/oidc"
                     }
                 """.utf8), nil)
+            case "oidc_config:good:no_refresh":
+                return (Data("""
+                    {
+                        "authorization_endpoint": "https://logto.dev/auth:good",
+                        "token_endpoint": "https://logto.dev/token:good:no_refresh",
+                        "end_session_endpoint": "https://logto.dev/end:good",
+                        "revocation_endpoint": "https://logto.dev/revoke:good",
+                        "userinfo_endpoint": "https://logto.dev/user",
+                        "jwks_uri": "https://logto.dev/jwks:good",
+                        "issuer": "http://localhost:443/oidc"
+                    }
+                """.utf8), nil)
             case "oidc_config:bad":
                 return (Data("""
                    {
@@ -81,6 +93,15 @@ public class NetworkSessionMock: NetworkSession {
                         "access_token": "123",
                         "refresh_token": "456",
                         "id_token": "789",
+                        "token_type": "jwt",
+                        "scope": "",
+                        "expires_in": 123
+                    }
+                """.utf8), nil)
+            case "token:good:no_refresh":
+                return (Data("""
+                    {
+                        "access_token": "123",
                         "token_type": "jwt",
                         "scope": "",
                         "expires_in": 123
