@@ -6,7 +6,7 @@
 
 # Logto Swift SDKs
 
-The monorepo for [Logto](https://github.com/logto-io) SDKs and social plugins written in Swift. Check out our [integration guide](https://docs.logto.io/docs/recipes/integrate-logto/ios) or [SDK reference](https://docs.logto.io/sdk/Swift) for more information.
+The monorepo for [Logto](https://github.com/logto-io) SDKs and social plugins written in Swift. See the [⚡ Get started](https://docs.logto.io/docs/tutorials/get-started/) guide for more information.
 
 ## Installation
 
@@ -39,7 +39,7 @@ CocoaPods [does not support local dependency](https://github.com/CocoaPods/Cocoa
 
 In most cases, you only need to import `LogtoClient`, which includes `Logto` and `LogtoSocialPluginWeb` under the hood.
 
-The related plugin is required when you integrate a [connector with native tag](https://docs.logto.io/connector/native).
+The related plugin is required when you integrate a native connector.
 
 ## Resources
 

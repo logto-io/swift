@@ -18,6 +18,22 @@ extension LogtoClientTests {
         XCTAssertEqual(token, cachedAccessToken)
     }
 
+    func testGetOrganizationwTokenCached() async throws {
+        let client = buildClient()
+        let cachedAccessToken = "foo"
+
+        client
+            .accessTokenMap[client.buildAccessTokenKey(for: LogtoUtilities.buildOrganizationUrn(forId: "1"))] =
+            AccessToken(
+                token: cachedAccessToken,
+                scope: "",
+                expiresAt: Date().timeIntervalSince1970 + 1000
+            )
+
+        let token = try await client.getOrganizationToken(forId: "1")
+        XCTAssertEqual(token, cachedAccessToken)
+    }
+
     func testGetAccessTokenByRefreshToken() async throws {
         NetworkSessionMock.shared.tokenRequestCount = 0
 

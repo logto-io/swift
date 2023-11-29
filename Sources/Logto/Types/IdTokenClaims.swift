@@ -23,4 +23,7 @@ public struct IdTokenClaims: UserInfoProtocol {
     public let emailVerified: Bool?
     public let phoneNumber: String?
     public let phoneNumberVerified: Bool?
+    public let roles: [String]?
+    public let organizations: [String]?
+    public let organizationRoles: [String]?
 }

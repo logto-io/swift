@@ -68,7 +68,10 @@ final class LogtoUtilitiesTests: XCTestCase {
                 email: nil,
                 emailVerified: nil,
                 phoneNumber: nil,
-                phoneNumberVerified: nil
+                phoneNumberVerified: nil,
+                roles: nil,
+                organizations: nil,
+                organizationRoles: nil
             )
         )
         XCTAssertThrowsError(try LogtoUtilities

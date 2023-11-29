@@ -74,4 +74,19 @@ extension LogtoClient {
 
         return token
     }
+
+    /**
+     Get an Access Token for the given organization ID. Scope `UserScope.organizations` is required in the config to use organization-related
+     methods.
+
+     If the cached Access Token has expired, this function will try to use `refreshToken` to fetch a new Access Token from the OIDC provider.
+
+     - Parameters:
+        - forId: The ID of the organization that the access token is granted for.
+     - Throws: An error if failed to get a valid Access Token.
+     - Returns: Access Token in string.
+     */
+    @MainActor public func getOrganizationToken(forId id: String) async throws -> String {
+        try await getAccessToken(for: LogtoUtilities.buildOrganizationUrn(forId: id))
+    }
 }

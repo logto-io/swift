@@ -10,15 +10,21 @@ import Logto
 
 public struct LogtoConfig {
     private let _scopes: [String]
+    private let _resources: [String]
 
     public let endpoint: URL
     public let appId: String
-    public let resources: [String]
     public let prompt: LogtoCore.Prompt
     public let usingPersistStorage: Bool
 
     public var scopes: [String] {
         LogtoUtilities.withReservedScopes(_scopes)
+    }
+
+    public var resources: [String] {
+        scopes.contains(UserScope.organizations.rawValue)
+            ? _resources + [ReservedResource.organizations.rawValue]
+            : _resources
     }
 
     // Have to do this in Swift
@@ -37,7 +43,7 @@ public struct LogtoConfig {
         self.endpoint = endpoint
         self.appId = appId
         _scopes = scopes
-        self.resources = resources
+        _resources = resources
         self.prompt = prompt
         self.usingPersistStorage = usingPersistStorage
     }

@@ -18,7 +18,7 @@ extension LogtoClient {
         do {
             let config = try await LogtoCore.fetchOidcConfig(
                 useSession: networkSession,
-                uri: logtoConfig.endpoint.appendingPathComponent("/oidc/.well-known/openid-configuration")
+                uri: logtoConfig.endpoint.appendingPathComponent("oidc/.well-known/openid-configuration")
             )
             oidcConfig = config
             return config
