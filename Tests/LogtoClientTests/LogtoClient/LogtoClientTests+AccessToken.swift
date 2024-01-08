@@ -35,8 +35,8 @@ extension LogtoClientTests {
 
         XCTAssertEqual(tokens[0], "123")
         XCTAssertEqual(tokens[1], "456")
-        XCTAssertEqual(client.refreshToken, "456")
-        XCTAssertEqual(client.idToken, "789")
+        XCTAssertEqual(client.refreshToken, "789")
+        XCTAssertEqual(client.idToken, "abc")
     }
 
     func testGetAccessTokenByRefreshTokenWithoutRefreshAndIdTokenReturned() async throws {
