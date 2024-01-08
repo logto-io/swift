@@ -51,6 +51,27 @@ extension LogtoClientTests {
 
         XCTAssertEqual(tokens[0], "123")
         XCTAssertEqual(tokens[1], "456")
+        XCTAssertEqual(client.refreshToken, "789")
+        XCTAssertEqual(client.idToken, "abc")
+    }
+
+    func testGetAccessTokenByRefreshTokenWithoutRefreshAndIdTokenReturned() async throws {
+        NetworkSessionMock.shared.tokenRequestCount = 0
+
+        let client = buildClient(withOidcEndpoint: "/oidc_config:good:no_refresh")
+        client.idToken = "baz"
+        client.refreshToken = "bar"
+        client.accessTokenMap[client.buildAccessTokenKey(for: "resource1")] = AccessToken(
+            token: "foo",
+            scope: "",
+            expiresAt: Date().timeIntervalSince1970 - 1
+        )
+
+        let token = try await client.getAccessToken(for: "resource1")
+
+        XCTAssertEqual(token, "123")
+        XCTAssertEqual(client.refreshToken, "bar")
+        XCTAssertEqual(client.idToken, "baz")
     }
 
     func testGetAccessTokenUnalbeToFetchOidcConfig() async throws {

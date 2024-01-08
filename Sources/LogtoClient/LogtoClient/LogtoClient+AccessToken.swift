@@ -34,7 +34,10 @@ extension LogtoClient {
             )
 
             accessTokenMap[key] = accessToken
-            self.refreshToken = response.refreshToken
+
+            response.refreshToken.map {
+                self.refreshToken = $0
+            }
 
             response.idToken.map {
                 self.idToken = $0

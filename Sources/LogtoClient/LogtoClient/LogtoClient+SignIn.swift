@@ -30,12 +30,14 @@ extension LogtoClient {
         let response = try await session.start()
         let jwks = try await fetchJwkSet()
 
-        try LogtoUtilities.verifyIdToken(
-            response.idToken,
-            issuer: oidcConfig.issuer,
-            clientId: logtoConfig.appId,
-            jwks: jwks
-        )
+        try response.idToken.map {
+            try LogtoUtilities.verifyIdToken(
+                $0,
+                issuer: oidcConfig.issuer,
+                clientId: logtoConfig.appId,
+                jwks: jwks
+            )
+        }
 
         idToken = response.idToken
         refreshToken = response.refreshToken
