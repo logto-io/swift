@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: |
             .build
@@ -21,7 +21,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-spm-v1-
       
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: BuildTools/.build
           key: ${{ runner.os }}-spm-v1-${{ hashFiles('BuildTools/Package.resolved') }}
