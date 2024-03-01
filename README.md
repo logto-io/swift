@@ -6,7 +6,7 @@
 
 # Logto Swift SDKs
 
-The monorepo for [Logto](https://github.com/logto-io) SDKs and social plugins written in Swift. See the [⚡ Get started](https://docs.logto.io/docs/tutorials/get-started/) guide for more information.
+The monorepo for [Logto](https://github.com/logto-io) SDKs and social plugins written in Swift. heck out our [docs](https://docs.logto.io/sdk/swift/) for more information.
 
 ## Installation
 
