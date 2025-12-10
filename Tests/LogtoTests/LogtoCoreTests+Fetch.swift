@@ -64,6 +64,20 @@ extension LogtoCoreTests {
             accessToken: "good"
         )
         XCTAssertNotNil(info)
+        XCTAssertNotNil(info.sub)
+        XCTAssertNotNil(info.customData)
+        XCTAssertNotNil(info.customData?["foo"])
+
+        guard case let .string(foo) = info.customData?["foo"] else {
+            XCTFail("Expected customData[\"foo\"] to be a .string")
+            return
+        }
+        XCTAssertEqual(foo, "bar")
+
+        guard case .null = info.customData?["baz"] else {
+            XCTFail("Expected customData[\"baz\"] to be a .null")
+            return
+        }
 
         await LogtoCoreTests.assertThrows(try await LogtoCore.fetchUserInfo(
             useSession: NetworkSessionMock.shared,

@@ -64,7 +64,8 @@ public class NetworkSessionMock: NetworkSession {
 
                 return (Data("""
                     {
-                        "sub": "foo"
+                        "sub": "foo",
+                        "custom_data": { "foo": "bar", "baz": null }
                     }
                 """.utf8), nil)
             default:
