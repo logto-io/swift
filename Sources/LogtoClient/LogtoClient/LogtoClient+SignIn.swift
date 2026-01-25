@@ -41,7 +41,7 @@ extension LogtoClient {
 
         idToken = response.idToken
         refreshToken = response.refreshToken
-        accessTokenMap[buildAccessTokenKey(for: nil)] = AccessToken(
+        accessTokenMap[buildAccessTokenKey(for: nil, in: nil)] = AccessToken(
             token: response.accessToken,
             scope: response.scope,
             expiresAt: Date().timeIntervalSince1970 + TimeInterval(response.expiresIn)

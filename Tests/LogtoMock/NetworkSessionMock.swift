@@ -12,6 +12,8 @@ public class MockError: LocalizedError {}
 
 public class NetworkSessionMock: NetworkSession {
     public static let shared = NetworkSessionMock()
+    public static let goodAccessTokenJWT =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYXRfaGFzaCI6ImZvbyIsImF1ZCI6ImJhciIsImV4cCI6MTUxNjIzOTAyMSwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ3RvLmRldiIsImN1c3RvbUNsYWltcyI6eyJyb2xlIjoiYWRtaW4iLCJhZ2UiOjMwfX0.sJMMInlklGgbSOeOa71_uhoUvTLXDFq4jHQ1Bu81GyE"
 
     public var tokenRequestCount = 0
 
@@ -38,6 +40,18 @@ public class NetworkSessionMock: NetworkSession {
                     {
                         "authorization_endpoint": "https://logto.dev/auth:good",
                         "token_endpoint": "https://logto.dev/token:good:no_refresh",
+                        "end_session_endpoint": "https://logto.dev/end:good",
+                        "revocation_endpoint": "https://logto.dev/revoke:good",
+                        "userinfo_endpoint": "https://logto.dev/user",
+                        "jwks_uri": "https://logto.dev/jwks:good",
+                        "issuer": "http://localhost:443/oidc"
+                    }
+                """.utf8), nil)
+            case "oidc_config:good:jwt":
+                return (Data("""
+                    {
+                        "authorization_endpoint": "https://logto.dev/auth:good",
+                        "token_endpoint": "https://logto.dev/token:jwt",
                         "end_session_endpoint": "https://logto.dev/end:good",
                         "revocation_endpoint": "https://logto.dev/revoke:good",
                         "userinfo_endpoint": "https://logto.dev/user",
@@ -103,6 +117,15 @@ public class NetworkSessionMock: NetworkSession {
                 return (Data("""
                     {
                         "access_token": "123",
+                        "token_type": "jwt",
+                        "scope": "",
+                        "expires_in": 123
+                    }
+                """.utf8), nil)
+            case "token:jwt":
+                return (Data("""
+                    {
+                        "access_token": "\(NetworkSessionMock.goodAccessTokenJWT)",
                         "token_type": "jwt",
                         "scope": "",
                         "expires_in": 123

@@ -76,7 +76,7 @@ extension LogtoClientTests {
     func testFetchUserInfoUnableToFetchUserInfo() async throws {
         let client = buildClient(withOidcEndpoint: "/oidc_config:good")
 
-        client.accessTokenMap[client.buildAccessTokenKey(for: nil)] = AccessToken(
+        client.accessTokenMap[client.buildAccessTokenKey(for: nil, in: nil)] = AccessToken(
             token: "bad",
             scope: "",
             expiresAt: Date().timeIntervalSince1970 + 1000
@@ -96,7 +96,7 @@ extension LogtoClientTests {
         let client = buildClient(withOidcEndpoint: "/oidc_config:good")
 
         client
-            .accessTokenMap[client.buildAccessTokenKey(for: nil)] = AccessToken(
+            .accessTokenMap[client.buildAccessTokenKey(for: nil, in: nil)] = AccessToken(
                 token: "good",
                 scope: "",
                 expiresAt: Date().timeIntervalSince1970 + 1000
@@ -104,5 +104,49 @@ extension LogtoClientTests {
 
         let info = try await client.fetchUserInfo()
         XCTAssertNotNil(info)
+    }
+
+    func testBuildFetchTokenPayloadByRefreshToken() {
+        let payload1 = LogtoCore.buildFetchTokenPayload(
+            byRefreshToken: "refreshToken",
+            clientId: "clientId",
+            resource: "resource",
+            scopes: ["scope1", "scope2"],
+            organizationId: "orgId"
+        )
+        XCTAssertEqual(payload1["grant_type"] as? String, "refresh_token")
+        XCTAssertEqual(payload1["refresh_token"] as? String, "refreshToken")
+        XCTAssertEqual(payload1["client_id"] as? String, "clientId")
+        XCTAssertEqual(payload1["resource"] as? String, "resource")
+        XCTAssertEqual(payload1["organization_id"] as? String, "orgId")
+        XCTAssertEqual(payload1["scope"] as? String, "scope1 scope2")
+
+        let payload2 = LogtoCore.buildFetchTokenPayload(
+            byRefreshToken: "refreshToken",
+            clientId: "clientId",
+            resource: LogtoUtilities.buildOrganizationUrn(forId: "orgId"),
+            scopes: nil,
+            organizationId: nil
+        )
+        XCTAssertEqual(payload2["grant_type"] as? String, "refresh_token")
+        XCTAssertEqual(payload2["refresh_token"] as? String, "refreshToken")
+        XCTAssertEqual(payload2["client_id"] as? String, "clientId")
+        XCTAssertNil(payload2["resource"] as? String)
+        XCTAssertEqual(payload2["organization_id"] as? String, "orgId")
+        XCTAssertNil(payload2["scope"] as? String)
+
+        let payload3 = LogtoCore.buildFetchTokenPayload(
+            byRefreshToken: "refreshToken",
+            clientId: "clientId",
+            resource: LogtoUtilities.buildOrganizationUrn(forId: "orgId"),
+            scopes: nil,
+            organizationId: "anotherOrgId"
+        )
+        XCTAssertEqual(payload3["grant_type"] as? String, "refresh_token")
+        XCTAssertEqual(payload3["refresh_token"] as? String, "refreshToken")
+        XCTAssertEqual(payload3["client_id"] as? String, "clientId")
+        XCTAssertNil(payload3["resource"] as? String)
+        XCTAssertEqual(payload3["organization_id"] as? String, "orgId")
+        XCTAssertNil(payload3["scope"] as? String)
     }
 }

@@ -8,7 +8,7 @@ extension LogtoClientTests {
         let client = buildClient()
         let cachedAccessToken = "foo"
 
-        client.accessTokenMap[client.buildAccessTokenKey(for: nil)] = AccessToken(
+        client.accessTokenMap[client.buildAccessTokenKey(for: nil, in: nil)] = AccessToken(
             token: cachedAccessToken,
             scope: "",
             expiresAt: Date().timeIntervalSince1970 + 1000
@@ -23,7 +23,7 @@ extension LogtoClientTests {
         let cachedAccessToken = "foo"
 
         client
-            .accessTokenMap[client.buildAccessTokenKey(for: LogtoUtilities.buildOrganizationUrn(forId: "1"))] =
+            .accessTokenMap[client.buildAccessTokenKey(for: LogtoUtilities.buildOrganizationUrn(forId: "1"), in: nil)] =
             AccessToken(
                 token: cachedAccessToken,
                 scope: "",
@@ -39,7 +39,7 @@ extension LogtoClientTests {
 
         let client = buildClient()
         client.refreshToken = "bar"
-        client.accessTokenMap[client.buildAccessTokenKey(for: "resource1")] = AccessToken(
+        client.accessTokenMap[client.buildAccessTokenKey(for: "resource1", in: "nil")] = AccessToken(
             token: "foo",
             scope: "",
             expiresAt: Date().timeIntervalSince1970 - 1
@@ -61,7 +61,7 @@ extension LogtoClientTests {
         let client = buildClient(withOidcEndpoint: "/oidc_config:good:no_refresh")
         client.idToken = "baz"
         client.refreshToken = "bar"
-        client.accessTokenMap[client.buildAccessTokenKey(for: "resource1")] = AccessToken(
+        client.accessTokenMap[client.buildAccessTokenKey(for: "resource1", in: nil)] = AccessToken(
             token: "foo",
             scope: "",
             expiresAt: Date().timeIntervalSince1970 - 1
@@ -102,5 +102,24 @@ extension LogtoClientTests {
         }
 
         XCTFail()
+    }
+
+    func testGetOrganizationToken() async throws {
+        let client = buildClient(withOidcEndpoint: "/oidc_config:good:jwt")
+        client.refreshToken = "foo"
+
+        let token = try await client.getOrganizationToken(forId: "1")
+        XCTAssertEqual(token, NetworkSessionMock.goodAccessTokenJWT)
+    }
+
+    func testGetAccessTokenClaims() async throws {
+        let client = buildClient(withOidcEndpoint: "/oidc_config:good:jwt")
+        client.refreshToken = "foo"
+
+        let token = try await client.getAccessTokenClaims(for: "any_resource", organizationId: "any_org")
+        XCTAssertEqual(token["sub"]?.stringValue, "1234567890")
+        XCTAssertEqual(token["iss"]?.stringValue, "https://logto.dev")
+        XCTAssertEqual(token["customClaims"]?.objectValue?["role"]?.stringValue, "admin")
+        XCTAssertEqual(token["customClaims"]?.objectValue?["age"]?.numberValue, 30)
     }
 }

@@ -15,6 +15,36 @@ public enum JsonValue: Codable, Equatable {
     case object(JsonObject)
     case null
 
+    public var stringValue: String? {
+        guard case let .string(v) = self else { return nil }
+        return v
+    }
+
+    public var numberValue: Double? {
+        guard case let .number(v) = self else { return nil }
+        return v
+    }
+
+    public var boolValue: Bool? {
+        guard case let .bool(v) = self else { return nil }
+        return v
+    }
+
+    public var arrayValue: [JsonValue]? {
+        guard case let .array(v) = self else { return nil }
+        return v
+    }
+
+    public var objectValue: JsonObject? {
+        guard case let .object(v) = self else { return nil }
+        return v
+    }
+
+    public var isNull: Bool {
+        if case .null = self { return true }
+        return false
+    }
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
 
