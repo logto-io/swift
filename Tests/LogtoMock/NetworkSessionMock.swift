@@ -110,7 +110,7 @@ public class NetworkSessionMock: NetworkSession {
                         "id_token": "789",
                         "token_type": "jwt",
                         "scope": "",
-                        "expires_in": 123
+                        "expires_in": 1
                     }
                 """.utf8), nil)
             case "token:good:no_refresh":

@@ -42,15 +42,15 @@ extension LogtoClientTests {
         client.accessTokenMap[client.buildAccessTokenKey(for: "resource1", in: nil)] = AccessToken(
             token: "foo",
             scope: "",
-            expiresAt: Date().timeIntervalSince1970 - 1
+            expiresAt: Date().timeIntervalSince1970 - 1000
         )
 
-        async let get1 = client.getAccessToken(for: "resource1")
-        async let get2 = client.getAccessToken(for: "resource1")
-        let tokens = try await [get1, get2]
+        let token1 = try await client.getAccessToken(for: "resource1")
+        try await Task.sleep(nanoseconds: 1_050_000_000) // 1.05s to make token expired
+        let token2 = try await client.getAccessToken(for: "resource1")
 
-        XCTAssertEqual(tokens[0], "123")
-        XCTAssertEqual(tokens[1], "456")
+        XCTAssertEqual(token1, "123")
+        XCTAssertEqual(token2, "456")
         XCTAssertEqual(client.refreshToken, "789")
         XCTAssertEqual(client.idToken, "abc")
     }
@@ -64,7 +64,7 @@ extension LogtoClientTests {
         client.accessTokenMap[client.buildAccessTokenKey(for: "resource1", in: nil)] = AccessToken(
             token: "foo",
             scope: "",
-            expiresAt: Date().timeIntervalSince1970 - 1
+            expiresAt: Date().timeIntervalSince1970 - 1000
         )
 
         let token = try await client.getAccessToken(for: "resource1")
