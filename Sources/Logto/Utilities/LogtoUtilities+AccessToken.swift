@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import JOSESwift
 
 public extension LogtoUtilities {
     /// Decode Access Token claims WITHOUT validation.

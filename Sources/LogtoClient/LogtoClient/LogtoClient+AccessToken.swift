@@ -91,7 +91,7 @@ public extension LogtoClient {
     }
 
     /**
-     Get structured Access Token claims WITHOUT validation. See `getAccessToken(for:in:)` for more details.
+     Get structured Access Token claims WITHOUT validation. See `getAccessToken(for:organizationId:)` for more details.
 
      - Parameters:
         - for: The resource indicator.
