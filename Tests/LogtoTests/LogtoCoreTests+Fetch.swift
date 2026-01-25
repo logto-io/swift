@@ -43,7 +43,8 @@ extension LogtoCoreTests {
             tokenEndpoint: "/token:good",
             clientId: "foo",
             resource: "bar",
-            scopes: ["baz"]
+            scopes: ["baz"],
+            organizationId: nil
         )
         XCTAssertNotNil(token)
 
@@ -53,7 +54,8 @@ extension LogtoCoreTests {
             tokenEndpoint: "/token:bad",
             clientId: "foo",
             resource: nil,
-            scopes: []
+            scopes: [],
+            organizationId: nil
         ))
     }
 

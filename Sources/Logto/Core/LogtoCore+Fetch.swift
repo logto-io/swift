@@ -86,6 +86,25 @@ public extension LogtoCore {
         public let expiresIn: Int64
     }
 
+    static func buildFetchTokenPayload(
+        byRefreshToken refreshToken: String,
+        clientId: String,
+        resource: String?,
+        scopes: [String]?,
+        organizationId: String?
+    ) -> [String: String?] {
+        let isResourceOrganizationUrn = LogtoUtilities.isOrganizationUrn(resource)
+        return [
+            "grant_type": TokenGrantType.refreshToken.rawValue,
+            "refresh_token": refreshToken,
+            "client_id": clientId,
+            "resource": isResourceOrganizationUrn ? nil : resource,
+            "organization_id": isResourceOrganizationUrn ? resource?
+                .suffix(from: LogtoUtilities.organizationUrnPrefix.endIndex).description : organizationId,
+            "scope": scopes?.joined(separator: " "),
+        ]
+    }
+
     /// Fetch token by `refresh_token`.
     /// Note the function will NOT validate any token in the response.
     static func fetchToken(
@@ -94,18 +113,16 @@ public extension LogtoCore {
         tokenEndpoint: String,
         clientId: String,
         resource: String?,
-        scopes: [String]?
+        scopes: [String]?,
+        organizationId: String?
     ) async throws -> RefreshTokenTokenResponse {
-        let isResourceOrganizationUrn = LogtoUtilities.isOrganizationUrn(resource)
-        let body: [String: String?] = [
-            "grant_type": TokenGrantType.refreshToken.rawValue,
-            "refresh_token": refreshToken,
-            "client_id": clientId,
-            "resource": isResourceOrganizationUrn ? nil : resource,
-            "organization_id": isResourceOrganizationUrn ? resource?
-                .suffix(from: LogtoUtilities.organizationUrnPrefix.endIndex).description : nil,
-            "scope": scopes?.joined(separator: " "),
-        ]
+        let body = buildFetchTokenPayload(
+            byRefreshToken: refreshToken,
+            clientId: clientId,
+            resource: resource,
+            scopes: scopes,
+            organizationId: organizationId
+        )
 
         return try await LogtoRequest.post(
             useSession: session,

@@ -9,144 +9,247 @@ import Logto
 import LogtoClient
 import SwiftUI
 
-struct ContentView: View {
-    @State var isAuthenticated: Bool
-    @State var authError: Error?
+// MARK: - 1) Edit these values
 
-    let resource = "https://api.logto.io"
-    let client: LogtoClient?
+enum DemoAuthConfig {
+    static let endpoint = "<YOUR_LOGTO_ENDPOINT>"
+    static let appId = "<YOUR_APP_ID>"
+    static let redirectUri = "<YOUR_REDIRECT_URI>" // e.g. "io.logto://callback"
+
+    // MARK: Optional config items
+
+    static let resources: [String] = [
+        "<YOUR_API_RESOURCE>", // e.g. "https://api.example.com"
+    ]
+
+    static let resourceToRequestTokenFor = "<YOUR_API_RESOURCE>"
+    static let organizationId = "<YOUR_ORGANIZATION_ID>"
+
+    static let scopes: [String] = [
+        UserScope.email.rawValue,
+        UserScope.roles.rawValue,
+        UserScope.organizations.rawValue,
+        UserScope.organizationRoles.rawValue,
+    ]
+}
+
+// MARK: - 2) ViewModel
+
+@MainActor
+final class DemoAuthViewModel: ObservableObject {
+    @Published var isAuthenticated = false
+    @Published var lastError: String?
+    @Published var output: String = ""
+
+    private let client: LogtoClient?
+    var isConfigured: Bool { client != nil }
 
     init() {
-        guard let config = try? LogtoConfig(
-            endpoint: "<your-logto-endpoint>",
-            appId: "<your-application-id>",
-            // Update per your needs
-            scopes: [
-                UserScope.email.rawValue,
-                UserScope.roles.rawValue,
-                UserScope.organizations.rawValue,
-                UserScope.organizationRoles.rawValue,
-            ],
-            // Update per your needs
-            resources: []
-        ) else {
-            client = nil
-            isAuthenticated = false
-            return
-        }
-        let logtoClient = LogtoClient(useConfig: config)
-        client = logtoClient
-        isAuthenticated = logtoClient.isAuthenticated
+        let c = Self.makeClient()
+        client = c
+        isAuthenticated = c?.isAuthenticated ?? false
 
-        if logtoClient.isAuthenticated {
-            print("authed", logtoClient.refreshToken ?? "N/A")
+        if c == nil {
+            log("config invalid: please update DemoAuthConfig placeholders")
+        } else if c?.isAuthenticated == true {
+            log("already authenticated")
         }
     }
 
-    var body: some View {
-        Text("Hello, world!")
-            .padding()
-        if isAuthenticated {
-            Text("Signed In")
-                .padding()
+    private static func makeClient() -> LogtoClient? {
+        guard let config = try? LogtoConfig(
+            endpoint: DemoAuthConfig.endpoint,
+            appId: DemoAuthConfig.appId,
+            scopes: DemoAuthConfig.scopes,
+            resources: DemoAuthConfig.resources
+        ) else {
+            return nil
         }
-        if let authError = authError {
-            Text(authError.localizedDescription)
-                .foregroundColor(.red)
-                .padding()
+        return LogtoClient(useConfig: config)
+    }
+
+    // MARK: Actions
+
+    func signIn() async {
+        guard let client else { logNotConfigured(); return }
+        clearError()
+        do {
+            try await client.signInWithBrowser(redirectUri: DemoAuthConfig.redirectUri)
+            isAuthenticated = true
+            log("sign-in success")
+        } catch {
+            isAuthenticated = false
+            handle(error, context: "sign-in")
+        }
+    }
+
+    func signOut() async {
+        guard let client else { logNotConfigured(); return }
+        clearError()
+        await client.signOut()
+        isAuthenticated = false
+        log("signed out")
+    }
+
+    func printIdTokenClaims() {
+        guard let client else { logNotConfigured(); return }
+        clearError()
+        do {
+            let claims = try client.getIdTokenClaims()
+            log("id token claims:\n\(claims)")
+        } catch {
+            handle(error, context: "get id token claims")
+        }
+    }
+
+    func fetchUserInfo() async {
+        guard let client else { logNotConfigured(); return }
+        clearError()
+        do {
+            let userInfo = try await client.fetchUserInfo()
+            log("userinfo:\n\(userInfo)")
+        } catch {
+            handle(error, context: "fetch userinfo")
+        }
+    }
+
+    func fetchAccessTokenClaims(for resource: String) async {
+        guard let client else { logNotConfigured(); return }
+        clearError()
+        do {
+            let claims = try await client.getAccessTokenClaims(for: resource)
+            log("access token claims for \(resource):\n\(claims)")
+        } catch {
+            handle(error, context: "get access token claims")
+        }
+    }
+
+    func fetchOrganizationTokenClaims(for organizationId: String) async {
+        guard let client else { logNotConfigured(); return }
+        clearError()
+        do {
+            let claims = try await client.getOrganizationTokenClaims(forId: organizationId)
+            log("organization token claims for \(organizationId):\n\(claims)")
+        } catch {
+            handle(error, context: "get organization token claims")
+        }
+    }
+
+    func fetchAccessTokenClaimsInOrg(resource: String, organizationId: String) async {
+        guard let client else { logNotConfigured(); return }
+        clearError()
+        do {
+            let claims = try await client.getAccessTokenClaims(for: resource, organizationId: organizationId)
+            log("access token claims for \(resource) in org \(organizationId):\n\(claims)")
+        } catch {
+            handle(error, context: "get access token claims in org")
+        }
+    }
+
+    // MARK: Helpers
+
+    private func clearError() {
+        lastError = nil
+    }
+
+    private func log(_ message: String) {
+        output = message
+        print(message)
+    }
+
+    private func logNotConfigured() {
+        lastError = "Logto is not configured. Please update DemoAuthConfig."
+        log(lastError!)
+    }
+
+    private func handle(_ error: Error, context: String) {
+        var msg = "[\(context)] \(error.localizedDescription)"
+
+        if let signInErr = error as? LogtoClientErrors.SignIn,
+           let resp = signInErr.innerError as? LogtoErrors.Response,
+           case let LogtoErrors.Response.withCode(_, _, data) = resp,
+           let data = data
+        {
+            msg += "\n\nresponse:\n" + String(decoding: data, as: UTF8.self)
         }
 
-        if let client = client {
-            Button("Print ID Token Claims") {
-                print(try! client.getIdTokenClaims())
-            }
-            Button("Sign In") {
-                Task { [self] in
-                    do {
-                        try await client.signInWithBrowser(redirectUri: "io.logto://callback")
-
-                        isAuthenticated = true
-                        authError = nil
-                    } catch let error as LogtoClientErrors.SignIn {
-                        isAuthenticated = false
-                        authError = error
-
-                        print("failure", error)
-
-                        if let error = error.innerError as? LogtoErrors.Response,
-                           case let LogtoErrors.Response.withCode(
-                               _,
-                               _,
-                               data
-                           ) = error, let data = data
-                        {
-                            print(String(decoding: data, as: UTF8.self))
-                        }
-                    } catch {
-                        print(error)
-                    }
-                }
-            }
-
-            Button("Sign Out") {
-                Task {
-                    await client.signOut()
-                    self.isAuthenticated = false
-                }
-            }
-
-            Button("Fetch Userinfo") {
-                Task {
-                    do {
-                        let userInfo = try await client.fetchUserInfo()
-                        print(userInfo)
-                    } catch let error as LogtoClientErrors.UserInfo {
-                        if let error = error.innerError as? LogtoClientErrors.AccessToken,
-                           let error = error.innerError as? LogtoErrors.Response,
-                           case let LogtoErrors.Response.withCode(
-                               _,
-                               _,
-                               data
-                           ) = error, let data = data
-                        {
-                            print(String(decoding: data, as: UTF8.self))
-                        } else {
-                            print(error)
-                        }
-                    } catch {
-                        print(error)
-                    }
-                }
-            }
-
-            Button("Fetch access token for \(resource)") {
-                Task {
-                    do {
-                        let token = try await client.getAccessToken(for: resource)
-                        print(token)
-                    } catch {
-                        print(error)
-                    }
-                }
-            }
-
-            Button("Fetch organization token") {
-                Task {
-                    do {
-                        // Replace `<organization-id>` with a valid organization ID
-                        let token = try await client.getOrganizationToken(forId: "<organization-id>")
-                        print(token)
-                    } catch {
-                        print(error)
-                    }
-                }
-            }
-        }
+        lastError = msg
+        log(msg)
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
+// MARK: - 3) UI
+
+struct ContentView: View {
+    @StateObject private var vm = DemoAuthViewModel()
+
+    var body: some View {
+        NavigationView {
+            Form {
+                Section("Status") {
+                    HStack {
+                        Text("Configured")
+                        Spacer()
+                        Text(vm.isConfigured ? "Yes" : "No")
+                            .foregroundColor(vm.isConfigured ? .green : .secondary)
+                    }
+
+                    HStack {
+                        Text("Authenticated")
+                        Spacer()
+                        Text(vm.isAuthenticated ? "Yes" : "No")
+                            .foregroundColor(vm.isAuthenticated ? .green : .secondary)
+                    }
+
+                    if let err = vm.lastError {
+                        Text(err)
+                            .foregroundColor(.red)
+                            .font(.footnote)
+                            .textSelection(.enabled)
+                    }
+                }
+
+                Section("Actions") {
+                    Button("Sign In") { Task { await vm.signIn() } }
+                        .disabled(!vm.isConfigured || vm.isAuthenticated)
+
+                    Button("Sign Out") { Task { await vm.signOut() } }
+                        .disabled(!vm.isConfigured || !vm.isAuthenticated)
+
+                    Button("Print ID Token Claims") { vm.printIdTokenClaims() }
+                        .disabled(!vm.isConfigured || !vm.isAuthenticated)
+
+                    Button("Fetch Userinfo") { Task { await vm.fetchUserInfo() } }
+                        .disabled(!vm.isConfigured || !vm.isAuthenticated)
+
+                    Button("Fetch access token claims") {
+                        Task { await vm.fetchAccessTokenClaims(for: DemoAuthConfig.resourceToRequestTokenFor) }
+                    }
+                    .disabled(!vm.isConfigured || !vm.isAuthenticated)
+
+                    Button("Fetch organization token claims") {
+                        Task { await vm.fetchOrganizationTokenClaims(for: DemoAuthConfig.organizationId) }
+                    }
+                    .disabled(!vm.isConfigured || !vm.isAuthenticated)
+
+                    Button("Fetch access token claims in organization") {
+                        Task {
+                            await vm.fetchAccessTokenClaimsInOrg(
+                                resource: DemoAuthConfig.resourceToRequestTokenFor,
+                                organizationId: DemoAuthConfig.organizationId
+                            )
+                        }
+                    }
+                    .disabled(!vm.isConfigured || !vm.isAuthenticated)
+                }
+
+                Section("Output") {
+                    Text(vm.output.isEmpty ? "(no output)" : vm.output)
+                        .font(.footnote)
+                        .textSelection(.enabled)
+                }
+            }
+            .navigationTitle("Logto SwiftUI Demo")
+        }
     }
 }

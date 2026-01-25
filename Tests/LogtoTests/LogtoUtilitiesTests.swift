@@ -164,4 +164,104 @@ final class LogtoUtilitiesTests: XCTestCase {
             forTimeInterval: 1_642_409_648
         ))
     }
+
+    // MARK: Decode Access Token
+
+    func testDecodeAccessToken() throws {
+        XCTAssertEqual(
+            try LogtoUtilities
+                .decodeAccessToken(
+                    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYXRfaGFzaCI6ImZvbyIsImF1ZCI6ImJhciIsImV4cCI6MTUxNjIzOTAyMSwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ3RvLmRldiJ9.sJMMInlklGgbSOeOa71_uhoUvTLXDFq4jHQ1Bu81GyE"
+                ),
+            JsonObject(
+                dictionaryLiteral: (
+                    "sub",
+                    .string("1234567890")
+                ),
+                (
+                    "at_hash",
+                    .string("foo")
+                ),
+                (
+                    "aud",
+                    .string("bar")
+                ),
+                (
+                    "exp",
+                    .number(1_516_239_021)
+                ),
+                (
+                    "iat",
+                    .number(1_516_239_022)
+                ),
+                (
+                    "iss",
+                    .string("https://logto.dev")
+                ),
+                (
+                    "name",
+                    .string("John Doe")
+                )
+            )
+        )
+        XCTAssertThrowsError(try LogtoUtilities
+            .decodeAccessToken(
+                "1"
+            )) {
+                XCTAssertNotNil($0 as? LogtoErrors.Decoding)
+            }
+    }
+
+    func testDecodeAccessTokenNestedClaims() throws {
+        let accessToken =
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYXRfaGFzaCI6ImZvbyIsImF1ZCI6ImJhciIsImV4cCI6MTUxNjIzOTAyMSwiaWF0IjoxNTE2MjM5MDIyLCJpc3MiOiJodHRwczovL2xvZ3RvLmRldiIsImN1c3RvbUNsYWltcyI6eyJyb2xlIjoiYWRtaW4iLCJhZ2UiOjMwfX0.sJMMInlklGgbSOeOa71_uhoUvTLXDFq4jHQ1Bu81GyE"
+        XCTAssertEqual(
+            try LogtoUtilities.decodeAccessToken(accessToken),
+            JsonObject(
+                dictionaryLiteral: (
+                    "sub",
+                    .string("1234567890")
+                ),
+                (
+                    "at_hash",
+                    .string("foo")
+                ),
+                (
+                    "aud",
+                    .string("bar")
+                ),
+                (
+                    "exp",
+                    .number(1_516_239_021)
+                ),
+                (
+                    "iat",
+                    .number(1_516_239_022)
+                ),
+                (
+                    "iss",
+                    .string("https://logto.dev"),
+                ),
+                (
+                    "name",
+                    .string("John Doe")
+                ),
+                (
+                    "customClaims",
+                    .object(
+                        JsonObject(
+                            dictionaryLiteral: (
+                                "role",
+                                .string("admin")
+                            ),
+                            (
+                                "age",
+                                .number(30)
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    }
 }

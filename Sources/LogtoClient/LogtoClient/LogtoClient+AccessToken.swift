@@ -8,13 +8,19 @@
 import Foundation
 import Logto
 
-extension LogtoClient {
-    func buildAccessTokenKey(for resource: String?) -> String {
-        resource ?? "@"
+public extension LogtoClient {
+    internal func buildAccessTokenKey(for resource: String?, in organizationId: String?) -> String {
+        guard let organizationId = organizationId else {
+            return resource ?? "@"
+        }
+
+        return (resource ?? "@") + "#" + organizationId
     }
 
-    func getAccessToken(by refreshToken: String, for resource: String?) async throws -> String {
-        let key = buildAccessTokenKey(for: resource)
+    internal func getAccessToken(by refreshToken: String, for resource: String?,
+                                 in organizationId: String?) async throws -> String
+    {
+        let key = buildAccessTokenKey(for: resource, in: organizationId)
         let oidcConfig = try await fetchOidcConfig()
 
         do {
@@ -24,7 +30,8 @@ extension LogtoClient {
                 tokenEndpoint: oidcConfig.tokenEndpoint,
                 clientId: logtoConfig.appId,
                 resource: resource,
-                scopes: nil
+                scopes: nil,
+                organizationId: organizationId
             )
 
             let accessToken = AccessToken(
@@ -51,17 +58,22 @@ extension LogtoClient {
     }
 
     /**
-     Get an Access Token for the given resource. If resource is `nil`, return the Access Token for user endpoint.
+     Get an Access Token for the given resource.
+     - If both `resource` and `organizationId` are `nil`, return the Access Token for user endpoint.
+     - If `resource` is provided but `organizationId` is `nil`, return the Access Token for the given resource.
+     - If both `resource` and `organizationId` are provided, return the Access Token for the given resource in the given organization.
+     - If `resource` is `nil` but `organizationId` is provided, an error will be thrown. Use `getOrganizationToken(forId:)` instead.
 
      If the cached Access Token has expired, this function will try to use `refreshToken` to fetch a new Access Token from the OIDC provider.
 
      - Parameters:
-        - resource: The resource indicator.
+        - for: The resource indicator.
+        - organizationId: The ID of the organization that the access token is granted for.
      - Throws: An error if failed to get a valid Access Token.
      - Returns: Access Token in string.
      */
-    @MainActor public func getAccessToken(for resource: String?) async throws -> String {
-        let key = buildAccessTokenKey(for: resource)
+    @MainActor func getAccessToken(for resource: String?, organizationId: String? = nil) async throws -> String {
+        let key = buildAccessTokenKey(for: resource, in: organizationId)
 
         // Cached access token is still valid
         if let accessToken = accessTokenMap[key], Date().timeIntervalSince1970 < accessToken.expiresAt {
@@ -73,9 +85,25 @@ extension LogtoClient {
             throw LogtoClientErrors.AccessToken(type: .noRefreshTokenFound, innerError: nil)
         }
 
-        let token = try await getAccessToken(by: refreshToken, for: resource)
+        let token = try await getAccessToken(by: refreshToken, for: resource, in: organizationId)
 
         return token
+    }
+
+    /**
+     Get structured Access Token claims WITHOUT validation. See `getAccessToken(for:organizationId:)` for more details.
+
+     - Parameters:
+        - for: The resource indicator.
+        - organizationId: The ID of the organization that the access token is granted for.
+     - Throws: An error if failed to get a valid Access Token or decode token failed.
+     - Returns: A dictionary of Access Token claims.
+     */
+    @MainActor func getAccessTokenClaims(for resource: String?,
+                                         organizationId: String? = nil) async throws -> JsonObject
+    {
+        let accessToken = try await getAccessToken(for: resource, organizationId: organizationId)
+        return try LogtoUtilities.decodeAccessToken(accessToken)
     }
 
     /**
@@ -89,7 +117,20 @@ extension LogtoClient {
      - Throws: An error if failed to get a valid Access Token.
      - Returns: Access Token in string.
      */
-    @MainActor public func getOrganizationToken(forId id: String) async throws -> String {
+    @MainActor func getOrganizationToken(forId id: String) async throws -> String {
         try await getAccessToken(for: LogtoUtilities.buildOrganizationUrn(forId: id))
+    }
+
+    /**
+     Get structured Access Token claims for the given organization ID WITHOUT validation. See `getOrganizationToken(forId:)` for more details.
+
+     - Parameters:
+        - forId: The ID of the organization that the access token is granted for.
+     - Throws: An error if failed to get a valid Access Token or decode token failed.
+     - Returns: A dictionary of Access Token claims.
+     */
+    @MainActor func getOrganizationTokenClaims(forId id: String) async throws -> JsonObject {
+        let accessToken = try await getOrganizationToken(forId: id)
+        return try LogtoUtilities.decodeAccessToken(accessToken)
     }
 }
