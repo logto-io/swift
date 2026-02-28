@@ -160,6 +160,40 @@ extension LogtoCoreTests {
         ]))
     }
 
+    func testGenerateSignInUriWithDirectSignInAndExtraParams() throws {
+        let codeChallenge = LogtoUtilities.generateCodeChallenge(codeVerifier: codeVerifier)
+
+        let url = try LogtoCore.generateSignInUri(
+            authorizationEndpoint: authorizationEndpoint,
+            clientId: clientId,
+            redirectUri: URL(string: "logto://sign-in/redirect")!,
+            codeChallenge: codeChallenge,
+            state: state,
+            loginHint: "foo@logto.dev",
+            directSignIn: LogtoCore.DirectSignInOptions(method: .social, target: "google"),
+            extraParams: [
+                "foo": "bar",
+                "organization_id": "org_123",
+            ]
+        )
+        try validateBaseInformation(url: url)
+
+        XCTAssertTrue(validate(url: url, queryItems: [
+            URLQueryItem(name: "client_id", value: "foo"),
+            URLQueryItem(name: "redirect_uri", value: "logto://sign-in/redirect"),
+            URLQueryItem(name: "code_challenge", value: codeChallenge),
+            URLQueryItem(name: "code_challenge_method", value: "S256"),
+            URLQueryItem(name: "state", value: state),
+            URLQueryItem(name: "scope", value: "offline_access openid profile"),
+            URLQueryItem(name: "response_type", value: "code"),
+            URLQueryItem(name: "prompt", value: "consent"),
+            URLQueryItem(name: "login_hint", value: "foo@logto.dev"),
+            URLQueryItem(name: "direct_sign_in", value: "social:google"),
+            URLQueryItem(name: "foo", value: "bar"),
+            URLQueryItem(name: "organization_id", value: "org_123"),
+        ]))
+    }
+
     func testGenerateSignOutUri() throws {
         XCTAssertThrowsError(try LogtoCore
             .generateSignOutUri(endSessionEndpoint: "???", idToken: "", postLogoutRedirectUri: nil)) {

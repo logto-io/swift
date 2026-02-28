@@ -12,7 +12,10 @@ import Logto
 extension LogtoClient {
     func signInWithBrowser<AuthSession: LogtoAuthSession>(
         authSessionType _: AuthSession.Type,
-        redirectUri: String
+        redirectUri: String,
+        loginHint: String? = nil,
+        directSignIn: LogtoCore.DirectSignInOptions? = nil,
+        extraParams: [String: String]? = nil
     ) async throws {
         guard let redirectUri = URL(string: redirectUri) else {
             throw (LogtoClientErrors.SignIn(type: .unableToConstructRedirectUri, innerError: nil))
@@ -24,7 +27,10 @@ extension LogtoClient {
             logtoConfig: logtoConfig,
             oidcConfig: oidcConfig,
             redirectUri: redirectUri,
-            socialPlugins: socialPlugins
+            socialPlugins: socialPlugins,
+            loginHint: loginHint,
+            directSignIn: directSignIn,
+            extraParams: extraParams
         )
 
         let response = try await session.start()
@@ -53,14 +59,23 @@ extension LogtoClient {
 
      - Parameters:
         - redirectUri: One of Redirect URIs of this application.
+        - loginHint: Login hint indicates the current user (usually an email address or phone number).
+        - directSignIn: Parameters for direct sign-in.
+        - extraParams: Extra parameters for the authentication request.
      - Throws: An error if the session failed to complete.
      */
     public func signInWithBrowser(
-        redirectUri: String
+        redirectUri: String,
+        loginHint: String? = nil,
+        directSignIn: LogtoCore.DirectSignInOptions? = nil,
+        extraParams: [String: String]? = nil
     ) async throws {
         try await signInWithBrowser(
             authSessionType: LogtoAuthSession.self,
-            redirectUri: redirectUri
+            redirectUri: redirectUri,
+            loginHint: loginHint,
+            directSignIn: directSignIn,
+            extraParams: extraParams
         )
     }
 }
