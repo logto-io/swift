@@ -75,10 +75,13 @@ public extension LogtoCore {
         }
 
         if let directSignIn {
-            optionalQueryItems.append(URLQueryItem(
-                name: "direct_sign_in",
-                value: "\(directSignIn.method.rawValue):\(directSignIn.target)"
-            ))
+            let trimmedTarget = directSignIn.target.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !trimmedTarget.isEmpty {
+                optionalQueryItems.append(URLQueryItem(
+                    name: "direct_sign_in",
+                    value: "\(directSignIn.method.rawValue):\(trimmedTarget)"
+                ))
+            }
         }
 
         let extraQueryItems = extraParams?.map {
