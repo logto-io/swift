@@ -23,6 +23,48 @@ class LogtoAuthSessionFailureMock: LogtoAuthSession {
     }
 }
 
+class LogtoAuthSessionCaptureMock: LogtoAuthSession {
+    static var capturedLoginHint: String?
+    static var capturedDirectSignIn: LogtoCore.DirectSignInOptions?
+    static var capturedExtraParams: [String: String]?
+
+    static func reset() {
+        capturedLoginHint = nil
+        capturedDirectSignIn = nil
+        capturedExtraParams = nil
+    }
+
+    required init(
+        useSession session: NetworkSession = URLSession.shared,
+        logtoConfig: LogtoConfig,
+        oidcConfig: LogtoCore.OidcConfigResponse,
+        redirectUri: URL,
+        socialPlugins: [LogtoSocialPlugin],
+        loginHint: String? = nil,
+        directSignIn: LogtoCore.DirectSignInOptions? = nil,
+        extraParams: [String: String]? = nil
+    ) {
+        super.init(
+            useSession: session,
+            logtoConfig: logtoConfig,
+            oidcConfig: oidcConfig,
+            redirectUri: redirectUri,
+            socialPlugins: socialPlugins,
+            loginHint: loginHint,
+            directSignIn: directSignIn,
+            extraParams: extraParams
+        )
+
+        Self.capturedLoginHint = loginHint
+        Self.capturedDirectSignIn = directSignIn
+        Self.capturedExtraParams = extraParams
+    }
+
+    override func start() async throws -> LogtoCore.CodeTokenResponse {
+        throw LogtoAuthSession.Errors.SignIn(type: .unknownError, innerError: nil)
+    }
+}
+
 extension LogtoClientTests {
     func testSignInUnableToFetchJwkSet() async throws {
         let client = buildClient(withToken: true)
@@ -61,6 +103,32 @@ extension LogtoClientTests {
             _ = try await client.signInWithBrowser(redirectUri: "io.logto.dev://callback")
         } catch let error as LogtoClientErrors.OidcConfig {
             XCTAssertEqual(error.type, .unableToFetchOidcConfig)
+            return
+        }
+
+        XCTFail()
+    }
+
+    func testSignInPassesOptionalParametersToAuthSession() async throws {
+        LogtoAuthSessionCaptureMock.reset()
+
+        let client = buildClient()
+        let directSignIn = LogtoCore.DirectSignInOptions(method: .social, target: "google")
+        let extraParams = ["organization_id": "org_123"]
+
+        do {
+            try await client.signInWithBrowser(
+                authSessionType: LogtoAuthSessionCaptureMock.self,
+                redirectUri: "io.logto.dev://callback",
+                loginHint: "foo@logto.dev",
+                directSignIn: directSignIn,
+                extraParams: extraParams
+            )
+        } catch let error as LogtoClientErrors.SignIn {
+            XCTAssertEqual(error.type, .unknownError)
+            XCTAssertEqual(LogtoAuthSessionCaptureMock.capturedLoginHint, "foo@logto.dev")
+            XCTAssertNotNil(LogtoAuthSessionCaptureMock.capturedDirectSignIn)
+            XCTAssertEqual(LogtoAuthSessionCaptureMock.capturedExtraParams, extraParams)
             return
         }
 

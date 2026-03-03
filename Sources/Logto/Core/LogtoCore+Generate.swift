@@ -13,6 +13,21 @@ public extension LogtoCore {
         case consent
     }
 
+    enum DirectSignInMethod: String {
+        case social
+        case sso
+    }
+
+    struct DirectSignInOptions {
+        let method: DirectSignInMethod
+        let target: String
+
+        public init(method: DirectSignInMethod, target: String) {
+            self.method = method
+            self.target = target
+        }
+    }
+
     private static let codeChallengeMethod = "S256"
     private static let responseType = "code"
 
@@ -24,7 +39,10 @@ public extension LogtoCore {
         state: String,
         scopes: [String] = [],
         resources: [String] = [],
-        prompt: Prompt = .consent
+        prompt: Prompt = .consent,
+        loginHint: String? = nil,
+        directSignIn: DirectSignInOptions? = nil,
+        extraParams: [String: String]? = nil
     ) throws -> URL {
         guard
             var components = URLComponents(string: authorizationEndpoint),
@@ -50,8 +68,28 @@ public extension LogtoCore {
         let resourceQueryItems = resources.map {
             URLQueryItem(name: "resource", value: $0)
         }
+        var optionalQueryItems = [URLQueryItem]()
 
-        components.queryItems = (baseQueryItems + resourceQueryItems).filter { $0.value != "" }
+        if let loginHint, !loginHint.isEmpty {
+            optionalQueryItems.append(URLQueryItem(name: "login_hint", value: loginHint))
+        }
+
+        if let directSignIn {
+            let trimmedTarget = directSignIn.target.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !trimmedTarget.isEmpty {
+                optionalQueryItems.append(URLQueryItem(
+                    name: "direct_sign_in",
+                    value: "\(directSignIn.method.rawValue):\(trimmedTarget)"
+                ))
+            }
+        }
+
+        let extraQueryItems = extraParams?.map {
+            URLQueryItem(name: $0.key, value: $0.value)
+        } ?? []
+
+        components.queryItems = (baseQueryItems + resourceQueryItems + optionalQueryItems + extraQueryItems)
+            .filter { $0.value != "" }
 
         guard let url = components.url else {
             throw LogtoErrors.UrlConstruction.unableToConstructUrl
