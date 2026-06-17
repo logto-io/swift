@@ -5,23 +5,19 @@
 //  Created by Gao Sun on 2022/1/30.
 //
 
-import AuthenticationServices
 import Foundation
 import Logto
-import LogtoSocialPlugin
 
 class LogtoAuthSession {
     typealias Errors = LogtoClientErrors
 
     let session: NetworkSession
-    let authContext: LogtoAuthContext
     let state: String
     let codeVerifier: String
     let codeChallenge: String
     let logtoConfig: LogtoConfig
     let oidcConfig: LogtoCore.OidcConfigResponse
     let redirectUri: URL
-    let socialPlugins: [LogtoSocialPlugin]
     let loginHint: String?
     let directSignIn: LogtoCore.DirectSignInOptions?
     let extraParams: [String: String]?
@@ -33,12 +29,10 @@ class LogtoAuthSession {
         logtoConfig: LogtoConfig,
         oidcConfig: LogtoCore.OidcConfigResponse,
         redirectUri: URL,
-        socialPlugins: [LogtoSocialPlugin],
         loginHint: String? = nil,
         directSignIn: LogtoCore.DirectSignInOptions? = nil,
         extraParams: [String: String]? = nil
     ) {
-        authContext = LogtoAuthContext()
         state = LogtoUtilities.generateState()
         codeVerifier = LogtoUtilities.generateCodeVerifier()
         codeChallenge = LogtoUtilities.generateCodeChallenge(codeVerifier: codeVerifier)
@@ -47,61 +41,29 @@ class LogtoAuthSession {
         self.logtoConfig = logtoConfig
         self.oidcConfig = oidcConfig
         self.redirectUri = redirectUri
-        self.socialPlugins = socialPlugins
         self.loginHint = loginHint
         self.directSignIn = directSignIn
         self.extraParams = extraParams
     }
 
     func start() async throws -> LogtoCore.CodeTokenResponse {
-        do {
-            let authUri = try LogtoCore.generateSignInUri(
-                authorizationEndpoint: oidcConfig.authorizationEndpoint,
-                clientId: logtoConfig.appId,
-                redirectUri: redirectUri,
-                codeChallenge: codeChallenge,
-                state: state,
-                scopes: logtoConfig.scopes,
-                resources: logtoConfig.resources,
-                prompt: logtoConfig.prompt,
-                loginHint: loginHint,
-                directSignIn: directSignIn,
-                extraParams: extraParams
-            )
+        throw Errors.SignIn(type: .authFailed, innerError: nil)
+    }
 
-            #if !os(macOS)
-                return try await withCheckedThrowingContinuation { continuation in
-                    // Create session
-                    let session = LogtoWebViewAuthSession(
-                        authUri,
-                        redirectUri: redirectUri,
-                        socialPlugins: socialPlugins
-                    ) { [self] in
-                        guard let callbackUri = $0 else {
-                            continuation.resume(throwing: Errors.SignIn(type: .authFailed, innerError: nil))
-                            return
-                        }
-
-                        do {
-                            let response = try await handle(callbackUri: callbackUri)
-                            continuation.resume(returning: response)
-                        } catch {
-                            continuation.resume(throwing: error)
-                        }
-                    }
-
-                    DispatchQueue.main.async {
-                        session.start()
-                    }
-                }
-            #else
-                fatalError("LogtoAuthSession does not support macOS currently.")
-            #endif
-        } catch let error as LogtoErrors.UrlConstruction {
-            throw Errors.SignIn(type: .unableToConstructAuthUri, innerError: error)
-        } catch {
-            throw Errors.SignIn(type: .unknownError, innerError: error)
-        }
+    func generateSignInUri() throws -> URL {
+        try LogtoCore.generateSignInUri(
+            authorizationEndpoint: oidcConfig.authorizationEndpoint,
+            clientId: logtoConfig.appId,
+            redirectUri: redirectUri,
+            codeChallenge: codeChallenge,
+            state: state,
+            scopes: logtoConfig.scopes,
+            resources: logtoConfig.resources,
+            prompt: logtoConfig.prompt,
+            loginHint: loginHint,
+            directSignIn: directSignIn,
+            extraParams: extraParams
+        )
     }
 
     func handle(callbackUri: URL) async throws -> LogtoCore.CodeTokenResponse {

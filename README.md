@@ -6,7 +6,7 @@
 
 # Logto Swift SDKs
 
-The monorepo for [Logto](https://github.com/logto-io) SDKs and social plugins written in Swift. Check out our [docs](https://docs.logto.io/sdk/swift/) for more information.
+The monorepo for [Logto](https://github.com/logto-io) SDKs written in Swift. Check out our [docs](https://docs.logto.io/sdk/swift/) for more information.
 
 ## Installation
 
@@ -20,7 +20,7 @@ https://github.com/logto-io/swift.git
 
 ### Carthage
 
-Carthage [needs a `xcodeproj` file to build](https://github.com/Carthage/Carthage/issues/1226#issuecomment-290931385), but `swift package generate-xcodeproj` will report a failure since we are using binary targets for native social plugins. We will try to find a workaround later.
+Carthage [needs a `xcodeproj` file to build](https://github.com/Carthage/Carthage/issues/1226#issuecomment-290931385). We will try to find a workaround later.
 
 ### CocoaPods
 
@@ -32,14 +32,8 @@ CocoaPods [does not support local dependency](https://github.com/CocoaPods/Cocoa
 |---|---|
 | Logto | Logto swift core. |
 | LogtoClient | Logto swift client. |
-| LogtoSocialPlugin | Social plugin foundation for LogtoClient. |
-| LogtoSocialPluginWeb | Social plugin for OAuth-like web IdPs. |
-| LogtoSocialPluginAlipay | Social plugin for Alipay sign in. |
-| LogtoSocialPluginWechat | Social plugin for WeChat sign in. |
 
-In most cases, you only need to import `LogtoClient`, which includes `Logto` and `LogtoSocialPluginWeb` under the hood.
-
-The related plugin is required when you integrate a native connector.
+In most cases, you only need to import `LogtoClient`, which includes `Logto` under the hood.
 
 ## Resources
 

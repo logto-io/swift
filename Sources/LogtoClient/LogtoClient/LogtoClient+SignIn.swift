@@ -5,7 +5,6 @@
 //  Created by Gao Sun on 2022/1/27.
 //
 
-import AuthenticationServices
 import Foundation
 import Logto
 
@@ -37,7 +36,6 @@ extension LogtoClient {
             logtoConfig: logtoConfig,
             oidcConfig: oidcConfig,
             redirectUri: redirectUri,
-            socialPlugins: socialPlugins,
             loginHint: loginHint,
             directSignIn: directSignIn,
             extraParams: extraParams
@@ -63,30 +61,45 @@ extension LogtoClient {
             expiresAt: Date().timeIntervalSince1970 + TimeInterval(response.expiresIn)
         )
     }
+}
 
-    /**
-     Start a sign in session with WKWebView. If the function returns with no error threw, it means the user has signed in successfully.
+public extension LogtoClient {
+    #if os(iOS)
+        /**
+         Start a sign in session with ASWebAuthenticationSession. If the function returns with no error threw, it means the user has signed in successfully.
 
-     - Parameters:
-        - redirectUri: One of Redirect URIs of this application.
-        - loginHint: Login hint indicates the current user (usually an email address or phone number).
-        - directSignIn: Parameters for direct sign-in.
-        - extraParams: Extra parameters for the authentication request.
-     - Throws: An error if the session failed to complete.
-     */
-    @MainActor
-    public func signInWithBrowser(
-        redirectUri: String,
-        loginHint: String? = nil,
-        directSignIn: LogtoCore.DirectSignInOptions? = nil,
-        extraParams: [String: String]? = nil
-    ) async throws {
-        try await signInWithBrowser(
-            authSessionType: LogtoAuthSession.self,
-            redirectUri: redirectUri,
-            loginHint: loginHint,
-            directSignIn: directSignIn,
-            extraParams: extraParams
-        )
-    }
+         - Parameters:
+            - redirectUri: One of Redirect URIs of this application.
+            - loginHint: Login hint indicates the current user (usually an email address or phone number).
+            - directSignIn: Parameters for direct sign-in.
+            - extraParams: Extra parameters for the authentication request.
+         - Throws: An error if the session failed to complete.
+         */
+        @MainActor
+        func signInWithBrowser(
+            redirectUri: String,
+            loginHint: String? = nil,
+            directSignIn: LogtoCore.DirectSignInOptions? = nil,
+            extraParams: [String: String]? = nil
+        ) async throws {
+            try await signInWithBrowser(
+                authSessionType: LogtoASWebAuthenticationSession.self,
+                redirectUri: redirectUri,
+                loginHint: loginHint,
+                directSignIn: directSignIn,
+                extraParams: extraParams
+            )
+        }
+    #else
+        @available(*, unavailable, message: "Browser sign-in is currently available on iOS only.")
+        @MainActor
+        func signInWithBrowser(
+            redirectUri _: String,
+            loginHint _: String? = nil,
+            directSignIn _: LogtoCore.DirectSignInOptions? = nil,
+            extraParams _: [String: String]? = nil
+        ) async throws {
+            fatalError("Browser sign-in is currently available on iOS only.")
+        }
+    #endif
 }
