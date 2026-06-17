@@ -82,9 +82,9 @@ class LogtoWebViewAuthViewController: UnifiedViewController {
             // Delete related cookies asyncly when view disappeared
             if let host = authSession.uri.host {
                 WKWebsiteDataStore.default().httpCookieStore.getAllCookies { cookies in
-                    for cooky in cookies {
-                        if cooky.domain == host {
-                            WKWebsiteDataStore.default().httpCookieStore.delete(cooky)
+                    for cookie in cookies {
+                        if cookie.domain == host {
+                            WKWebsiteDataStore.default().httpCookieStore.delete(cookie)
                         }
                     }
                 }
