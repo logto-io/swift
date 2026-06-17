@@ -30,7 +30,8 @@ public enum UserScope: String {
     case identities
     /// The scope for user's roles for API resources. It maps to the `roles` claim.
     case roles
-    /// Scope for user's organization IDs and perform organization token grant per [RFC 0001](https://github.com/logto-io/rfcs).
+    /// Scope for user's organization IDs and perform organization token grant per [RFC
+    /// 0001](https://github.com/logto-io/rfcs).
     ///
     /// To learn more about Logto Organizations, see [Logto docs](https://docs.logto.io/docs/recipes/organizations/).
     case organizations = "urn:logto:scope:organizations"

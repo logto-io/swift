@@ -18,7 +18,7 @@ public struct LogtoSocialPluginConfiguration {
     public let completion: (URL) -> Void
     public let errorHandler: (LogtoSocialPluginError) -> Void
 
-    // https://stackoverflow.com/a/54673401/12514940
+    /// https://stackoverflow.com/a/54673401/12514940
     public init(
         redirectTo: URL,
         callbackUri: URL,

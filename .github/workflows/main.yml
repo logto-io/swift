@@ -10,9 +10,9 @@ jobs:
   main:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v5
         with:
           path: |
             .build
@@ -20,8 +20,8 @@ jobs:
           key: ${{ runner.os }}-spm-v1-${{ hashFiles('Package.resolved') }}
           restore-keys: |
             ${{ runner.os }}-spm-v1-
-      
-      - uses: actions/cache@v3
+
+      - uses: actions/cache@v5
         with:
           path: BuildTools/.build
           key: ${{ runner.os }}-spm-v1-${{ hashFiles('BuildTools/Package.resolved') }}
@@ -51,7 +51,7 @@ jobs:
           node generate-codecov-json.js --archive-path ./Logto.xcresult
 
       - name: Codecov Report Upload
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v7
         with:
           flags: swift-sdk
           files: ./coverage-report-Logto.json

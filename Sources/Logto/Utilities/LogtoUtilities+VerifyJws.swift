@@ -28,15 +28,15 @@ extension LogtoUtilities {
                 switch $0 {
                 case let publicKey as ECPublicKey:
                     if let secKey = try? publicKey.converted(to: SecKey.self) {
-                        return Verifier(verifyingAlgorithm: algorithm, key: secKey)
+                        return Verifier(signatureAlgorithm: algorithm, key: secKey)
                     }
                 case let publicKey as RSAPublicKey:
                     if let secKey = try? publicKey.converted(to: SecKey.self) {
-                        return Verifier(verifyingAlgorithm: algorithm, key: secKey)
+                        return Verifier(signatureAlgorithm: algorithm, key: secKey)
                     }
                 case let symmetricKey as SymmetricKey:
                     if let data = try? symmetricKey.converted(to: Data.self) {
-                        return Verifier(verifyingAlgorithm: algorithm, key: data)
+                        return Verifier(signatureAlgorithm: algorithm, key: data)
                     }
                 default:
                     throw LogtoErrors.Verification.unsupportedJwkType

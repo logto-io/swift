@@ -131,7 +131,7 @@ final class LogtoWebViewAuthViewControllerTest: XCTestCase {
             ["callbackUri": mockUrl.absoluteString, "redirectTo": "mock://url"]
         ))
         XCTAssertTrue(socialPlugin.startCalled)
-        XCTAssertEqual(viewController.webView.url, URL(string: "mock://url")!)
+        XCTAssertEqual(viewController.webView.url, URL(string: "mock://url"))
     }
 
     func testUserContentControllerError() {

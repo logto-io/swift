@@ -33,7 +33,7 @@ public extension LogtoClient {
                 )
                 return nil
             } catch {
-                return (LogtoClientErrors.SignOut(type: .unableToRevokeToken, innerError: error))
+                return LogtoClientErrors.SignOut(type: .unableToRevokeToken, innerError: error)
             }
         }
 

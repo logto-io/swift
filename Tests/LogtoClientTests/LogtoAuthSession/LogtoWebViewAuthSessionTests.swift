@@ -19,7 +19,10 @@ class LogtoWebViewAuthSessionMock: LogtoWebViewAuthSession {
 }
 
 final class WKNavigationActionMock: WKNavigationAction {
-    override var request: URLRequest { urlRequest }
+    override var request: URLRequest {
+        urlRequest
+    }
+
     let urlRequest: URLRequest
 
     init(urlRequest: URLRequest) {
@@ -84,8 +87,8 @@ final class LogtoWebViewAuthSessionTests: XCTestCase {
         await task.value
     }
 
-    func testDelegateNavigationActionCancel() async {
-        let mockUrl = URL(string: "logto://callback/path")!
+    func testDelegateNavigationActionCancel() async throws {
+        let mockUrl = try XCTUnwrap(URL(string: "logto://callback/path"))
         let session = LogtoWebViewAuthSession(mockUrl, redirectUri: mockUrl, socialPlugins: []) { _ in }
         let controller = await LogtoWebViewAuthViewController(authSession: session)
 

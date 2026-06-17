@@ -27,7 +27,7 @@ public struct LogtoConfig {
             : _resources
     }
 
-    // Have to do this in Swift
+    /// Have to do this in Swift
     public init(
         endpoint: String,
         appId: String,
