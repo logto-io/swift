@@ -16,10 +16,12 @@ public class LogtoClient {
     internal let keychain: Keychain?
     internal let logtoConfig: LogtoConfig
     internal let networkSession: NetworkSession
+    internal let signInLock = NSLock()
 
     // MARK: Internal Variables
 
     internal var accessTokenMap = [String: AccessToken]()
+    internal var isSigningIn = false
 
     // MARK: Public Variables
 

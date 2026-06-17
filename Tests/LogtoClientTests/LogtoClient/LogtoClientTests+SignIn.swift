@@ -63,6 +63,25 @@ class LogtoAuthSessionCaptureMock: LogtoAuthSession {
     }
 }
 
+class LogtoAuthSessionBlockingMock: LogtoAuthSession {
+    static var didStart: XCTestExpectation?
+    static var release: CheckedContinuation<Void, Never>?
+
+    static func reset() {
+        didStart = nil
+        release = nil
+    }
+
+    override func start() async throws -> LogtoCore.CodeTokenResponse {
+        Self.didStart?.fulfill()
+        await withCheckedContinuation {
+            Self.release = $0
+        }
+
+        throw LogtoAuthSession.Errors.SignIn(type: .unknownError, innerError: nil)
+    }
+}
+
 extension LogtoClientTests {
     func testSignInUnableToFetchJwkSet() async throws {
         let client = buildClient(withToken: true)
@@ -130,6 +149,39 @@ extension LogtoClientTests {
             return
         }
 
+        XCTFail()
+    }
+
+    func testSignInRejectsConcurrentSession() async throws {
+        LogtoAuthSessionBlockingMock.reset()
+
+        let client = buildClient()
+        let didStart = expectation(description: "first sign-in started")
+        LogtoAuthSessionBlockingMock.didStart = didStart
+
+        let firstSignIn = Task {
+            try await client.signInWithBrowser(
+                authSessionType: LogtoAuthSessionBlockingMock.self,
+                redirectUri: "io.logto.dev://callback"
+            )
+        }
+
+        await fulfillment(of: [didStart], timeout: 1)
+
+        do {
+            try await client.signInWithBrowser(
+                authSessionType: LogtoAuthSessionSuccessMock.self,
+                redirectUri: "io.logto.dev://callback"
+            )
+        } catch let error as LogtoClientErrors.SignIn {
+            XCTAssertEqual(error.type, .signInSessionAlreadyInProgress)
+            LogtoAuthSessionBlockingMock.release?.resume()
+            _ = try? await firstSignIn.value
+            return
+        }
+
+        LogtoAuthSessionBlockingMock.release?.resume()
+        _ = try? await firstSignIn.value
         XCTFail()
     }
 

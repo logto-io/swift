@@ -38,6 +38,7 @@ enum DemoAuthConfig {
 @MainActor
 final class DemoAuthViewModel: ObservableObject {
     @Published var isAuthenticated = false
+    @Published var isSigningIn = false
     @Published var lastError: String?
     @Published var output: String = ""
 
@@ -72,6 +73,13 @@ final class DemoAuthViewModel: ObservableObject {
 
     func signIn() async {
         guard let client else { logNotConfigured(); return }
+        guard !isSigningIn else { return }
+
+        isSigningIn = true
+        defer {
+            isSigningIn = false
+        }
+
         clearError()
         do {
             try await client.signInWithBrowser(redirectUri: DemoAuthConfig.redirectUri)
@@ -210,11 +218,11 @@ struct ContentView: View {
                 }
 
                 Section("Actions") {
-                    Button("Sign In") { Task { await vm.signIn() } }
-                        .disabled(!vm.isConfigured || vm.isAuthenticated)
+                    Button(vm.isSigningIn ? "Signing In..." : "Sign In") { Task { await vm.signIn() } }
+                        .disabled(!vm.isConfigured || vm.isAuthenticated || vm.isSigningIn)
 
                     Button("Sign Out") { Task { await vm.signOut() } }
-                        .disabled(!vm.isConfigured || !vm.isAuthenticated)
+                        .disabled(!vm.isConfigured || !vm.isAuthenticated || vm.isSigningIn)
 
                     Button("Print ID Token Claims") { vm.printIdTokenClaims() }
                         .disabled(!vm.isConfigured || !vm.isAuthenticated)

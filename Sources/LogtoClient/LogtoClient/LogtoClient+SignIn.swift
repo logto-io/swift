@@ -20,6 +20,11 @@ extension LogtoClient {
             throw (LogtoClientErrors.SignIn(type: .unableToConstructRedirectUri, innerError: nil))
         }
 
+        try beginSignInSession()
+        defer {
+            endSignInSession()
+        }
+
         let oidcConfig = try await fetchOidcConfig()
 
         let session = AuthSession(
@@ -75,5 +80,27 @@ extension LogtoClient {
             directSignIn: directSignIn,
             extraParams: extraParams
         )
+    }
+
+    private func beginSignInSession() throws {
+        signInLock.lock()
+        defer {
+            signInLock.unlock()
+        }
+
+        guard !isSigningIn else {
+            throw LogtoClientErrors.SignIn(type: .signInSessionAlreadyInProgress, innerError: nil)
+        }
+
+        isSigningIn = true
+    }
+
+    private func endSignInSession() {
+        signInLock.lock()
+        defer {
+            signInLock.unlock()
+        }
+
+        isSigningIn = false
     }
 }
