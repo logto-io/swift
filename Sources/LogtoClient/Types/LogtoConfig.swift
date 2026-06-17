@@ -16,6 +16,7 @@ public struct LogtoConfig {
     public let appId: String
     public let prompt: LogtoCore.Prompt
     public let usingPersistStorage: Bool
+    public let prefersEphemeralWebBrowserSession: Bool
 
     public var scopes: [String] {
         LogtoUtilities.withReservedScopes(_scopes)
@@ -34,7 +35,8 @@ public struct LogtoConfig {
         scopes: [String] = [],
         resources: [String] = [],
         prompt: LogtoCore.Prompt = .consent,
-        usingPersistStorage: Bool = true
+        usingPersistStorage: Bool = true,
+        prefersEphemeralWebBrowserSession: Bool = true
     ) throws {
         guard let endpoint = URL(string: endpoint) else {
             throw LogtoErrors.UrlConstruction.unableToConstructUrl
@@ -46,5 +48,6 @@ public struct LogtoConfig {
         _resources = resources
         self.prompt = prompt
         self.usingPersistStorage = usingPersistStorage
+        self.prefersEphemeralWebBrowserSession = prefersEphemeralWebBrowserSession
     }
 }

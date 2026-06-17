@@ -5,7 +5,6 @@
 //  Created by Gao Sun on 2022/1/27.
 //
 
-import AuthenticationServices
 import Foundation
 import Logto
 
@@ -27,7 +26,6 @@ extension LogtoClient {
             logtoConfig: logtoConfig,
             oidcConfig: oidcConfig,
             redirectUri: redirectUri,
-            socialPlugins: socialPlugins,
             loginHint: loginHint,
             directSignIn: directSignIn,
             extraParams: extraParams
@@ -55,7 +53,7 @@ extension LogtoClient {
     }
 
     /**
-     Start a sign in session with WKWebView. If the function returns with no error threw, it means the user has signed in successfully.
+     Start a sign in session with ASWebAuthenticationSession. If the function returns with no error threw, it means the user has signed in successfully.
 
      - Parameters:
         - redirectUri: One of Redirect URIs of this application.
@@ -71,7 +69,7 @@ extension LogtoClient {
         extraParams: [String: String]? = nil
     ) async throws {
         try await signInWithBrowser(
-            authSessionType: LogtoAuthSession.self,
+            authSessionType: LogtoASWebAuthenticationSession.self,
             redirectUri: redirectUri,
             loginHint: loginHint,
             directSignIn: directSignIn,

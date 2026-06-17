@@ -39,7 +39,6 @@ class LogtoAuthSessionCaptureMock: LogtoAuthSession {
         logtoConfig: LogtoConfig,
         oidcConfig: LogtoCore.OidcConfigResponse,
         redirectUri: URL,
-        socialPlugins: [LogtoSocialPlugin],
         loginHint: String? = nil,
         directSignIn: LogtoCore.DirectSignInOptions? = nil,
         extraParams: [String: String]? = nil
@@ -49,7 +48,6 @@ class LogtoAuthSessionCaptureMock: LogtoAuthSession {
             logtoConfig: logtoConfig,
             oidcConfig: oidcConfig,
             redirectUri: redirectUri,
-            socialPlugins: socialPlugins,
             loginHint: loginHint,
             directSignIn: directSignIn,
             extraParams: extraParams
