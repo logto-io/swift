@@ -85,9 +85,7 @@ public extension LogtoClient {
             throw LogtoClientErrors.AccessToken(type: .noRefreshTokenFound, innerError: nil)
         }
 
-        let token = try await getAccessToken(by: refreshToken, for: resource, in: organizationId)
-
-        return token
+        return try await getAccessToken(by: refreshToken, for: resource, in: organizationId)
     }
 
     /**

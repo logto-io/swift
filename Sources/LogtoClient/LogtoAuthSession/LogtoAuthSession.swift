@@ -26,7 +26,7 @@ class LogtoAuthSession {
     let directSignIn: LogtoCore.DirectSignInOptions?
     let extraParams: [String: String]?
 
-    internal var callbackUri: URL?
+    var callbackUri: URL?
 
     required init(
         useSession session: NetworkSession = URLSession.shared,
@@ -111,7 +111,7 @@ class LogtoAuthSession {
                 redirectUri: redirectUri,
                 state: state
             )
-            let tokenResponse = try await LogtoCore.fetchToken(
+            return try await LogtoCore.fetchToken(
                 useSession: session,
                 byAuthorizationCode: code,
                 codeVerifier: codeVerifier,
@@ -119,7 +119,6 @@ class LogtoAuthSession {
                 clientId: logtoConfig.appId,
                 redirectUri: redirectUri.absoluteString
             )
-            return tokenResponse
         } catch let error as LogtoErrors.UriVerification {
             throw Errors.SignIn(type: .unexpectedSignInCallback, innerError: error)
         } catch {

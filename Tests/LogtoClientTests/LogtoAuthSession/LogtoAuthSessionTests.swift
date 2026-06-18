@@ -39,9 +39,9 @@ final class LogtoAuthSessionTests: XCTestCase {
         )
     }
 
-    // Swift cannot directly mock a class or an object unless subclassing or using generic,
-    // which increases unnecessary complecity for now.
-    // So the test case is reduced for minimum verification.
+    /// Swift cannot directly mock a class or an object unless subclassing or using generic,
+    /// which increases unnecessary complecity for now.
+    /// So the test case is reduced for minimum verification.
     func testStartOk() async throws {
         let session = createGoodSession()
         let task = Task {
@@ -54,11 +54,11 @@ final class LogtoAuthSessionTests: XCTestCase {
     }
 
     func testStartFailed() async throws {
-        let session = LogtoAuthSession(
+        let session = try LogtoAuthSession(
             useSession: NetworkSessionMock.shared,
-            logtoConfig: try! LogtoConfig(endpoint: "https://logto.dev", appId: ""),
+            logtoConfig: LogtoConfig(endpoint: "https://logto.dev", appId: ""),
             oidcConfig: getMockOidcConfig(authorizationEndpoint: "foo"),
-            redirectUri: URL(string: "foo")!,
+            redirectUri: XCTUnwrap(URL(string: "foo")),
             socialPlugins: []
         )
 
@@ -73,22 +73,22 @@ final class LogtoAuthSessionTests: XCTestCase {
     }
 
     func testHandleUnableToFetchToken() async throws {
-        let session = LogtoAuthSession(
+        let session = try LogtoAuthSession(
             useSession: NetworkSessionMock.shared,
-            logtoConfig: try! LogtoConfig(endpoint: "https://logto.dev", appId: ""),
+            logtoConfig: LogtoConfig(endpoint: "https://logto.dev", appId: ""),
             oidcConfig: getMockOidcConfig(authorizationEndpoint: "https://logto.dev/auth"),
             redirectUri: redirectUri,
             socialPlugins: []
         )
 
-        var components = URLComponents(url: redirectUri, resolvingAgainstBaseURL: true)!
+        var components = try XCTUnwrap(URLComponents(url: redirectUri, resolvingAgainstBaseURL: true))
         components.queryItems = [
             URLQueryItem(name: "state", value: session.state),
             URLQueryItem(name: "code", value: "abc"),
         ]
 
         do {
-            _ = try await session.handle(callbackUri: components.url!)
+            _ = try await session.handle(callbackUri: XCTUnwrap(components.url))
         } catch let error as LogtoClientErrors.SignIn {
             XCTAssertEqual(error.type, .unableToFetchToken)
             return
@@ -101,7 +101,7 @@ final class LogtoAuthSessionTests: XCTestCase {
         let session = createGoodSession()
 
         do {
-            _ = try await session.handle(callbackUri: URL(string: "https://foo")!)
+            _ = try await session.handle(callbackUri: XCTUnwrap(URL(string: "https://foo")))
         } catch let error as LogtoClientErrors.SignIn {
             XCTAssertEqual(error.type, .unexpectedSignInCallback)
             return
@@ -113,12 +113,12 @@ final class LogtoAuthSessionTests: XCTestCase {
     func testHandleOk() async throws {
         let session = createGoodSession()
 
-        var components = URLComponents(url: redirectUri, resolvingAgainstBaseURL: true)!
+        var components = try XCTUnwrap(URLComponents(url: redirectUri, resolvingAgainstBaseURL: true))
         components.queryItems = [
             URLQueryItem(name: "state", value: session.state),
             URLQueryItem(name: "code", value: "abc"),
         ]
 
-        _ = try await session.handle(callbackUri: components.url!)
+        _ = try await session.handle(callbackUri: XCTUnwrap(components.url))
     }
 }

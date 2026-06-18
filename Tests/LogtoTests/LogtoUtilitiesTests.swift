@@ -3,7 +3,7 @@ import JOSESwift
 import XCTest
 
 final class LogtoUtilitiesTests: XCTestCase {
-    func testWithReservedScopes() throws {
+    func testWithReservedScopes() {
         XCTAssertEqual(LogtoUtilities.withReservedScopes([]).sorted(), ["offline_access", "openid", "profile"].sorted())
         XCTAssertEqual(
             LogtoUtilities.withReservedScopes(["foo"]).sorted(),
@@ -15,19 +15,19 @@ final class LogtoUtilitiesTests: XCTestCase {
         )
     }
 
-    func testGenerateState() throws {
+    func testGenerateState() {
         let state = LogtoUtilities.generateState()
         XCTAssertTrue(state.isUrlSafe)
         XCTAssertEqual(Data.fromUrlSafeBase64(string: state)?.count, 64)
     }
 
-    func testGenerateCodeVerifier() throws {
+    func testGenerateCodeVerifier() {
         let verifier = LogtoUtilities.generateCodeVerifier()
         XCTAssertTrue(verifier.isUrlSafe)
         XCTAssertEqual(Data.fromUrlSafeBase64(string: verifier)?.count, 64)
     }
 
-    func testGenerateCodeChallenge() throws {
+    func testGenerateCodeChallenge() {
         XCTAssertEqual(
             LogtoUtilities
                 .generateCodeChallenge(
@@ -99,9 +99,10 @@ final class LogtoUtilitiesTests: XCTestCase {
         let clientId = "foo"
 
         XCTAssertThrowsError(try LogtoUtilities
-            .verifyIdToken(idToken, issuer: "foo", clientId: "bar", jwks: JWKSet(keys: []))) {
-                XCTAssertEqual($0 as? LogtoErrors.Verification, LogtoErrors.Verification.missingJwk)
-            }
+            .verifyIdToken(idToken, issuer: "foo", clientId: "bar", jwks: JWKSet(keys: [])))
+        {
+            XCTAssertEqual($0 as? LogtoErrors.Verification, LogtoErrors.Verification.missingJwk)
+        }
         XCTAssertThrowsError(try LogtoUtilities.verifyIdToken(idToken, issuer: "foo", clientId: "bar", jwks: jwks2)) {
             XCTAssertEqual($0 as? LogtoErrors.Verification, LogtoErrors.Verification.noSigningKeyMatched)
         }
@@ -124,9 +125,10 @@ final class LogtoUtilitiesTests: XCTestCase {
             XCTAssertEqual($0 as? LogtoErrors.Verification, LogtoErrors.Verification.jwtExpired)
         }
         XCTAssertThrowsError(try LogtoUtilities
-            .verifyIdToken(idToken, issuer: issuer, clientId: clientId, jwks: jwks, forTimeInterval: 0)) {
-                XCTAssertEqual($0 as? LogtoErrors.Verification, LogtoErrors.Verification.jwtIssuedTimeIncorrect)
-            }
+            .verifyIdToken(idToken, issuer: issuer, clientId: clientId, jwks: jwks, forTimeInterval: 0))
+        {
+            XCTAssertEqual($0 as? LogtoErrors.Verification, LogtoErrors.Verification.jwtIssuedTimeIncorrect)
+        }
     }
 
     func testVerifyIdTokenRSA() throws {
@@ -240,7 +242,7 @@ final class LogtoUtilitiesTests: XCTestCase {
                 ),
                 (
                     "iss",
-                    .string("https://logto.dev"),
+                    .string("https://logto.dev")
                 ),
                 (
                     "name",

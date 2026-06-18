@@ -10,10 +10,10 @@ import Foundation
 import XCTest
 
 final class URLSessionTests: XCTestCase {
-    func testHandleResponseOk() {
+    func testHandleResponseOk() throws {
         let mockData = "123".data(using: .utf8)!
-        let response = HTTPURLResponse(
-            url: URL(string: "https://logto.dev")!,
+        let response = try HTTPURLResponse(
+            url: XCTUnwrap(URL(string: "https://logto.dev")),
             statusCode: 200,
             httpVersion: nil,
             headerFields: nil
@@ -25,10 +25,10 @@ final class URLSessionTests: XCTestCase {
         XCTAssertNil(error)
     }
 
-    func testHandleResponseStatusCodeError() {
+    func testHandleResponseStatusCodeError() throws {
         let mockData = "123".data(using: .utf8)!
-        let response = HTTPURLResponse(
-            url: URL(string: "https://logto.dev")!,
+        let response = try HTTPURLResponse(
+            url: XCTUnwrap(URL(string: "https://logto.dev")),
             statusCode: 400,
             httpVersion: nil,
             headerFields: nil

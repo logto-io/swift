@@ -9,8 +9,10 @@ import Foundation
 
 #if !os(macOS)
     import UIKit
+
     public typealias UnifiedViewController = UIViewController
 #else
     import Cocoa
+
     public typealias UnifiedViewController = NSViewController
 #endif

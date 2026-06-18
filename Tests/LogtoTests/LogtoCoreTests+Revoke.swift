@@ -11,7 +11,7 @@ extension LogtoCoreTests {
             clientId: "foo"
         )
 
-        await LogtoCoreTests.assertThrows(try await LogtoCore.revoke(
+        try await LogtoCoreTests.assertThrows(await LogtoCore.revoke(
             useSession: NetworkSessionMock.shared,
             token: "123",
             revocationEndpoint: "/revoke:bad",

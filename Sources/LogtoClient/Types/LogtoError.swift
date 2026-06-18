@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  LogtoError.swift
 //
 //
 //  Created by Gao Sun on 2022/2/4.

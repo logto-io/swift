@@ -28,8 +28,7 @@ public enum LogtoRequest {
         }
 
         do {
-            let decoded = try decoder.decode(T.self, from: data)
-            return decoded
+            return try decoder.decode(T.self, from: data)
         } catch {
             throw error
         }
@@ -49,7 +48,7 @@ public enum LogtoRequest {
 
         request.httpMethod = method.rawValue
         request.httpBody = body
-        headers.forEach { key, value in
+        for (key, value) in headers {
             request.setValue(value, forHTTPHeaderField: key)
         }
 

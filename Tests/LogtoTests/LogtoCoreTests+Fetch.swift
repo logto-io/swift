@@ -6,13 +6,13 @@ extension LogtoCoreTests {
     func testFetchOidcConfig() async throws {
         let config = try await LogtoCore.fetchOidcConfig(
             useSession: NetworkSessionMock.shared,
-            uri: URL(string: "/oidc_config:good")!
+            uri: XCTUnwrap(URL(string: "/oidc_config:good"))
         )
         XCTAssertNotNil(config)
 
-        await LogtoCoreTests
-            .assertThrows(try await LogtoCore
-                .fetchOidcConfig(useSession: NetworkSessionMock.shared, uri: URL(string: "/bad")!))
+        try await LogtoCoreTests
+            .assertThrows(await LogtoCore
+                .fetchOidcConfig(useSession: NetworkSessionMock.shared, uri: XCTUnwrap(URL(string: "/bad"))))
     }
 
     func testFetchTokenByCode() async throws {
@@ -26,7 +26,7 @@ extension LogtoCoreTests {
         )
         XCTAssertNotNil(token)
 
-        await LogtoCoreTests.assertThrows(try await LogtoCore.fetchToken(
+        try await LogtoCoreTests.assertThrows(await LogtoCore.fetchToken(
             useSession: NetworkSessionMock.shared,
             byAuthorizationCode: "123",
             codeVerifier: "456",
@@ -48,7 +48,7 @@ extension LogtoCoreTests {
         )
         XCTAssertNotNil(token)
 
-        await LogtoCoreTests.assertThrows(try await LogtoCore.fetchToken(
+        try await LogtoCoreTests.assertThrows(await LogtoCore.fetchToken(
             useSession: NetworkSessionMock.shared,
             byRefreshToken: "123",
             tokenEndpoint: "/token:bad",
@@ -81,7 +81,7 @@ extension LogtoCoreTests {
             return
         }
 
-        await LogtoCoreTests.assertThrows(try await LogtoCore.fetchUserInfo(
+        try await LogtoCoreTests.assertThrows(await LogtoCore.fetchUserInfo(
             useSession: NetworkSessionMock.shared,
             userInfoEndpoint: "/user",
             accessToken: "bad"

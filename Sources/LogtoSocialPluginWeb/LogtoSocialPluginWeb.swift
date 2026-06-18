@@ -10,7 +10,7 @@ import Foundation
 import LogtoSocialPlugin
 
 class LogtoSocialPluginWebContextProviding: NSObject, ASWebAuthenticationPresentationContextProviding {
-    public func presentationAnchor(for _: ASWebAuthenticationSession) -> ASPresentationAnchor {
+    func presentationAnchor(for _: ASWebAuthenticationSession) -> ASPresentationAnchor {
         ASPresentationAnchor()
     }
 }

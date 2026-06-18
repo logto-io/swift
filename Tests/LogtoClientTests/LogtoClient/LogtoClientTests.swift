@@ -45,9 +45,9 @@ final class LogtoClientTests: XCTestCase {
         return client
     }
 
-    func testStaticHandleUrl() {
+    func testStaticHandleUrl() throws {
         let appId = "foo"
-        let url = URL(string: "bar")!
+        let url = try XCTUnwrap(URL(string: "bar"))
         var called = false
 
         let handle: (Notification) -> Void = { notification in
@@ -77,7 +77,7 @@ final class LogtoClientTests: XCTestCase {
         XCTAssertTrue(client.isAuthenticated)
     }
 
-    func testGetIdTokenClaims() {
+    func testGetIdTokenClaims() throws {
         let client = buildClient()
 
         XCTAssertThrowsError(try client.getIdTokenClaims()) {
@@ -89,8 +89,8 @@ final class LogtoClientTests: XCTestCase {
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwiYXVkIjoiZm9vIiwiaXNzIjoiYmFyIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE1MTYyMzkwMjJ9.t2LDedv_3AGjdOnrZuBKl83HfnD1aapuSWbPVIhwecc"
 
         XCTAssertEqual(
-            try! client.getIdTokenClaims(),
-            try! JSONDecoder().decode(IdTokenClaims.self, from: Data("""
+            try client.getIdTokenClaims(),
+            try JSONDecoder().decode(IdTokenClaims.self, from: Data("""
                 {
                     "sub": "1234567890",
                     "aud": "foo",
@@ -103,27 +103,27 @@ final class LogtoClientTests: XCTestCase {
         )
     }
 
-    func testUsingPersistStorage() {
-        let client = LogtoClient(
-            useConfig: try! LogtoConfig(endpoint: "/", appId: "foo"),
+    func testUsingPersistStorage() throws {
+        let client = try LogtoClient(
+            useConfig: LogtoConfig(endpoint: "/", appId: "foo"),
             session: NetworkSessionMock.shared
         )
 
         XCTAssertNotNil(client.keychain)
     }
 
-    func testHandleUrl() {
-        let client = LogtoClient(
-            useConfig: try! LogtoConfig(endpoint: "/", appId: "test-handle-url"),
+    func testHandleUrl() throws {
+        let client = try LogtoClient(
+            useConfig: LogtoConfig(endpoint: "/", appId: "test-handle-url"),
             socialPlugins: [LogtoSocialPluginMock()]
         )
 
-        XCTAssertTrue(client.handle(url: URL(string: "mock://foo")!))
+        XCTAssertTrue(try client.handle(url: XCTUnwrap(URL(string: "mock://foo"))))
     }
 
-    func testHandleWrongNotification() {
-        let client = LogtoClientMockHandleUrl(
-            useConfig: try! LogtoConfig(endpoint: "/", appId: "test-handle-url"),
+    func testHandleWrongNotification() throws {
+        let client = try LogtoClientMockHandleUrl(
+            useConfig: LogtoConfig(endpoint: "/", appId: "test-handle-url"),
             socialPlugins: [LogtoSocialPluginMock()]
         )
 

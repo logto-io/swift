@@ -11,7 +11,7 @@
     import Foundation
     import LogtoSocialPlugin
 
-    // Follows Alipay official docs: https://opendocs.alipay.com/open/218/wy75xo
+    /// Follows Alipay official docs: https://opendocs.alipay.com/open/218/wy75xo
     public class LogtoSocialPluginAlipay: LogtoSocialPlugin {
         public let connectorPlatform: LogtoSocialPluginPlatform = .native
         public let connectorTarget: String? = "alipay"

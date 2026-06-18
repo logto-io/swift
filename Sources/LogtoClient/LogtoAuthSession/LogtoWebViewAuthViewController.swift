@@ -51,7 +51,7 @@ class LogtoWebViewAuthViewController: UnifiedViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override public func loadView() {
+    override func loadView() {
         view = UIView()
 
         webView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
@@ -71,20 +71,20 @@ class LogtoWebViewAuthViewController: UnifiedViewController {
         view.addSubview(activityIndicator)
     }
 
-    override public func viewDidLoad() {
+    override func viewDidLoad() {
         webView.load(URLRequest(url: authSession.uri))
     }
 
-    override public func viewDidDisappear(_: Bool) {
+    override func viewDidDisappear(_: Bool) {
         Task {
             await authSession.didFinish(url: nil)
 
             // Delete related cookies asyncly when view disappeared
             if let host = authSession.uri.host {
                 WKWebsiteDataStore.default().httpCookieStore.getAllCookies { cookies in
-                    cookies.forEach {
-                        if $0.domain == host {
-                            WKWebsiteDataStore.default().httpCookieStore.delete($0)
+                    for cookie in cookies {
+                        if cookie.domain == host {
+                            WKWebsiteDataStore.default().httpCookieStore.delete(cookie)
                         }
                     }
                 }
@@ -104,7 +104,7 @@ class LogtoWebViewAuthViewController: UnifiedViewController {
 }
 
 extension LogtoWebViewAuthViewController: ASWebAuthenticationPresentationContextProviding {
-    public func presentationAnchor(for _: ASWebAuthenticationSession) -> ASPresentationAnchor {
+    func presentationAnchor(for _: ASWebAuthenticationSession) -> ASPresentationAnchor {
         view.window!
     }
 }

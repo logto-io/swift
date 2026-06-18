@@ -6,7 +6,7 @@ extension LogtoCoreTests {
         XCTAssertThrowsError(try LogtoCore.generateSignInUri(
             authorizationEndpoint: "???",
             clientId: "",
-            redirectUri: URL(string: "foo")!,
+            redirectUri: XCTUnwrap(URL(string: "foo")),
             codeChallenge: "",
             state: ""
         )) {
@@ -47,7 +47,7 @@ extension LogtoCoreTests {
         let url = try LogtoCore.generateSignInUri(
             authorizationEndpoint: authorizationEndpoint,
             clientId: clientId,
-            redirectUri: URL(string: "logto://sign-in/redirect")!,
+            redirectUri: XCTUnwrap(URL(string: "logto://sign-in/redirect")),
             codeChallenge: codeChallenge,
             state: state
         )
@@ -71,7 +71,7 @@ extension LogtoCoreTests {
         let url1 = try LogtoCore.generateSignInUri(
             authorizationEndpoint: authorizationEndpoint,
             clientId: clientId,
-            redirectUri: URL(string: "logto://sign-in/redirect")!,
+            redirectUri: XCTUnwrap(URL(string: "logto://sign-in/redirect")),
             codeChallenge: codeChallenge,
             state: state,
             scopes: ["foo"]
@@ -92,7 +92,7 @@ extension LogtoCoreTests {
         let url2 = try LogtoCore.generateSignInUri(
             authorizationEndpoint: authorizationEndpoint,
             clientId: clientId,
-            redirectUri: URL(string: "logto://sign-in/redirect")!,
+            redirectUri: XCTUnwrap(URL(string: "logto://sign-in/redirect")),
             codeChallenge: codeChallenge,
             state: state,
             scopes: ["foo", "bar"]
@@ -117,7 +117,7 @@ extension LogtoCoreTests {
         let url1 = try LogtoCore.generateSignInUri(
             authorizationEndpoint: authorizationEndpoint,
             clientId: clientId,
-            redirectUri: URL(string: "logto://sign-in/redirect")!,
+            redirectUri: XCTUnwrap(URL(string: "logto://sign-in/redirect")),
             codeChallenge: codeChallenge,
             state: state,
             resources: ["https://api.logto.dev"]
@@ -139,7 +139,7 @@ extension LogtoCoreTests {
         let url2 = try LogtoCore.generateSignInUri(
             authorizationEndpoint: authorizationEndpoint,
             clientId: clientId,
-            redirectUri: URL(string: "logto://sign-in/redirect")!,
+            redirectUri: XCTUnwrap(URL(string: "logto://sign-in/redirect")),
             codeChallenge: codeChallenge,
             state: state,
             resources: ["https://api.logto.dev", "bar"]
@@ -166,7 +166,7 @@ extension LogtoCoreTests {
         let url = try LogtoCore.generateSignInUri(
             authorizationEndpoint: authorizationEndpoint,
             clientId: clientId,
-            redirectUri: URL(string: "logto://sign-in/redirect")!,
+            redirectUri: XCTUnwrap(URL(string: "logto://sign-in/redirect")),
             codeChallenge: codeChallenge,
             state: state,
             loginHint: "foo@logto.dev",
@@ -196,12 +196,13 @@ extension LogtoCoreTests {
 
     func testGenerateSignOutUri() throws {
         XCTAssertThrowsError(try LogtoCore
-            .generateSignOutUri(endSessionEndpoint: "???", idToken: "", postLogoutRedirectUri: nil)) {
-                XCTAssertEqual(
-                    $0 as? LogtoErrors.UrlConstruction,
-                    LogtoErrors.UrlConstruction.invalidEndpoint
-                )
-            }
+            .generateSignOutUri(endSessionEndpoint: "???", idToken: "", postLogoutRedirectUri: nil))
+        {
+            XCTAssertEqual(
+                $0 as? LogtoErrors.UrlConstruction,
+                LogtoErrors.UrlConstruction.invalidEndpoint
+            )
+        }
 
         let endSessionEndpoint = "https://logto.dev/oidc/session/end"
         let idToken = "foo"

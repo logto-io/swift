@@ -42,7 +42,9 @@ final class DemoAuthViewModel: ObservableObject {
     @Published var output: String = ""
 
     private let client: LogtoClient?
-    var isConfigured: Bool { client != nil }
+    var isConfigured: Bool {
+        client != nil
+    }
 
     init() {
         let c = Self.makeClient()

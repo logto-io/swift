@@ -39,15 +39,15 @@ public class LogtoClient {
 
     // MARK: Internal Constants
 
-    internal let authContext = LogtoAuthContext()
-    internal let keychain: Keychain?
-    internal let logtoConfig: LogtoConfig
-    internal let networkSession: NetworkSession
-    internal let socialPlugins: [LogtoSocialPlugin]
+    let authContext = LogtoAuthContext()
+    let keychain: Keychain?
+    let logtoConfig: LogtoConfig
+    let networkSession: NetworkSession
+    let socialPlugins: [LogtoSocialPlugin]
 
     // MARK: Internal Variables
 
-    internal var accessTokenMap = [String: AccessToken]()
+    var accessTokenMap = [String: AccessToken]()
 
     // MARK: Public Variables
 

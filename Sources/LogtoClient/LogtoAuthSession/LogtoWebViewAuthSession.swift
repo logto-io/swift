@@ -20,7 +20,7 @@ class LogtoWebViewAuthSession: NSObject {
     let onFinish: FinishHandler
     var viewController: LogtoWebViewAuthViewController?
 
-    public init(_ uri: URL, redirectUri: URL, socialPlugins: [LogtoSocialPlugin], onFinish: @escaping FinishHandler) {
+    init(_ uri: URL, redirectUri: URL, socialPlugins: [LogtoSocialPlugin], onFinish: @escaping FinishHandler) {
         self.uri = uri
         self.redirectUri = redirectUri
         self.socialPlugins = socialPlugins
@@ -46,7 +46,7 @@ class LogtoWebViewAuthSession: NSObject {
         }
     #endif
 
-    @discardableResult public func start() -> Bool {
+    @discardableResult func start() -> Bool {
         guard let topViewController = getTopViewController() else {
             return false
         }
@@ -61,7 +61,7 @@ class LogtoWebViewAuthSession: NSObject {
         #endif
     }
 
-    internal func didFinish(url: URL?) async {
+    func didFinish(url: URL?) async {
         guard !isFinished else {
             return
         }

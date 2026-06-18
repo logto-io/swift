@@ -15,7 +15,7 @@ extension LogtoClientTests {
 
     func testFetchOidcConfigCachedOk() async throws {
         let client = buildClient()
-        let mockConfig = try! JSONDecoder().decode(LogtoCore.OidcConfigResponse.self, from: Data("""
+        let mockConfig = try JSONDecoder().decode(LogtoCore.OidcConfigResponse.self, from: Data("""
             {
                 "authorizationEndpoint": "1",
                 "tokenEndpoint": "2",
