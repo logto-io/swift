@@ -36,6 +36,8 @@ public enum LogtoClientErrorTypes {
         /// Failed to complete the authentication.
         /// This could be an internal error or the user canceled the authentication.
         case authFailed
+        /// A sign-in session is already in progress.
+        case signInSessionAlreadyInProgress
         /// Unable to construct Redirect URI for the given string.
         case unableToConstructRedirectUri
         /// Unable to construct Redirect URI for the config.

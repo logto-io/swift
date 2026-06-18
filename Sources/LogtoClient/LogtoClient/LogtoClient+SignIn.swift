@@ -10,6 +10,7 @@ import Foundation
 import Logto
 
 extension LogtoClient {
+    @MainActor
     func signInWithBrowser<AuthSession: LogtoAuthSession>(
         authSessionType _: AuthSession.Type,
         redirectUri: String,
@@ -19,6 +20,15 @@ extension LogtoClient {
     ) async throws {
         guard let redirectUri = URL(string: redirectUri) else {
             throw (LogtoClientErrors.SignIn(type: .unableToConstructRedirectUri, innerError: nil))
+        }
+
+        guard !isSigningIn else {
+            throw LogtoClientErrors.SignIn(type: .signInSessionAlreadyInProgress, innerError: nil)
+        }
+
+        isSigningIn = true
+        defer {
+            isSigningIn = false
         }
 
         let oidcConfig = try await fetchOidcConfig()
@@ -64,6 +74,7 @@ extension LogtoClient {
         - extraParams: Extra parameters for the authentication request.
      - Throws: An error if the session failed to complete.
      */
+    @MainActor
     public func signInWithBrowser(
         redirectUri: String,
         loginHint: String? = nil,
