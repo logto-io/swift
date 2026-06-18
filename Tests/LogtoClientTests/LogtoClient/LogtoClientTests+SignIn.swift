@@ -65,6 +65,25 @@ class LogtoAuthSessionCaptureMock: LogtoAuthSession {
     }
 }
 
+class LogtoAuthSessionBlockingMock: LogtoAuthSession {
+    static var didStart: XCTestExpectation?
+    static var release: CheckedContinuation<Void, Never>?
+
+    static func reset() {
+        didStart = nil
+        release = nil
+    }
+
+    override func start() async throws -> LogtoCore.CodeTokenResponse {
+        await withCheckedContinuation {
+            Self.release = $0
+            Self.didStart?.fulfill()
+        }
+
+        throw LogtoAuthSession.Errors.SignIn(type: .unknownError, innerError: nil)
+    }
+}
+
 extension LogtoClientTests {
     func testSignInUnableToFetchJwkSet() async throws {
         let client = buildClient(withToken: true)
@@ -133,6 +152,45 @@ extension LogtoClientTests {
         }
 
         XCTFail()
+    }
+
+    func testSignInRejectsConcurrentSession() async throws {
+        LogtoAuthSessionBlockingMock.reset()
+
+        let client = buildClient()
+        let didStart = expectation(description: "first sign-in started")
+        LogtoAuthSessionBlockingMock.didStart = didStart
+
+        let firstSignIn = Task {
+            try await client.signInWithBrowser(
+                authSessionType: LogtoAuthSessionBlockingMock.self,
+                redirectUri: "io.logto.dev://callback"
+            )
+        }
+
+        await fulfillment(of: [didStart], timeout: 1)
+
+        let secondSignInError: Error?
+        do {
+            try await client.signInWithBrowser(
+                authSessionType: LogtoAuthSessionFailureMock.self,
+                redirectUri: "io.logto.dev://callback"
+            )
+            secondSignInError = nil
+        } catch {
+            secondSignInError = error
+        }
+
+        LogtoAuthSessionBlockingMock.release?.resume()
+        LogtoAuthSessionBlockingMock.release = nil
+        _ = try? await firstSignIn.value
+
+        guard let error = secondSignInError as? LogtoClientErrors.SignIn else {
+            XCTFail("Expected SignIn error")
+            return
+        }
+
+        XCTAssertEqual(error.type, .signInSessionAlreadyInProgress)
     }
 
     func testSignInUnknownError() async throws {

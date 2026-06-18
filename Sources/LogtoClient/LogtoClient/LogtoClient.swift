@@ -48,6 +48,7 @@ public class LogtoClient {
     // MARK: Internal Variables
 
     var accessTokenMap = [String: AccessToken]()
+    var isSigningIn = false
 
     // MARK: Public Variables
 
