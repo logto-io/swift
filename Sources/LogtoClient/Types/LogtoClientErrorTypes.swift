@@ -58,6 +58,8 @@ public enum LogtoClientErrorTypes {
         case unableToFetchOidcConfig
         /// Unable to construct Sign-out URI for the given post logout redirect URI or OIDC config.
         case unableToConstructSignOutUri
+        /// The sign-out callback URI is not valid.
+        case unexpectedSignOutCallback
         /// Unable to launch the browser sign-out session.
         case unableToLaunchBrowser
         /// Unable to revoke token in the OIDC provider.

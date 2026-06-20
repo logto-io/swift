@@ -97,6 +97,7 @@ extension LogtoClient {
 
 #if os(iOS)
     private struct LogtoSignOutSessionError: Error {}
+    private struct LogtoUnexpectedSignOutCallbackError: Error {}
 
     private final class LogtoSignOutSessionContinuation {
         private let continuation: CheckedContinuation<Void, Error>
@@ -181,6 +182,8 @@ extension LogtoClient {
                 )
             } catch let error as LogtoErrors.UrlConstruction {
                 return LogtoClientErrors.SignOut(type: .unableToConstructSignOutUri, innerError: error)
+            } catch let error as LogtoUnexpectedSignOutCallbackError {
+                return LogtoClientErrors.SignOut(type: .unexpectedSignOutCallback, innerError: error)
             } catch {
                 return LogtoClientErrors.SignOut(type: .unableToLaunchBrowser, innerError: error)
             }
@@ -224,7 +227,7 @@ extension LogtoClient {
                     }
 
                     guard Self.isCallbackUri(callbackUri, matching: postLogoutRedirectUri) else {
-                        resolver.resume(throwing: LogtoSignOutSessionError())
+                        resolver.resume(throwing: LogtoUnexpectedSignOutCallbackError())
                         return
                     }
 

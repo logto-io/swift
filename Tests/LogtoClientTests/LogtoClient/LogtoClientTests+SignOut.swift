@@ -181,6 +181,24 @@ extension LogtoClientTests {
         }
 
         @MainActor
+        func testSignOutUnexpectedCallbackUri() async {
+            let client = buildClient(withToken: true)
+
+            let error = await client
+                .signOut(postLogoutRedirectUri: "io.logto.test://signed-out") { _, _, completionHandler in
+                    SignOutSystemAuthenticationSessionMock(
+                        callbackUri: URL(string: "io.logto.test://unexpected"),
+                        completionHandler: completionHandler
+                    )
+                }
+
+            XCTAssertEqual(error?.type, .unexpectedSignOutCallback)
+            XCTAssertNil(client.refreshToken)
+            XCTAssertNil(client.idToken)
+            XCTAssertEqual(client.accessTokenMap.count, 0)
+        }
+
+        @MainActor
         func testSignOutWithoutRedirectCanceledByUserCompletesSuccessfully() async {
             let client = buildClient(withToken: true)
             let cancelError = NSError(
