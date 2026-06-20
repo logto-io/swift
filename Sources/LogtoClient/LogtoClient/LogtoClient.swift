@@ -5,6 +5,9 @@
 //  Created by Gao Sun on 2022/1/21.
 //
 
+#if os(iOS)
+    import AuthenticationServices
+#endif
 import Foundation
 import KeychainAccess
 import Logto
@@ -20,6 +23,10 @@ public class LogtoClient {
 
     var accessTokenMap = [String: AccessToken]()
     var isSigningIn = false
+    #if os(iOS)
+        var signOutAuthenticationSession: LogtoSystemAuthenticationSession?
+        var signOutPresentationContextProvider: ASWebAuthenticationPresentationContextProviding?
+    #endif
 
     // MARK: Public Variables
 

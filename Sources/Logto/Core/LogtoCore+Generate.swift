@@ -100,8 +100,8 @@ public extension LogtoCore {
 
     static func generateSignOutUri(
         endSessionEndpoint: String,
-        idToken: String,
-        postLogoutRedirectUri: String?
+        clientId: String,
+        postLogoutRedirectUri: String? = nil
     ) throws -> URL {
         guard
             var components = URLComponents(string: endSessionEndpoint),
@@ -112,10 +112,16 @@ public extension LogtoCore {
         }
 
         let queryItems = [
-            URLQueryItem(name: "id_token_hint", value: idToken),
+            URLQueryItem(name: "client_id", value: clientId),
             URLQueryItem(name: "post_logout_redirect_uri", value: postLogoutRedirectUri),
         ]
-        components.queryItems = queryItems.filter { $0.value != "" }
+        components.queryItems = queryItems.filter {
+            guard let value = $0.value else {
+                return false
+            }
+
+            return !value.isEmpty
+        }
 
         guard let url = components.url else {
             throw LogtoErrors.UrlConstruction.unableToConstructUrl

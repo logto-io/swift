@@ -14,7 +14,8 @@ import SwiftUI
 enum DemoAuthConfig {
     static let endpoint = "<YOUR_LOGTO_ENDPOINT>"
     static let appId = "<YOUR_APP_ID>"
-    static let redirectUri = "<YOUR_REDIRECT_URI>" // e.g. "io.logto://callback"
+    static let redirectUri = "logto-demo://callback"
+    static let postLogoutRedirectUri = "logto-demo://signed-out"
 
     // MARK: Optional config items
 
@@ -88,9 +89,22 @@ final class DemoAuthViewModel: ObservableObject {
     func signOut() async {
         guard let client else { logNotConfigured(); return }
         clearError()
-        await client.signOut()
-        isAuthenticated = false
-        log("signed out")
+        let error = await client.signOut(postLogoutRedirectUri: DemoAuthConfig.postLogoutRedirectUri)
+        handleSignOutResult(error, context: "sign-out", successMessage: "signed out with redirect")
+    }
+
+    func signOutWithoutRedirect() async {
+        guard let client else { logNotConfigured(); return }
+        clearError()
+        let error = await client.signOut()
+        handleSignOutResult(error, context: "sign-out without redirect", successMessage: "signed out without redirect")
+    }
+
+    func clearCredentials() async {
+        guard let client else { logNotConfigured(); return }
+        clearError()
+        let error = await client.clearCredentials()
+        handleSignOutResult(error, context: "clear credentials", successMessage: "credentials cleared")
     }
 
     func printIdTokenClaims() {
@@ -164,6 +178,34 @@ final class DemoAuthViewModel: ObservableObject {
         log(lastError!)
     }
 
+    private func handleSignOutResult(
+        _ error: LogtoClientErrors.SignOut?,
+        context: String,
+        successMessage: String
+    ) {
+        isAuthenticated = client?.isAuthenticated ?? false
+
+        if let error {
+            handleSignOut(error, context: context)
+            return
+        }
+
+        log(successMessage)
+    }
+
+    private func handleSignOut(_ error: LogtoClientErrors.SignOut, context: String) {
+        var msg = "[\(context)] \(error.type.rawValue)"
+
+        if let innerError = error.innerError {
+            let nsError = innerError as NSError
+            msg += "\ninner: \(innerError.localizedDescription)"
+            msg += "\ninner domain: \(nsError.domain), code: \(nsError.code)"
+        }
+
+        lastError = msg
+        log(msg)
+    }
+
     private func handle(_ error: Error, context: String) {
         var msg = "[\(context)] \(error.localizedDescription)"
 
@@ -216,6 +258,12 @@ struct ContentView: View {
                         .disabled(!vm.isConfigured || vm.isAuthenticated)
 
                     Button("Sign Out") { Task { await vm.signOut() } }
+                        .disabled(!vm.isConfigured || !vm.isAuthenticated)
+
+                    Button("Sign Out Without Redirect") { Task { await vm.signOutWithoutRedirect() } }
+                        .disabled(!vm.isConfigured || !vm.isAuthenticated)
+
+                    Button("Clear Credentials") { Task { await vm.clearCredentials() } }
                         .disabled(!vm.isConfigured || !vm.isAuthenticated)
 
                     Button("Print ID Token Claims") { vm.printIdTokenClaims() }

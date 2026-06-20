@@ -121,7 +121,7 @@
             return try await startAuthenticationSession(with: authUri)
         }
 
-        private static func createAuthenticationSession(
+        static func createAuthenticationSession(
             url: URL,
             callbackURLScheme: String?,
             completionHandler: @escaping CompletionHandler
@@ -133,12 +133,16 @@
             )
         }
 
-        private var callbackURLScheme: String? {
-            guard let scheme = redirectUri.scheme?.lowercased(), !["http", "https"].contains(scheme) else {
+        static func callbackURLScheme(for url: URL) -> String? {
+            guard let scheme = url.scheme?.lowercased(), !["http", "https"].contains(scheme) else {
                 return nil
             }
 
             return scheme
+        }
+
+        private var callbackURLScheme: String? {
+            Self.callbackURLScheme(for: redirectUri)
         }
 
         private func startAuthenticationSession(with authUri: URL) async throws -> LogtoCore.CodeTokenResponse {
