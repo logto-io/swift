@@ -16,22 +16,6 @@ let package = Package(
             name: "LogtoClient",
             targets: ["LogtoClient"]
         ),
-        .library(
-            name: "LogtoSocialPlugin",
-            targets: ["LogtoSocialPlugin"]
-        ),
-        .library(
-            name: "LogtoSocialPluginWeb",
-            targets: ["LogtoSocialPluginWeb"]
-        ),
-        .library(
-            name: "LogtoSocialPluginAlipay",
-            targets: ["LogtoSocialPluginAlipay"]
-        ),
-        .library(
-            name: "LogtoSocialPluginWechat",
-            targets: ["LogtoSocialPluginWechat"]
-        ),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -57,42 +41,11 @@ let package = Package(
         ),
         .target(
             name: "LogtoClient",
-            dependencies: ["Logto", "KeychainAccess", "LogtoSocialPlugin", "LogtoSocialPluginWeb"]
+            dependencies: ["Logto", "KeychainAccess"]
         ),
         .testTarget(
             name: "LogtoClientTests",
             dependencies: ["LogtoClient", "LogtoMock"]
-        ),
-        .target(
-            name: "LogtoSocialPlugin",
-            dependencies: []
-        ),
-        .target(
-            name: "LogtoSocialPluginWeb",
-            dependencies: ["LogtoSocialPlugin"]
-        ),
-        .binaryTarget(
-            name: "AFServiceSDK",
-            url: "https://github.com/logto-io/social-sdks/raw/9441f1c774e430fad54a900581f1091109772189/alipay/swift/AFServiceSDK.zip",
-            checksum: "197f4e7e2930e5331642923c393ee9f1ea85b5db8a7ab82550c94b0c0facc8bc"
-        ),
-        .target(
-            name: "LogtoSocialPluginAlipay",
-            dependencies: ["LogtoSocialPlugin", "AFServiceSDK"]
-        ),
-        .binaryTarget(
-            name: "WechatOpenSDK",
-            url: "https://github.com/logto-io/social-sdks/raw/9441f1c774e430fad54a900581f1091109772189/wechat/swift/WechatOpenSDK.zip",
-            checksum: "545fa87232593a76f69f799513096334cb0f491b165cc45ccdd0dc5bdddcd958"
-        ),
-        .target(
-            name: "LogtoSocialPluginWechat",
-            dependencies: ["LogtoSocialPlugin", "WechatOpenSDK"],
-            linkerSettings: [
-                .linkedLibrary("sqlite3"),
-                .linkedLibrary("c++"),
-                .linkedLibrary("z"),
-            ]
         ),
     ]
 )

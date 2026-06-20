@@ -39,7 +39,6 @@ class LogtoAuthSessionCaptureMock: LogtoAuthSession {
         logtoConfig: LogtoConfig,
         oidcConfig: LogtoCore.OidcConfigResponse,
         redirectUri: URL,
-        socialPlugins: [LogtoSocialPlugin],
         loginHint: String? = nil,
         directSignIn: LogtoCore.DirectSignInOptions? = nil,
         extraParams: [String: String]? = nil
@@ -49,7 +48,6 @@ class LogtoAuthSessionCaptureMock: LogtoAuthSession {
             logtoConfig: logtoConfig,
             oidcConfig: oidcConfig,
             redirectUri: redirectUri,
-            socialPlugins: socialPlugins,
             loginHint: loginHint,
             directSignIn: directSignIn,
             extraParams: extraParams
@@ -106,7 +104,10 @@ extension LogtoClientTests {
         let client = buildClient()
 
         do {
-            try await client.signInWithBrowser(redirectUri: "")
+            try await client.signInWithBrowser(
+                authSessionType: LogtoAuthSessionFailureMock.self,
+                redirectUri: ""
+            )
         } catch let error as LogtoClientErrors.SignIn {
             XCTAssertEqual(error.type, .unableToConstructRedirectUri)
             return
@@ -119,7 +120,10 @@ extension LogtoClientTests {
         let client = buildClient(withOidcEndpoint: "/bad")
 
         do {
-            _ = try await client.signInWithBrowser(redirectUri: "io.logto.dev://callback")
+            _ = try await client.signInWithBrowser(
+                authSessionType: LogtoAuthSessionFailureMock.self,
+                redirectUri: "io.logto.dev://callback"
+            )
         } catch let error as LogtoClientErrors.OidcConfig {
             XCTAssertEqual(error.type, .unableToFetchOidcConfig)
             return

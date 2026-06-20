@@ -43,7 +43,6 @@
 		6CB2AF5727A3D898003411A4 /* swift */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = swift; path = ../..; sourceTree = "<group>"; };
 		6CB600B727FC94CD008AD679 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		6CB600B927FC94D6008AD679 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		6CB600BB27FC94DA008AD679 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		6CB600C627FD7561008AD679 /* SwiftUI Demo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "SwiftUI Demo.entitlements"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -125,7 +124,6 @@
 		6CB2AF5827A3D8E7003411A4 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				6CB600BB27FC94DA008AD679 /* WebKit.framework */,
 				6CB600B927FC94D6008AD679 /* CoreGraphics.framework */,
 				6CB600B727FC94CD008AD679 /* Security.framework */,
 			);
