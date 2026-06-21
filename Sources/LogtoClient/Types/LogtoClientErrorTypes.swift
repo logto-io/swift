@@ -50,6 +50,18 @@ public enum LogtoClientErrorTypes {
     }
 
     public enum SignOut: String {
+        /// The user is not authenticated.
+        case notAuthenticated
+        /// The post logout redirect URI is invalid.
+        case invalidRedirectUri
+        /// Unable to fetch OIDC config from the OIDC provider.
+        case unableToFetchOidcConfig
+        /// Unable to construct Sign-out URI for the given post logout redirect URI or OIDC config.
+        case unableToConstructSignOutUri
+        /// The sign-out callback URI is not valid.
+        case unexpectedSignOutCallback
+        /// Unable to launch the browser sign-out session.
+        case unableToLaunchBrowser
         /// Unable to revoke token in the OIDC provider.
         /// Usually this error is safe to ignore.
         case unableToRevokeToken

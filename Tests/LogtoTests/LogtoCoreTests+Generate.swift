@@ -196,7 +196,7 @@ extension LogtoCoreTests {
 
     func testGenerateSignOutUri() throws {
         XCTAssertThrowsError(try LogtoCore
-            .generateSignOutUri(endSessionEndpoint: "???", idToken: "", postLogoutRedirectUri: nil))
+            .generateSignOutUri(endSessionEndpoint: "???", clientId: "", postLogoutRedirectUri: nil))
         {
             XCTAssertEqual(
                 $0 as? LogtoErrors.UrlConstruction,
@@ -205,11 +205,11 @@ extension LogtoCoreTests {
         }
 
         let endSessionEndpoint = "https://logto.dev/oidc/session/end"
-        let idToken = "foo"
+        let clientId = "foo"
         let postLogoutRedirectUri = "https://localhost"
         let url = try LogtoCore.generateSignOutUri(
             endSessionEndpoint: endSessionEndpoint,
-            idToken: idToken,
+            clientId: clientId,
             postLogoutRedirectUri: postLogoutRedirectUri
         )
 
@@ -217,8 +217,18 @@ extension LogtoCoreTests {
         XCTAssertEqual(url.host, "logto.dev")
         XCTAssertEqual(url.path, "/oidc/session/end")
         XCTAssertTrue(validate(url: url, queryItems: [
-            URLQueryItem(name: "id_token_hint", value: idToken),
+            URLQueryItem(name: "client_id", value: clientId),
             URLQueryItem(name: "post_logout_redirect_uri", value: postLogoutRedirectUri),
+        ]))
+
+        let urlWithoutRedirect = try LogtoCore.generateSignOutUri(
+            endSessionEndpoint: endSessionEndpoint,
+            clientId: clientId,
+            postLogoutRedirectUri: nil
+        )
+
+        XCTAssertTrue(validate(url: urlWithoutRedirect, queryItems: [
+            URLQueryItem(name: "client_id", value: clientId),
         ]))
     }
 }
