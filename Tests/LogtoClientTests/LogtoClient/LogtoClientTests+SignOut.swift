@@ -172,9 +172,10 @@ extension LogtoClientTests {
             XCTAssertEqual(error?.type, .invalidRedirectUri)
             XCTAssertFalse(didCreateSession)
             XCTAssertEqual(networkSession.requestCount, 0)
-            XCTAssertNil(client.refreshToken)
-            XCTAssertNil(client.idToken)
-            XCTAssertEqual(client.accessTokenMap.count, 0)
+            // Credentials must stay intact so the caller can retry a complete sign-out with a valid URI.
+            XCTAssertEqual(client.refreshToken, initialRefreshToken)
+            XCTAssertEqual(client.idToken, initialIdToken)
+            XCTAssertEqual(client.accessTokenMap.count, 1)
         }
 
         @MainActor
