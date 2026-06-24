@@ -33,6 +33,12 @@ jobs:
           [ ! -d ".build/" ] && swift run -c release swiftformat ../ --lint || .build/release/swiftformat ../ --lint
         working-directory: ./BuildTools
 
+      - name: Install iOS Simulator runtime
+        run: |
+          xcrun simctl list runtimes
+          xcodebuild -downloadPlatform iOS
+          xcrun simctl list runtimes
+
       - name: Build & Test
         run: |
           set -o pipefail && \
