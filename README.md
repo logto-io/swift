@@ -8,6 +8,18 @@
 
 The monorepo for [Logto](https://github.com/logto-io) SDKs written in Swift. Check out our [docs](https://docs.logto.io/sdk/swift/) for more information.
 
+## Versions
+
+| Version | Branch | Status |
+|---|---|---|
+| v2 (beta) | [`master`](https://github.com/logto-io/swift/tree/master) | In development - released as `2.0.0-beta.x` prereleases until GA |
+| v1 (stable) | [`v1.x`](https://github.com/logto-io/swift/tree/v1.x) | Maintenance - bug fixes only |
+
+v2 moves the iOS sign-in experience from an embedded WebView to `ASWebAuthenticationSession` (the system browser), unlocks WebAuthn/passkeys and shared browser sessions, removes native social plugin targets, and revamps the sign-out API.
+
+- **Upgrading from v1?** Follow [MIGRATION.md](./MIGRATION.md).
+- This README documents v2. The v1 documentation lives in the [`v1.x` README](https://github.com/logto-io/swift/blob/v1.x/README.md).
+
 ## Installation
 
 ### Swift Package Manager
@@ -17,6 +29,8 @@ Since Xcode 11, you can [directly import a swift package](https://developer.appl
 ```bash
 https://github.com/logto-io/swift.git
 ```
+
+v2 is in beta: use `2.0.0-beta.1` for the first beta, or the latest `2.0.0-beta.x` prerelease when selecting a package version. For the stable v1 line, see [Versions](#versions).
 
 ### Carthage
 
