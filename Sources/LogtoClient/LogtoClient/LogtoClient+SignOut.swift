@@ -147,7 +147,10 @@ extension LogtoClient {
             }
 
             if let postLogoutRedirectUri, !Self.isValidRedirectUri(postLogoutRedirectUri) {
-                _ = await clearCredentials()
+                // Treat an invalid redirect URI as a pure input-validation failure and keep all
+                // credentials intact. Clearing them here would leave the Logto session alive on the
+                // provider while marking the client signed out, and the caller would no longer be
+                // able to perform a complete sign-out after fixing the URI.
                 return LogtoClientErrors.SignOut(type: .invalidRedirectUri, innerError: nil)
             }
 

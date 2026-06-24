@@ -7,10 +7,14 @@ final class LogtoClientTests: XCTestCase {
     let initialRefreshToken = "foo"
     let initialIdToken = "bar"
 
-    func buildClient(withOidcEndpoint endpoint: String = "/oidc_config:good", withToken: Bool = false) -> LogtoClient {
+    func buildClient(
+        withOidcEndpoint endpoint: String = "/oidc_config:good",
+        withToken: Bool = false,
+        session: NetworkSession = NetworkSessionMock.shared
+    ) -> LogtoClient {
         let client = LogtoClient(
             useConfig: try! LogtoConfig(endpoint: endpoint, appId: "foo", usingPersistStorage: false),
-            session: NetworkSessionMock.shared
+            session: session
         )
 
         if withToken {

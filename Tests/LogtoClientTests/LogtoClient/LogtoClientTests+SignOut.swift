@@ -159,7 +159,8 @@ extension LogtoClientTests {
 
         @MainActor
         func testSignOutInvalidRedirectUri() async {
-            let client = buildClient(withToken: true)
+            let networkSession = SignOutNetworkSessionSpy()
+            let client = buildClient(withToken: true, session: networkSession)
             var didCreateSession = false
 
             let error = await client.signOut(postLogoutRedirectUri: "io.logto.test://signed-out#invalid") {
@@ -170,9 +171,11 @@ extension LogtoClientTests {
 
             XCTAssertEqual(error?.type, .invalidRedirectUri)
             XCTAssertFalse(didCreateSession)
-            XCTAssertNil(client.refreshToken)
-            XCTAssertNil(client.idToken)
-            XCTAssertEqual(client.accessTokenMap.count, 0)
+            XCTAssertEqual(networkSession.requestCount, 0)
+            // Credentials must stay intact so the caller can retry a complete sign-out with a valid URI.
+            XCTAssertEqual(client.refreshToken, initialRefreshToken)
+            XCTAssertEqual(client.idToken, initialIdToken)
+            XCTAssertEqual(client.accessTokenMap.count, 1)
         }
 
         @MainActor
@@ -332,5 +335,16 @@ extension LogtoClientTests {
         }
 
         func cancel() {}
+    }
+
+    private struct SignOutNetworkSessionSpyError: Error {}
+
+    private final class SignOutNetworkSessionSpy: NetworkSession {
+        private(set) var requestCount = 0
+
+        func loadData(with _: URLRequest) async -> (Data?, Error?) {
+            requestCount += 1
+            return (nil, SignOutNetworkSessionSpyError())
+        }
     }
 #endif
