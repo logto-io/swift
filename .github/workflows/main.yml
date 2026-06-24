@@ -38,7 +38,7 @@ jobs:
           set -o pipefail && \
           xcodebuild \
             -scheme "LogtoSDK-Package" \
-            -destination "platform=iOS Simulator,OS=26.2,name=iPhone 17 Pro" \
+            -destination "platform=iOS Simulator,name=iPhone 17 Pro" \
             -enableCodeCoverage=YES \
             -resultBundlePath Logto.xcresult \
             test | \
