@@ -21,15 +21,40 @@ app must be configured to receive the URI you pass to `signInWithBrowser`.
 
 For a custom scheme such as `io.logto.app://callback`:
 
-1. Register the scheme in your app's `Info.plist`.
+1. Register the scheme in your app's `Info.plist`. Register only the scheme
+   part, not the full redirect URI. For `io.logto.app://callback`, the scheme is
+   `io.logto.app`.
 2. Add the same URI to your Logto application's Redirect URIs.
 3. Pass the same URI to `signInWithBrowser`.
+
+In Xcode, open your app target, select **Info**, expand **URL Types**, and add
+one entry with `io.logto.app` in **URL Schemes**. If you edit `Info.plist`
+directly, add:
+
+```xml
+<key>CFBundleURLTypes</key>
+<array>
+    <dict>
+        <key>CFBundleTypeRole</key>
+        <string>Editor</string>
+        <key>CFBundleURLName</key>
+        <string>io.logto.app</string>
+        <key>CFBundleURLSchemes</key>
+        <array>
+            <string>io.logto.app</string>
+        </array>
+    </dict>
+</array>
+```
 
 ```swift
 try await logtoClient.signInWithBrowser(
     redirectUri: "io.logto.app://callback"
 )
 ```
+
+For the browser flow in v2, you do not need to call `LogtoClient.handle(url:)`;
+that plugin handoff API was removed with the embedded WebView flow.
 
 Custom scheme callbacks can be matched and dismissed automatically on all supported
 iOS versions.

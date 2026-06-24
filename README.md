@@ -53,7 +53,7 @@ In most cases, you only need to import `LogtoClient`, which includes `Logto` und
 
 `signInWithBrowser(redirectUri:)` supports both custom scheme redirect URIs and HTTPS Universal Links.
 
-For a custom scheme such as `io.logto.app://callback`, register the scheme in your app's `Info.plist` and add the same URI to your Logto application's Redirect URIs. This works with automatic `ASWebAuthenticationSession` completion on all supported iOS versions.
+For a custom scheme such as `io.logto.app://callback`, register the scheme part (`io.logto.app`) in your app's `Info.plist` and add the full URI to your Logto application's Redirect URIs. This works with automatic `ASWebAuthenticationSession` completion on all supported iOS versions.
 
 ### Use Universal Links instead of a custom scheme
 
