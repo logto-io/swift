@@ -80,12 +80,52 @@
             return components.url!
         }
 
+        func testAuthenticationCallbackForCustomSchemeRedirect() throws {
+            let redirectUri = try XCTUnwrap(URL(string: "io.logto.test://callback"))
+            let callback = LogtoASWebAuthenticationSession.authenticationCallback(for: redirectUri)
+
+            XCTAssertEqual(callback, .customScheme("io.logto.test"))
+            XCTAssertEqual(callback.callbackURLScheme, "io.logto.test")
+        }
+
+        func testAuthenticationCallbackForHttpsRedirect() throws {
+            let redirectUri = try XCTUnwrap(URL(string: "https://Example.com/callback"))
+            let callback = LogtoASWebAuthenticationSession.authenticationCallback(for: redirectUri)
+
+            XCTAssertEqual(callback, .https(host: "example.com", path: "/callback"))
+            XCTAssertNil(callback.callbackURLScheme)
+        }
+
+        func testAuthenticationCallbackForHttpsRedirectWithoutPath() throws {
+            let redirectUri = try XCTUnwrap(URL(string: "https://Example.com"))
+            let callback = LogtoASWebAuthenticationSession.authenticationCallback(for: redirectUri)
+
+            XCTAssertEqual(callback, .https(host: "example.com", path: "/"))
+            XCTAssertNil(callback.callbackURLScheme)
+        }
+
+        func testAuthenticationCallbackForHttpRedirect() throws {
+            let redirectUri = try XCTUnwrap(URL(string: "http://example.com/callback"))
+            let callback = LogtoASWebAuthenticationSession.authenticationCallback(for: redirectUri)
+
+            XCTAssertEqual(callback, .unsupported)
+            XCTAssertNil(callback.callbackURLScheme)
+        }
+
+        func testAuthenticationCallbackForHttpsRedirectWithoutHost() throws {
+            let redirectUri = try XCTUnwrap(URL(string: "https:///callback"))
+            let callback = LogtoASWebAuthenticationSession.authenticationCallback(for: redirectUri)
+
+            XCTAssertEqual(callback, .unsupported)
+            XCTAssertNil(callback.callbackURLScheme)
+        }
+
         @MainActor
         func testStartOk() async throws {
             NetworkSessionMock.shared.tokenRequestCount = 0
 
             let contextProvider = PresentationContextProviderMock()
-            var capturedCallbackURLScheme: String?
+            var capturedCallback: LogtoASWebAuthenticationSession.AuthenticationCallback?
             var mockSession: LogtoSystemAuthenticationSessionMock!
             var authSession: LogtoASWebAuthenticationSession!
 
@@ -99,8 +139,8 @@
                 oidcConfig: getMockOidcConfig(),
                 redirectUri: customRedirectUri,
                 presentationContextProvider: contextProvider
-            ) { authUri, callbackURLScheme, completionHandler in
-                capturedCallbackURLScheme = callbackURLScheme
+            ) { authUri, callback, completionHandler in
+                capturedCallback = callback
                 XCTAssertEqual(authUri.scheme, "https")
                 XCTAssertEqual(authUri.host, "logto.dev")
 
@@ -114,7 +154,7 @@
             let response = try await authSession.start()
 
             XCTAssertEqual(response.accessToken, "123")
-            XCTAssertEqual(capturedCallbackURLScheme, "io.logto.test")
+            XCTAssertEqual(capturedCallback, .customScheme("io.logto.test"))
             XCTAssertTrue(mockSession.prefersEphemeralWebBrowserSession)
             XCTAssertNotNil(mockSession.presentationContextProvider)
         }
@@ -191,33 +231,32 @@
             XCTFail()
         }
 
-        func testUniversalLinkRedirectDoesNotUseCallbackURLScheme() async throws {
-            let redirectUri = try XCTUnwrap(URL(string: "https://example.com/callback"))
-            var capturedCallbackURLScheme: String?
+        @MainActor
+        func testHttpsRedirectUsesHttpsCallback() async throws {
+            NetworkSessionMock.shared.tokenRequestCount = 0
 
-            let authSession = try LogtoASWebAuthenticationSession(
+            let redirectUri = try XCTUnwrap(URL(string: "https://example.com/callback"))
+            var capturedCallback: LogtoASWebAuthenticationSession.AuthenticationCallback?
+            var authSession: LogtoASWebAuthenticationSession!
+
+            authSession = try LogtoASWebAuthenticationSession(
                 useSession: NetworkSessionMock.shared,
                 logtoConfig: LogtoConfig(endpoint: "https://logto.dev", appId: "foo"),
                 oidcConfig: getMockOidcConfig(),
                 redirectUri: redirectUri
-            ) { _, callbackURLScheme, completionHandler in
-                capturedCallbackURLScheme = callbackURLScheme
+            ) { _, callback, completionHandler in
+                capturedCallback = callback
                 return LogtoSystemAuthenticationSessionMock(
-                    shouldStart: false,
-                    completesOnStart: false,
+                    callbackUri: self.getCallbackUri(redirectUri: redirectUri, state: authSession.state),
                     completionHandler: completionHandler
                 )
             }
 
-            do {
-                _ = try await authSession.start()
-            } catch let error as LogtoClientErrors.SignIn {
-                XCTAssertEqual(error.type, .authFailed)
-                XCTAssertNil(capturedCallbackURLScheme)
-                return
-            }
+            let response = try await authSession.start()
 
-            XCTFail()
+            XCTAssertEqual(response.accessToken, "123")
+            XCTAssertEqual(capturedCallback, .https(host: "example.com", path: "/callback"))
+            XCTAssertNil(capturedCallback?.callbackURLScheme)
         }
     }
 #endif

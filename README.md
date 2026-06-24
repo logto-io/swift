@@ -35,6 +35,23 @@ CocoaPods [does not support local dependency](https://github.com/CocoaPods/Cocoa
 
 In most cases, you only need to import `LogtoClient`, which includes `Logto` under the hood.
 
+## Redirect URIs on iOS
+
+`signInWithBrowser(redirectUri:)` supports both custom scheme redirect URIs and HTTPS Universal Links.
+
+For a custom scheme such as `io.logto.app://callback`, register the scheme in your app's `Info.plist` and add the same URI to your Logto application's Redirect URIs. This works with automatic `ASWebAuthenticationSession` completion on all supported iOS versions.
+
+### Use Universal Links instead of a custom scheme
+
+You can also use an HTTPS redirect URI such as `https://example.com/callback`:
+
+1. Add the Associated Domains capability to your app.
+2. Configure the domain as `webcredentials:example.com` so `ASWebAuthenticationSession` can match HTTPS callbacks on iOS 17.4 and newer.
+3. If the same URL should also open your app as a Universal Link outside the authentication session, configure `applinks:example.com` and host a valid `apple-app-site-association` file for the domain and path.
+4. Add the HTTPS URI to your Logto application's Redirect URIs.
+
+On iOS 17.4 and newer, the SDK uses `ASWebAuthenticationSession`'s HTTPS callback matching API so HTTPS redirects can automatically complete and dismiss the session. On older iOS versions, the authorization request can still use the HTTPS redirect URI, but the session may not close automatically unless your app handles the Universal Link callback itself. Keep a custom scheme redirect as a compatibility option if you need automatic completion on older iOS versions.
+
 ## Resources
 
 [![Website](https://img.shields.io/badge/website-logto.io-8262F8.svg)](https://logto.io/)

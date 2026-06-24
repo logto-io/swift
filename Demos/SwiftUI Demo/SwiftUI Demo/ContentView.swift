@@ -14,7 +14,7 @@ import SwiftUI
 enum DemoAuthConfig {
     static let endpoint = "<YOUR_LOGTO_ENDPOINT>"
     static let appId = "<YOUR_APP_ID>"
-    static let redirectUri = "logto-demo://callback"
+    static let redirectUri = "logto-demo://callback" // e.g. "io.logto://callback" or "https://example.com/callback"
     static let postLogoutRedirectUri = "logto-demo://signed-out"
 
     // MARK: Optional config items
