@@ -49,9 +49,38 @@
 
     class LogtoASWebAuthenticationSession: LogtoAuthSession {
         typealias CompletionHandler = (URL?, Error?) -> Void
+
+        enum AuthenticationCallback: Equatable {
+            case customScheme(String)
+            case https(host: String, path: String)
+            case unsupported
+
+            var callbackURLScheme: String? {
+                guard case let .customScheme(scheme) = self else {
+                    return nil
+                }
+
+                return scheme
+            }
+
+            #if compiler(>=5.10)
+                @available(iOS 17.4, *)
+                var callback: ASWebAuthenticationSession.Callback? {
+                    switch self {
+                    case let .customScheme(scheme):
+                        return .customScheme(scheme)
+                    case let .https(host, path):
+                        return .https(host: host, path: path)
+                    case .unsupported:
+                        return nil
+                    }
+                }
+            #endif
+        }
+
         typealias AuthenticationSessionFactory = (
             _ url: URL,
-            _ callbackURLScheme: String?,
+            _ callback: AuthenticationCallback,
             _ completionHandler: @escaping CompletionHandler
         ) -> LogtoSystemAuthenticationSession
 
@@ -123,33 +152,59 @@
 
         static func createAuthenticationSession(
             url: URL,
-            callbackURLScheme: String?,
+            callback: AuthenticationCallback,
             completionHandler: @escaping CompletionHandler
         ) -> LogtoSystemAuthenticationSession {
-            ASWebAuthenticationSession(
+            #if compiler(>=5.10)
+                if #available(iOS 17.4, *), let callback = callback.callback {
+                    return ASWebAuthenticationSession(
+                        url: url,
+                        callback: callback,
+                        completionHandler: completionHandler
+                    )
+                }
+            #endif
+
+            return ASWebAuthenticationSession(
                 url: url,
-                callbackURLScheme: callbackURLScheme,
+                callbackURLScheme: callback.callbackURLScheme,
                 completionHandler: completionHandler
             )
         }
 
-        static func callbackURLScheme(for url: URL) -> String? {
-            guard let scheme = url.scheme?.lowercased(), !["http", "https"].contains(scheme) else {
-                return nil
+        static func authenticationCallback(for redirectUri: URL) -> AuthenticationCallback {
+            guard let scheme = redirectUri.scheme?.lowercased() else {
+                return .unsupported
             }
 
-            return scheme
+            switch scheme {
+            case "https":
+                guard let host = redirectUri.host?.lowercased() else {
+                    return .unsupported
+                }
+
+                let path = redirectUri.path.isEmpty ? "/" : redirectUri.path
+                return .https(host: host, path: path)
+            case "http":
+                return .unsupported
+            default:
+                return .customScheme(scheme)
+            }
         }
 
-        private var callbackURLScheme: String? {
-            Self.callbackURLScheme(for: redirectUri)
+        static func callbackURLScheme(for url: URL) -> String? {
+            authenticationCallback(for: url).callbackURLScheme
+        }
+
+        private var authenticationCallback: AuthenticationCallback {
+            Self.authenticationCallback(for: redirectUri)
         }
 
         private func startAuthenticationSession(with authUri: URL) async throws -> LogtoCore.CodeTokenResponse {
             try await withCheckedThrowingContinuation { continuation in
                 let resolver = LogtoASWebAuthenticationSessionContinuation(continuation)
                 let session = authenticationSessionFactory(authUri,
-                                                           callbackURLScheme)
+                                                           authenticationCallback)
                 { [weak self] callbackUri, error in
                     guard let self else {
                         resolver.resume(throwing: Errors.SignIn(type: .authFailed, innerError: nil))

@@ -49,6 +49,8 @@ public extension LogtoClient {
         /**
          Sign out from Logto in the browser and clear all local credentials.
 
+         The post sign-out redirect URI can use a custom scheme or an HTTPS Universal Link. Custom scheme redirects can be matched and dismissed automatically on all supported iOS versions. HTTPS redirects require Associated Domains configuration with the `webcredentials` service and iOS 17.4 or newer for ASWebAuthenticationSession to match the callback and dismiss automatically.
+
          - Parameter postLogoutRedirectUri: One of Post sign-out redirect URIs of this application. When omitted, the browser stays on the Logto sign-out page and the user can dismiss it manually.
          - Returns: An error if the browser sign-out or token revocation failed.
          */
@@ -201,7 +203,8 @@ extension LogtoClient {
                 let resolver = LogtoSignOutSessionContinuation(continuation)
                 let session = authenticationSessionFactory(
                     signOutUri,
-                    postLogoutRedirectUri.flatMap(LogtoASWebAuthenticationSession.callbackURLScheme(for:))
+                    postLogoutRedirectUri
+                        .map(LogtoASWebAuthenticationSession.authenticationCallback(for:)) ?? .unsupported
                 ) { [weak self] callbackUri, error in
                     self?.signOutAuthenticationSession = nil
                     self?.signOutPresentationContextProvider = nil

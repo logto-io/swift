@@ -46,14 +46,14 @@ extension LogtoClientTests {
             let client = buildClient(withToken: true)
             let postLogoutRedirectUri = try XCTUnwrap(URL(string: "io.logto.test://signed-out"))
             var capturedSignOutUri: URL?
-            var capturedCallbackURLScheme: String?
+            var capturedCallback: LogtoASWebAuthenticationSession.AuthenticationCallback?
             var mockSession: SignOutSystemAuthenticationSessionMock!
 
             let error = await client.signOut(
                 postLogoutRedirectUri: postLogoutRedirectUri.absoluteString
-            ) { signOutUri, callbackURLScheme, completionHandler in
+            ) { signOutUri, callback, completionHandler in
                 capturedSignOutUri = signOutUri
-                capturedCallbackURLScheme = callbackURLScheme
+                capturedCallback = callback
 
                 mockSession = SignOutSystemAuthenticationSessionMock(
                     callbackUri: postLogoutRedirectUri,
@@ -69,7 +69,7 @@ extension LogtoClientTests {
             XCTAssertEqual(capturedSignOutUri?.scheme, "https")
             XCTAssertEqual(capturedSignOutUri?.host, "logto.dev")
             XCTAssertEqual(capturedSignOutUri?.path, "/end:good")
-            XCTAssertEqual(capturedCallbackURLScheme, "io.logto.test")
+            XCTAssertEqual(capturedCallback, .customScheme("io.logto.test"))
             XCTAssertTrue(try queryItems(in: XCTUnwrap(capturedSignOutUri)).contains(URLQueryItem(
                 name: "client_id",
                 value: "foo"
@@ -87,15 +87,46 @@ extension LogtoClientTests {
         }
 
         @MainActor
+        func testSignOutWithHttpsRedirectUsesHttpsCallback() async throws {
+            let client = buildClient(withToken: true)
+            let postLogoutRedirectUri = try XCTUnwrap(URL(string: "https://example.com/signed-out"))
+            var capturedSignOutUri: URL?
+            var capturedCallback: LogtoASWebAuthenticationSession.AuthenticationCallback?
+
+            let error = await client.signOut(
+                postLogoutRedirectUri: postLogoutRedirectUri.absoluteString
+            ) { signOutUri, callback, completionHandler in
+                capturedSignOutUri = signOutUri
+                capturedCallback = callback
+
+                return SignOutSystemAuthenticationSessionMock(
+                    callbackUri: postLogoutRedirectUri,
+                    completionHandler: completionHandler
+                )
+            }
+
+            XCTAssertNil(error)
+            XCTAssertNil(client.refreshToken)
+            XCTAssertNil(client.idToken)
+            XCTAssertEqual(client.accessTokenMap.count, 0)
+            XCTAssertEqual(capturedCallback, .https(host: "example.com", path: "/signed-out"))
+            XCTAssertNil(capturedCallback?.callbackURLScheme)
+            XCTAssertTrue(try queryItems(in: XCTUnwrap(capturedSignOutUri)).contains(URLQueryItem(
+                name: "post_logout_redirect_uri",
+                value: postLogoutRedirectUri.absoluteString
+            )))
+        }
+
+        @MainActor
         func testSignOutWithoutRedirectOk() async throws {
             let client = buildClient(withToken: true)
             var capturedSignOutUri: URL?
-            var capturedCallbackURLScheme: String?
+            var capturedCallback: LogtoASWebAuthenticationSession.AuthenticationCallback?
             var mockSession: SignOutSystemAuthenticationSessionMock!
 
-            let error = await client.signOut { signOutUri, callbackURLScheme, completionHandler in
+            let error = await client.signOut { signOutUri, callback, completionHandler in
                 capturedSignOutUri = signOutUri
-                capturedCallbackURLScheme = callbackURLScheme
+                capturedCallback = callback
                 mockSession = SignOutSystemAuthenticationSessionMock(completionHandler: completionHandler)
                 return mockSession
             }
@@ -104,7 +135,7 @@ extension LogtoClientTests {
             XCTAssertNil(client.refreshToken)
             XCTAssertNil(client.idToken)
             XCTAssertEqual(client.accessTokenMap.count, 0)
-            XCTAssertNil(capturedCallbackURLScheme)
+            XCTAssertEqual(capturedCallback, .unsupported)
             XCTAssertNotNil(mockSession.presentationContextProvider)
 
             let items = try queryItems(in: XCTUnwrap(capturedSignOutUri))
@@ -206,8 +237,8 @@ extension LogtoClientTests {
                 code: ASWebAuthenticationSessionError.Code.canceledLogin.rawValue
             )
 
-            let error = await client.signOut { _, callbackURLScheme, completionHandler in
-                XCTAssertNil(callbackURLScheme)
+            let error = await client.signOut { _, callback, completionHandler in
+                XCTAssertEqual(callback, .unsupported)
                 return SignOutSystemAuthenticationSessionMock(
                     callbackError: cancelError,
                     completionHandler: completionHandler

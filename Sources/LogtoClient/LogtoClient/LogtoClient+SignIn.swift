@@ -68,6 +68,11 @@ public extension LogtoClient {
         /**
          Start a sign in session with ASWebAuthenticationSession. If the function returns with no error threw, it means the user has signed in successfully.
 
+         The redirect URI can use a custom scheme or an HTTPS Universal Link:
+         - Custom scheme redirect URIs, for example `io.logto.app://callback`, can be matched and dismissed automatically on all supported iOS versions.
+         - HTTPS Universal Link redirect URIs, for example `https://example.com/callback`, require Associated Domains configuration with the `webcredentials` service and iOS 17.4 or newer for ASWebAuthenticationSession to match the callback and dismiss automatically.
+         - On older iOS versions, an HTTPS redirect can still be used in the authorization request, but ASWebAuthenticationSession may not close automatically unless the app handles the Universal Link callback itself.
+
          - Parameters:
             - redirectUri: One of Redirect URIs of this application.
             - loginHint: Login hint indicates the current user (usually an email address or phone number).
