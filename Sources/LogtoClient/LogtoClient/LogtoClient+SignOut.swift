@@ -147,7 +147,7 @@ extension LogtoClient {
             }
 
             if let postLogoutRedirectUri, !Self.isValidRedirectUri(postLogoutRedirectUri) {
-                _ = await clearCredentials()
+                clearLocalCredentials()
                 return LogtoClientErrors.SignOut(type: .invalidRedirectUri, innerError: nil)
             }
 
