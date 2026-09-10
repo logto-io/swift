@@ -48,7 +48,7 @@ extension LogtoClient {
 
         do {
             return try await LogtoCore
-                .fetchJwkSet(jwksUri: oidcConfig.jwksUri)
+                .fetchJwkSet(useSession: networkSession, jwksUri: oidcConfig.jwksUri)
         } catch {
             throw LogtoClientErrors.JwkSet(type: .unableToFetchJwkSet, innerError: error)
         }

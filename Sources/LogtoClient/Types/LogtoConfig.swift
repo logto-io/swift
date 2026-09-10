@@ -17,6 +17,9 @@ public struct LogtoConfig {
     public let prompt: LogtoCore.Prompt
     public let usingPersistStorage: Bool
     public let prefersEphemeralWebBrowserSession: Bool
+    /// The options for verifying the ID Token, such as the clock tolerance for devices whose clock drifts from the
+    /// Logto server. See `IdTokenVerificationOptions`.
+    public let idTokenVerification: IdTokenVerificationOptions
 
     public var scopes: [String] {
         LogtoUtilities.withReservedScopes(_scopes)
@@ -29,6 +32,8 @@ public struct LogtoConfig {
     }
 
     /// Have to do this in Swift
+    /// - Throws: `LogtoErrors.UrlConstruction.unableToConstructUrl` if the endpoint is not a valid URL, or
+    ///   `LogtoClientErrors.Config.invalidClockTolerance` if the clock tolerance is not a positive number of seconds.
     public init(
         endpoint: String,
         appId: String,
@@ -36,10 +41,15 @@ public struct LogtoConfig {
         resources: [String] = [],
         prompt: LogtoCore.Prompt = .consent,
         usingPersistStorage: Bool = true,
-        prefersEphemeralWebBrowserSession: Bool = false
+        prefersEphemeralWebBrowserSession: Bool = false,
+        idTokenVerification: IdTokenVerificationOptions = IdTokenVerificationOptions()
     ) throws {
         guard let endpoint = URL(string: endpoint) else {
             throw LogtoErrors.UrlConstruction.unableToConstructUrl
+        }
+
+        guard idTokenVerification.clockTolerance > 0, idTokenVerification.clockTolerance.isFinite else {
+            throw LogtoClientErrors.Config.invalidClockTolerance
         }
 
         self.endpoint = endpoint
@@ -49,5 +59,6 @@ public struct LogtoConfig {
         self.prompt = prompt
         self.usingPersistStorage = usingPersistStorage
         self.prefersEphemeralWebBrowserSession = prefersEphemeralWebBrowserSession
+        self.idTokenVerification = idTokenVerification
     }
 }

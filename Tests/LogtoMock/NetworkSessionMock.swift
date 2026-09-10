@@ -32,7 +32,7 @@ public class NetworkSessionMock: NetworkSession {
                         "revocation_endpoint": "https://logto.dev/revoke:good",
                         "userinfo_endpoint": "https://logto.dev/user",
                         "jwks_uri": "https://logto.dev/jwks:good",
-                        "issuer": "http://localhost:443/oidc"
+                        "issuer": "\(IdTokenFixtures.issuer)"
                     }
                 """.utf8), nil)
             case "oidc_config:good:no_refresh":
@@ -44,7 +44,7 @@ public class NetworkSessionMock: NetworkSession {
                         "revocation_endpoint": "https://logto.dev/revoke:good",
                         "userinfo_endpoint": "https://logto.dev/user",
                         "jwks_uri": "https://logto.dev/jwks:good",
-                        "issuer": "http://localhost:443/oidc"
+                        "issuer": "\(IdTokenFixtures.issuer)"
                     }
                 """.utf8), nil)
             case "oidc_config:good:jwt":
@@ -56,7 +56,7 @@ public class NetworkSessionMock: NetworkSession {
                         "revocation_endpoint": "https://logto.dev/revoke:good",
                         "userinfo_endpoint": "https://logto.dev/user",
                         "jwks_uri": "https://logto.dev/jwks:good",
-                        "issuer": "http://localhost:443/oidc"
+                        "issuer": "\(IdTokenFixtures.issuer)"
                     }
                 """.utf8), nil)
             case "oidc_config:bad":
@@ -68,9 +68,11 @@ public class NetworkSessionMock: NetworkSession {
                        "revocation_endpoint": "https://logto.dev/revoke:bad",
                        "userinfo_endpoint": "https://logto.dev/user",
                        "jwks_uri": "https://logto.dev/jwks:bad",
-                       "issuer": "http://localhost:443/oidc"
+                       "issuer": "\(IdTokenFixtures.issuer)"
                    }
                 """.utf8), nil)
+            case "jwks:good":
+                return (Data(IdTokenFixtures.rsaJwkSetJson.utf8), nil)
             case "user":
                 guard request.value(forHTTPHeaderField: "Authorization") == "Bearer good" else {
                     return (nil, MockError())

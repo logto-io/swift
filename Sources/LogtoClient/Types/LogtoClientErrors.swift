@@ -19,4 +19,9 @@ public enum LogtoClientErrors {
         /// No ID Token presents in the Keychain.
         case notAuthenticated
     }
+
+    public enum Config: String, LocalizedError {
+        /// The clock tolerance for ID Token verification must be a positive number of seconds.
+        case invalidClockTolerance
+    }
 }
