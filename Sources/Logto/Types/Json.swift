@@ -41,7 +41,9 @@ public enum JsonValue: Codable, Equatable {
     }
 
     public var isNull: Bool {
-        if case .null = self { return true }
+        if case .null = self {
+            return true
+        }
         return false
     }
 
