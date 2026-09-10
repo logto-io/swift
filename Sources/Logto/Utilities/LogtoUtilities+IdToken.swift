@@ -56,6 +56,11 @@ public extension LogtoUtilities {
         clockTolerance: TimeInterval = LogtoUtilities.defaultIdTokenClockTolerance,
         forTimeInterval: TimeInterval = Date().timeIntervalSince1970
     ) throws {
+        precondition(
+            clockTolerance > 0 && clockTolerance.isFinite,
+            "clockTolerance must be a positive number of seconds"
+        )
+
         if jwks.keys.isEmpty {
             throw LogtoErrors.Verification.missingJwk
         }
