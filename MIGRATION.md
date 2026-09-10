@@ -210,9 +210,8 @@ button.
 Browser sign-in and browser sign-out are currently available on iOS. On non-iOS
 platforms, use `clearCredentials()` for local credential clearing.
 
-## Installing the beta
+## Installing v2
 
-v2 is released through Git tags. For the first beta, use the prerelease tag
-`v2.0.0-beta.1` when it is published. Swift Package Manager and Xcode can resolve
-SemVer prerelease tags, but callers should select the prerelease explicitly instead
-of relying on a normal version range to pick it automatically.
+v2 is released through Git tags. Select `2.0.0` or a later `2.x` version when adding
+the package in Swift Package Manager or Xcode. The `2.0.0-beta.x` prereleases are
+superseded by the stable release.
