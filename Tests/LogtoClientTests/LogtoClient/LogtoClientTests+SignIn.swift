@@ -17,6 +17,20 @@ class LogtoAuthSessionSuccessMock: LogtoAuthSession {
     }
 }
 
+class LogtoAuthSessionIdTokenMock: LogtoAuthSession {
+    override func start() async throws -> LogtoCore.CodeTokenResponse {
+        try JSONDecoder().decode(LogtoCore.CodeTokenResponse.self, from: Data("""
+            {
+                "accessToken": "foo",
+                "refreshToken": "bar",
+                "idToken": "\(IdTokenFixtures.rsaIdToken)",
+                "scope": "openid offline_access",
+                "expiresIn": 300
+            }
+        """.utf8))
+    }
+}
+
 class LogtoAuthSessionFailureMock: LogtoAuthSession {
     override func start() async throws -> LogtoCore.CodeTokenResponse {
         throw LogtoAuthSession.Errors.SignIn(type: .unknownError, innerError: nil)
@@ -84,7 +98,7 @@ class LogtoAuthSessionBlockingMock: LogtoAuthSession {
 
 extension LogtoClientTests {
     func testSignInUnableToFetchJwkSet() async throws {
-        let client = buildClient(withToken: true)
+        let client = buildClient(withOidcEndpoint: "/oidc_config:bad", withToken: true)
 
         do {
             try await client.signInWithBrowser(
@@ -211,5 +225,37 @@ extension LogtoClientTests {
         }
 
         XCTFail()
+    }
+
+    func testSignInRejectsIdTokenOutsideClockTolerance() async throws {
+        let client = buildClient()
+
+        do {
+            try await client.signInWithBrowser(
+                authSessionType: LogtoAuthSessionIdTokenMock.self,
+                redirectUri: "io.logto.dev://callback"
+            )
+        } catch let error as LogtoErrors.Verification {
+            // The fixture ID Token expired in 2022, far beyond the default tolerance
+            XCTAssertEqual(error, .jwtExpired)
+            XCTAssertNil(client.idToken)
+            return
+        }
+
+        XCTFail()
+    }
+
+    func testSignInAcceptsIdTokenWithinClockTolerance() async throws {
+        // A tolerance that covers the age of the fixture ID Token
+        let clockTolerance = Date().timeIntervalSince1970 - IdTokenFixtures.issuedAt + 60
+        let client = buildClient(idTokenVerification: IdTokenVerificationOptions(clockTolerance: clockTolerance))
+
+        try await client.signInWithBrowser(
+            authSessionType: LogtoAuthSessionIdTokenMock.self,
+            redirectUri: "io.logto.dev://callback"
+        )
+
+        XCTAssertEqual(client.idToken, IdTokenFixtures.rsaIdToken)
+        XCTAssertEqual(client.refreshToken, "bar")
     }
 }

@@ -100,6 +100,28 @@ The visible behavior changes because the flow now uses `ASWebAuthenticationSessi
 - The app can no longer inspect the page, inject JavaScript, or rely on WebView-only
   behavior during authentication.
 
+## Changed: ID token clock tolerance
+
+ID token verification now tolerates a clock drift of up to 300 seconds between the
+device and the Logto server (v1 allowed 60 seconds), and the tolerance also applies to
+the `exp` claim. This matches the default of the Logto JS SDK. Devices whose clock
+drifts by more than the tolerance still fail sign-in, with
+`LogtoErrors.Verification.jwtIssuedTimeIncorrect` or `LogtoErrors.Verification.jwtExpired`.
+These errors are now public, so your app can tell the user to check the device clock.
+
+The tolerance is configurable in seconds through the new `idTokenVerification` option:
+
+```swift
+let config = try LogtoConfig(
+    endpoint: "<your-logto-endpoint>",
+    appId: "<your-app-id>",
+    idTokenVerification: IdTokenVerificationOptions(clockTolerance: 600)
+)
+```
+
+`LogtoConfig` throws `LogtoClientErrors.Config.invalidClockTolerance` if the tolerance
+is not a positive number of seconds.
+
 ## Removed: native social plugins
 
 The native social plugin products and targets are removed:

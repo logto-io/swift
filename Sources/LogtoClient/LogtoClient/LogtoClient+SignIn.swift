@@ -49,7 +49,8 @@ extension LogtoClient {
                 $0,
                 issuer: oidcConfig.issuer,
                 clientId: logtoConfig.appId,
-                jwks: jwks
+                jwks: jwks,
+                clockTolerance: logtoConfig.idTokenVerification.clockTolerance
             )
         }
 

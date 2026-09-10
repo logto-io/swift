@@ -13,12 +13,16 @@ public enum LogtoErrors {
         case invalidUrlSafeBase64Encoding
     }
 
-    enum Verification: LocalizedError, Equatable {
+    /// The errors thrown when verifying an ID Token.
+    public enum Verification: LocalizedError, Equatable {
         case missingJwk
         case unsupportedJwkType
         case noSigningKeyMatched
         case jwtMissingAlgorithmInHeader
+        /// The ID Token has expired, even after applying the clock tolerance.
         case jwtExpired
+        /// The ID Token was issued outside the clock tolerance around the current time.
+        /// This usually means the device clock drifts from the Logto server.
         case jwtIssuedTimeIncorrect
         case jwtValueMismatched(field: JwtField)
     }
