@@ -19,7 +19,7 @@ class LogtoAuthSessionSuccessMock: LogtoAuthSession {
 
 class LogtoAuthSessionIdTokenMock: LogtoAuthSession {
     override func start() async throws -> LogtoCore.CodeTokenResponse {
-        try! JSONDecoder().decode(LogtoCore.CodeTokenResponse.self, from: Data("""
+        try JSONDecoder().decode(LogtoCore.CodeTokenResponse.self, from: Data("""
             {
                 "accessToken": "foo",
                 "refreshToken": "bar",
