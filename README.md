@@ -70,6 +70,19 @@ You can also use an HTTPS redirect URI such as `https://example.com/callback`:
 
 On iOS 17.4 and newer, the SDK uses `ASWebAuthenticationSession`'s HTTPS callback matching API so HTTPS redirects can automatically complete and dismiss the session. On older iOS versions, the authorization request can still use the HTTPS redirect URI, but the session may not close automatically unless your app handles the Universal Link callback itself. Keep a custom scheme redirect as a compatibility option if you need automatic completion on older iOS versions.
 
+## Keep the Save Password prompt on iOS
+
+`ASWebAuthenticationSession` closes as soon as Logto redirects back to your app, so the iOS "Save Password" prompt is dismissed right after a password sign-in. To keep it, pass `confirm_redirect_policy=password` in `extraParams`. Logto then shows a "You're signed in" page after the user enters a password, and returns to your app when the user selects "Continue":
+
+```swift
+try await client.signInWithBrowser(
+    redirectUri: "io.logto.app://callback",
+    extraParams: ["confirm_redirect_policy": "password"]
+)
+```
+
+See [Keep the iOS "Save Password" prompt](https://docs.logto.io/end-user-flows/authentication-parameters#keep-the-ios-save-password-prompt) for details.
+
 ## Resources
 
 [![Website](https://img.shields.io/badge/website-logto.io-8262F8.svg)](https://logto.io/)
